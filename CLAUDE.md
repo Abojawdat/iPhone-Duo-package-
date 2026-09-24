@@ -2,34 +2,6 @@
 
 Pure-Dart Flutter package: adaptive layout for Apple's foldable iPhone Duo and every other screen. Published as `duo_dynamic_sizing`, repo https://github.com/Abojawdat/iPhone-Duo-package-.
 
-## Handoff: what to do next (written 2026-09-24)
-
-**Where things stand:**
-- **Version:** 1.0.1 is on `main` and is **not on pub.dev yet**.
-- **CI:** `.github/workflows/ci.yml` is green on Flutter 3.41.9 and the latest stable.
-- **Tests:** 97 package tests pass locally, plus 9 integration tests on macOS.
-- **Docs:** the README is bilingual (English + Arabic, with a navigator between them).
-- **Publishing:** `.github/workflows/publish.yml` publishes to pub.dev when a `vX.Y.Z` tag is pushed.
-
-**Next, in this order.** When a new chat starts, show the maintainer this list and ask which steps are done.
-
-1. **[maintainer] First publish, by hand.** pub.dev can only automate packages that already exist. In this folder run `flutter pub publish`, check the file list, type `y`, and sign in with Google. Verify that https://pub.dev/packages/duo_dynamic_sizing shows 1.0.1. Never publish on their behalf: it's irreversible and needs their Google account.
-2. **[maintainer] Turn on automation on pub.dev.** Go to https://pub.dev/packages/duo_dynamic_sizing/admin → Automated publishing and set:
-   - enable publishing from GitHub Actions
-   - repository `Abojawdat/iPhone-Duo-package-`
-   - tag pattern `v{{version}}`
-   - tick "Require GitHub Actions environment" and set it to `pub.dev`
-3. **[maintainer] Require their approval for releases.** GitHub → Settings → Environments → `pub.dev` (create it if missing) → Required reviewers → add themselves. Optionally add a tag ruleset for `v*` limited to admins.
-4. **[Claude] Once 1–3 are confirmed:**
-   - Make sure `main` still has `version: 1.0.1` and nothing unreleased.
-   - Run `git tag v1.0.1 && git push origin v1.0.1`.
-   - Watch the "Publish to pub.dev" run. It should find 1.0.1 already on pub.dev, skip publishing, and finish green. If reviewers are set, the maintainer has to approve the run first.
-5. **[Claude] After it's verified,** delete this Handoff section and commit.
-
-**Checking CI without the `gh` CLI (it isn't installed):**
-- **Runs:** `curl -s "https://api.github.com/repos/Abojawdat/iPhone-Duo-package-/actions/runs?per_page=5"`
-- **Failure details:** use each job's `check_run_url` + `/annotations`. Job logs need admin rights, which is why `ci.yml` prints `pub publish --dry-run` output and `git diff` as error annotations.
-
 ## Working with the maintainer
 
 - **Before any big task,** ask a round of clarifying questions with a recommended option. They like to be asked.
@@ -105,5 +77,7 @@ Outputs: stills in `doc/*.webp`, `doc/fold.webp` (also a pub.dev screenshot), an
 
 1. Bump `version` in `pubspec.yaml`, add a `CHANGELOG.md` entry, push to `main` and wait for CI to go green.
 2. `git tag vX.Y.Z && git push origin vX.Y.Z`. `publish.yml` checks the tag matches the pubspec, runs the tests, then publishes over OIDC (no secrets). It waits for approval in the `pub.dev` environment, and skips if the version already exists.
-3. The very first version has to be published by hand with `flutter pub publish` (see Handoff). pub.dev can't create a package from CI.
+3. Automated publishing is set up on pub.dev (repo `Abojawdat/iPhone-Duo-package-`, tag pattern `v{{version}}`, environment `pub.dev`). Each tag run waits for the maintainer's approval in GitHub → Actions → Review deployments.
 4. README images are absolute `raw.githubusercontent.com/.../main/doc/...` URLs, so they also render on pub.dev.
+
+**Checking CI without the `gh` CLI:** `curl -s "https://api.github.com/repos/Abojawdat/iPhone-Duo-package-/actions/runs?per_page=5"`. For failures, use each job's `check_run_url` + `/annotations`; job logs need admin rights, which is why `ci.yml` prints `pub publish --dry-run` output and `git diff` as error annotations.
