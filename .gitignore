@@ -32,3 +32,6 @@ migrate_working_dir/
 
 # golden diff output
 test/failures/
+
+# the example lock changes with every flutter version
+example/pubspec.lock

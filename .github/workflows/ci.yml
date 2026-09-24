@@ -14,7 +14,7 @@ jobs:
       matrix:
         flutter: ['3.41.9', '3.x'] # our floor and latest stable
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ matrix.flutter }}
@@ -28,4 +28,9 @@ jobs:
         run: |
           flutter pub get
           flutter analyze
-      - run: flutter pub publish --dry-run
+      - name: Publish dry run
+        run: |
+          flutter pub publish --dry-run > "$RUNNER_TEMP/dry.txt" 2>&1 && exit 0
+          cat "$RUNNER_TEMP/dry.txt"
+          echo "::error title=pub publish --dry-run::$(tail -n 25 "$RUNNER_TEMP/dry.txt" | tr '\n' ' ')"
+          exit 1
