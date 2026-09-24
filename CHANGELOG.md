@@ -1,3 +1,10 @@
+## 1.0.3
+
+Docs only, no code changes:
+
+* The Arabic README section, DESIGN.ar.md and the example app's Arabic text are now in Iraqi (Baghdadi) Arabic.
+* The author section links the issues page in both languages.
+
 ## 1.0.2
 
 Docs only, no code changes:
