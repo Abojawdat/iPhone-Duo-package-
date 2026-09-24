@@ -15,13 +15,21 @@ cd example && flutter test integration_test -d macos  # real app, every pose. ke
 cd example && flutter drive -d macos --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart  # same + screenshots in example/build/screens
 ```
 
-Regenerate the README / pub.dev visuals (real renders of the example app):
+Regenerate every image and animation in `doc/` (real renders of the example app; Arabic uses macOS's SF Arabic):
 
 ```sh
 cd example && flutter test tool/render.dart && python3 ../tool/pack_visuals.py   # needs Pillow
 ```
 
-`doc/banner.svg` (animated, SMIL) and `doc/logo.svg` are hand-written SVGs. Keep the logo geometry in sync with `_LogoPainter` in `example/tool/render.dart`.
+Outputs: stills in `doc/*.webp`, `doc/fold.webp` (also a pub.dev screenshot), and scenario animations in `doc/anim/*.webp` (kept out of the pub archive by `.pubignore`). `doc/banner.svg` (animated, SMIL) and `doc/logo.svg` are hand-written SVGs.
+
+## Docs (English + Arabic, keep them in sync)
+
+- `README.md`: English, also the pub.dev page. Images use absolute `raw.githubusercontent.com/.../main/...` URLs.
+- `README.ar.md`: full Arabic mirror. Prose sits in `<div dir="rtl">` blocks; code blocks go outside them so they stay LTR.
+- `DESIGN.md` / `DESIGN.ar.md`: every design decision, its reason and the rejected alternative.
+- `example/lib/minimal.dart` is the README's minimal example; keep both copies identical.
+- Any behavior change updates both languages in the same commit. Keep the logo geometry in sync with `_LogoPainter` in `example/tool/render.dart`.
 
 ## Layout
 
