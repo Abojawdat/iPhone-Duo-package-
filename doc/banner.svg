@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" font-family="Inter, 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title>duo_dynamic_sizing: adaptive layout for the foldable iPhone Duo and every other screen</title>
+  <defs>
+    <linearGradient id="lgA" x1="6" y1="14" x2="50" y2="86" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8B7CFF"/><stop offset="1" stop-color="#5B4BEF"/></linearGradient>
+    <linearGradient id="lgB" x1="50" y1="14" x2="94" y2="86" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#C084FC"/><stop offset="1" stop-color="#8B3FF0"/></linearGradient>
+    <clipPath id="lgBody"><rect x="6" y="14" width="88" height="72" rx="18"/></clipPath>
+    <filter id="lgGlow" x="-100%" y="-20%" width="300%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter>
+    <clipPath id="card0"><rect width="1280" height="640" rx="28"/></clipPath>
+    <radialGradient id="glowA" cx="12%" cy="0%" r="75%"><stop offset="0" stop-color="#6D5DFC" stop-opacity=".5"/><stop offset="1" stop-color="#6D5DFC" stop-opacity="0"/></radialGradient>
+    <radialGradient id="glowB" cx="100%" cy="100%" r="60%"><stop offset="0" stop-color="#22D3EE" stop-opacity=".28"/><stop offset="1" stop-color="#22D3EE" stop-opacity="0"/></radialGradient>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="14" cy="14" r="1.1" fill="#fff" fill-opacity=".05"/></pattern>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6D5DFC"/><stop offset="1" stop-color="#A855F7"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="26" stdDeviation="24" flood-color="#000" flood-opacity=".6"/></filter>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="46"/></filter>
+    <filter id="foldGlow" x="-400%" y="-10%" width="900%" height="120%"><feGaussianBlur stdDeviation="3.5"/></filter>
+    <clipPath id="screen">
+      <rect width="475.5" height="334.5" rx="21">
+        <animate attributeName="width" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="233.0;233.0;475.5;475.5;233.0;233.0"/>
+        <animate attributeName="height" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="339.0;339.0;334.5;334.5;339.0;339.0"/>
+      </rect>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#card0)">
+    <rect width="1280" height="640" fill="#0A0B14"/>
+    <rect width="1280" height="640" fill="url(#glowA)"/>
+    <rect width="1280" height="640" fill="url(#glowB)"/>
+    <rect width="1280" height="640" fill="url(#dots)"/>
+    <ellipse cx="960" cy="328" rx="290" ry="170" fill="#6D5DFC" fill-opacity=".22" filter="url(#soft)"/>
+  </g>
+
+  <g transform="translate(80 120) scale(.9)">
+    <g clip-path="url(#lgBody)">
+      <rect x="6" y="14" width="44" height="72" fill="url(#lgA)"/>
+      <rect x="50" y="14" width="44" height="72" fill="url(#lgB)"/>
+      <g fill="#fff" fill-opacity=".92">
+        <circle cx="18" cy="31" r="4"/><rect x="26" y="28" width="16" height="6" rx="3"/>
+        <circle cx="18" cy="45" r="4"/><rect x="26" y="42" width="16" height="6" rx="3"/>
+        <circle cx="18" cy="59" r="4"/><rect x="26" y="56" width="16" height="6" rx="3"/>
+        <rect x="58" y="26" width="28" height="30" rx="6"/>
+        <rect x="58" y="62" width="22" height="6" rx="3"/>
+      </g>
+    </g>
+    <line x1="50" y1="10" x2="50" y2="90" stroke="#22D3EE" stroke-opacity=".65" stroke-width="7" filter="url(#lgGlow)"/>
+    <line x1="50" y1="10" x2="50" y2="90" stroke="#CFFAFE" stroke-width="2.6" stroke-linecap="round"/>
+  </g>
+  <text x="80" y="290" font-size="54" font-weight="800" letter-spacing="-1.4" fill="#fff">duo_dynamic_sizing</text>
+  <text x="80" y="340" font-size="24" fill="#C9CCDD">Adaptive layout for the foldable iPhone Duo</text>
+  <text x="80" y="374" font-size="24" fill="#C9CCDD">and every other screen.</text>
+  
+    <rect x="80" y="412" width="116" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
+    <text x="138.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Pure Dart</text>
+    <rect x="206" y="412" width="126" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
+    <text x="269.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Fold aware</text>
+    <rect x="342" y="412" width="118" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
+    <text x="401.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Split View</text>
+    <rect x="470" y="412" width="188" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
+    <text x="564.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Android foldables</text>
+  <rect x="80" y="476" width="444" height="48" rx="12" fill="#fff" fill-opacity=".04" stroke="#fff" stroke-opacity=".12"/>
+  <text x="102" y="506" font-family="'SF Mono', ui-monospace, Menlo, Consolas, 'Roboto Mono', monospace" font-size="18" fill="#E4E6F0"><tspan fill="#A855F7">$</tspan> flutter pub add duo_dynamic_sizing</text>
+
+  <rect x="716.25" y="144.75" width="487.5" height="346.5" rx="27"
+        fill="#040406" stroke="#4A4A57" stroke-width="1.2" filter="url(#shadow)">
+    <animate attributeName="x" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="837.5;837.5;716.25;716.25;837.5;837.5"/>
+    <animate attributeName="y" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="142.5;142.5;144.75;144.75;142.5;142.5"/>
+    <animate attributeName="width" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="245.0;245.0;487.5;487.5;245.0;245.0"/>
+    <animate attributeName="height" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="351.0;351.0;346.5;346.5;351.0;351.0"/>
+  </rect>
+
+  <g transform="translate(722.25 150.75)">
+    <animateTransform attributeName="transform" type="translate" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="843.5 148.5;843.5 148.5;722.25 150.75;722.25 150.75;843.5 148.5;843.5 148.5"/>
+    <g clip-path="url(#screen)">
+      <rect width="475.5" height="339.0" fill="#FDF8FF"/>
+      <text x="12" y="27" font-size="15" font-weight="700" fill="#1C1B1F">Inbox</text>
+      <rect x="4" y="90" width="229.75" height="44" rx="12" fill="#E8DEF8" opacity="1">
+        <animate attributeName="opacity" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="0;0;1;1;0;0"/>
+      </rect>
+        <circle cx="20" cy="62" r="10" fill="#6D5DFC"/>
+        <text x="20" y="65.5" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">S</text>
+        <rect x="38" y="52" width="64" height="6" rx="3" fill="#1C1B1F" fill-opacity=".86"/>
+        <rect x="38" y="62" width="98" height="5" rx="2.5" fill="#1C1B1F" fill-opacity=".55"/>
+        <rect x="38" y="71" width="112" height="4.5" rx="2.25" fill="#49454F" fill-opacity=".32"/>
+        <circle cx="20" cy="109" r="10" fill="#EC4899"/>
+        <text x="20" y="112.5" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">O</text>
+        <rect x="38" y="99" width="57" height="6" rx="3" fill="#1C1B1F" fill-opacity=".86"/>
+        <rect x="38" y="109" width="82" height="5" rx="2.5" fill="#1C1B1F" fill-opacity=".55"/>
+        <rect x="38" y="118" width="100" height="4.5" rx="2.25" fill="#49454F" fill-opacity=".32"/>
+        <circle cx="20" cy="156" r="10" fill="#14B8A6"/>
+        <text x="20" y="159.5" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">L</text>
+        <rect x="38" y="146" width="50" height="6" rx="3" fill="#1C1B1F" fill-opacity=".86"/>
+        <rect x="38" y="156" width="98" height="5" rx="2.5" fill="#1C1B1F" fill-opacity=".55"/>
+        <rect x="38" y="165" width="88" height="4.5" rx="2.25" fill="#49454F" fill-opacity=".32"/>
+        <circle cx="20" cy="203" r="10" fill="#F59E0B"/>
+        <text x="20" y="206.5" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Y</text>
+        <rect x="38" y="193" width="64" height="6" rx="3" fill="#1C1B1F" fill-opacity=".86"/>
+        <rect x="38" y="203" width="82" height="5" rx="2.5" fill="#1C1B1F" fill-opacity=".55"/>
+        <rect x="38" y="212" width="112" height="4.5" rx="2.25" fill="#49454F" fill-opacity=".32"/>
+        <circle cx="20" cy="250" r="10" fill="#3B82F6"/>
+        <text x="20" y="253.5" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">M</text>
+        <rect x="38" y="240" width="57" height="6" rx="3" fill="#1C1B1F" fill-opacity=".86"/>
+        <rect x="38" y="250" width="98" height="5" rx="2.5" fill="#1C1B1F" fill-opacity=".55"/>
+        <rect x="38" y="259" width="100" height="4.5" rx="2.25" fill="#49454F" fill-opacity=".32"/>
+        <circle cx="20" cy="297" r="10" fill="#8B5CF6"/>
+        <text x="20" y="300.5" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">A</text>
+        <rect x="38" y="287" width="50" height="6" rx="3" fill="#1C1B1F" fill-opacity=".86"/>
+        <rect x="38" y="297" width="82" height="5" rx="2.5" fill="#1C1B1F" fill-opacity=".55"/>
+        <rect x="38" y="306" width="88" height="4.5" rx="2.25" fill="#49454F" fill-opacity=".32"/>
+      <g opacity="1">
+        <animate attributeName="opacity" dur="8s" repeatCount="indefinite" keyTimes="0;0.31;0.38;0.72;0.76;1" values="0;0;1;1;0;0"/>
+        <rect x="251.75" y="40" width="118" height="9" rx="4.5" fill="#1C1B1F" fill-opacity=".9"/>
+        <circle cx="260.75" cy="68" r="9" fill="#EC4899"/>
+        <rect x="275.75" y="62" width="60" height="5.5" rx="2.75" fill="#1C1B1F" fill-opacity=".8"/>
+        <rect x="275.75" y="71" width="40" height="4" rx="2" fill="#49454F" fill-opacity=".45"/>
+        <rect x="251.75" y="92" width="138" height="4.5" rx="2.25" fill="#49454F" fill-opacity=".45"/>
+        <rect x="251.75" y="101" width="130" height="4.5" rx="2.25" fill="#49454F" fill-opacity=".45"/>
+        <rect x="251.75" y="110" width="136" height="4.5" rx="2.25" fill="#49454F" fill-opacity=".45"/>
+        <rect x="251.75" y="119" width="88" height="4.5" rx="2.25" fill="#49454F" fill-opacity=".45"/>
+        <rect x="251.75" y="134" width="140" height="62" rx="12" fill="url(#card)"/>
+        <rect x="312.75" y="155" width="8" height="20" rx="2" fill="#fff" fill-opacity=".9"/>
+        <rect x="322.75" y="152" width="10" height="26" rx="2.5" fill="#fff" fill-opacity=".9"/>
+        <rect x="251.75" y="208" width="46" height="17" rx="8.5" fill="#5E54C8"/>
+        <rect x="303.75" y="208" width="54" height="17" rx="8.5" fill="none" stroke="#79747E" stroke-opacity=".7"/>
+      </g>
+      <g transform="translate(406.0 0)">
+        <animateTransform attributeName="transform" type="translate" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="163.5 0;163.5 0;406.0 0;406.0 0;163.5 0;163.5 0"/>
+        <circle cx="-16" cy="20" r="8" fill="#6D5DFC"/>
+        <text x="-16" y="23.5" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">M</text>
+        <circle cx="-39" cy="19" r="4.2" fill="none" stroke="#49454F" stroke-width="1.6"/>
+        <line x1="-36" y1="22" x2="-33" y2="25" stroke="#49454F" stroke-width="1.6" stroke-linecap="round"/>
+        <rect width="40" height="339.0" y="0" fill="#F3EDF7"/>
+        <rect x="8" y="38" width="24" height="24" rx="7" fill="#E8DEF8"/>
+        <path d="M15 55 l3-1 8-8 -2-2 -8 8 z" fill="#4F378B"/>
+        <rect x="6" y="76" width="28" height="15" rx="7.5" fill="#E8DEF8"/>
+        <rect x="15" y="79.5" width="10" height="8" rx="2" fill="#1D192B"/>
+        <circle cx="20" cy="112" r="5" fill="none" stroke="#49454F" stroke-width="1.5"/>
+        <rect x="15" y="134" width="10" height="11" rx="2" fill="none" stroke="#49454F" stroke-width="1.5"/>
+      </g>
+      <rect x="455.25" y="22" width="11" height="39" rx="5.5" fill="#000">
+        <animate attributeName="x" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="212.75;212.75;455.25;455.25;212.75;212.75"/>
+      </rect>
+      <g opacity="1">
+        <animate attributeName="opacity" dur="8s" repeatCount="indefinite" keyTimes="0;0.30;0.38;0.72;0.78;1" values="0;0;1;1;0;0"/>
+        <line x1="237.75" y1="0" x2="237.75" y2="334.5" stroke="#22D3EE" stroke-width="8" stroke-opacity=".55" filter="url(#foldGlow)">
+          <animate attributeName="stroke-opacity" dur="2.4s" repeatCount="indefinite" values=".35;.8;.35"/>
+        </line>
+        <line x1="237.75" y1="0" x2="237.75" y2="334.5" stroke="#A5F3FC" stroke-width="1.4"/>
+      </g>
+    </g>
+  </g>
+  
+  <text x="960" y="562" text-anchor="middle" font-family="'SF Mono', ui-monospace, Menlo, Consolas, 'Roboto Mono', monospace" font-size="17" fill="#9AA0B8" opacity="0">
+    <tspan fill="#fff" font-weight="700">closedPortrait</tspan>&#160;&#160;·&#160;&#160;<tspan fill="#C084FC">466×678</tspan>&#160;&#160;·&#160;&#160;<tspan>one pane</tspan>
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite" keyTimes="0;0.22;0.25;0.83;0.86;1" values="1;1;0;0;1;1"/>
+  </text>
+  
+  <text x="960" y="562" text-anchor="middle" font-family="'SF Mono', ui-monospace, Menlo, Consolas, 'Roboto Mono', monospace" font-size="17" fill="#9AA0B8" opacity="1">
+    <tspan fill="#fff" font-weight="700">openLandscape</tspan>&#160;&#160;·&#160;&#160;<tspan fill="#C084FC">951×669</tspan>&#160;&#160;·&#160;&#160;<tspan>list + detail, split at the fold</tspan>
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite" keyTimes="0;0.33;0.36;0.72;0.75;1" values="0;0;1;1;0;0"/>
+  </text>
+</svg>

@@ -1,11 +1,21 @@
-name: example
+name: duo_dynamic_sizing_example
+description: Showcase for duo_dynamic_sizing.
 publish_to: none
+version: 1.0.0+1
 
 environment:
-  sdk: ^3.12.2
+  sdk: ^3.11.0
 
 dependencies:
   flutter:
     sdk: flutter
-  iphone_due_sizing:
+  duo_dynamic_sizing:
     path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
