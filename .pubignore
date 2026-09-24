@@ -36,3 +36,4 @@ tool/
 example/tool/
 doc/banner.svg
 doc/logo.svg
+test/goldens/

@@ -10,6 +10,9 @@ flutter analyze                 # must be clean
 flutter test                    # test/duo_data_test.dart (logic), test/widgets_test.dart (poses)
 dart format lib test example    # 80 cols
 cd example && flutter run       # showcase with a pose picker
+flutter test --update-goldens test/golden_test.dart   # goldens, macOS only (skipped elsewhere)
+cd example && flutter test integration_test -d macos  # real app, every pose. keep its window visible: macOS throttles hidden windows and the run crawls
+cd example && flutter drive -d macos --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart  # same + screenshots in example/build/screens
 ```
 
 Regenerate the README / pub.dev visuals (real renders of the example app):
@@ -39,6 +42,8 @@ cd example && flutter test tool/render.dart && python3 ../tool/pack_visuals.py  
 - **Direction:** panes and `DuoAvoidFold` follow the ambient `Directionality`; `textDirection` overrides it on `DuoSplit` and `DuoListDetail`. In RTL, `splitPanes` swaps which pane sits where but keeps the split on the physical fold. The rail uses `DuoRailSide`, where `auto` means the physical right on the Duo and the start side elsewhere.
 - **Duo detection means exact sizes on iOS at 3x only,** with ±1 pt tolerance, partial windows for older SDKs, and Split View slices. Keep iPads (2x), Android and web from matching.
 - **iOS gives no hinge or posture.** It's `unknown` until flutter/flutter#192515 lands; then `displayFeatures` carries it and the Android path handles it with no changes here.
+- **Rail sizing:** keep `IntrinsicWidth` inside the 30% width cap. A bounded `NavigationRail` stretches to fill its width, which silently took 60 pt from the content before the goldens caught it.
+- **Edge cases live in `test/edge_cases_test.dart`:** zero and tiny windows, bad input, unbounded layouts, tri-folds, rapid folding, 3x text, keyboard rebuilds. Add a case there for every bug fix.
 - **The Flutter floor is 3.41 (Dart 3.11).** The local SDK is newer, so don't use APIs added after 3.41.
 
 ## iPhone Duo facts

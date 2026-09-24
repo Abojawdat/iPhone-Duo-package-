@@ -1,6 +1,6 @@
 name: duo_dynamic_sizing
 description: Adaptive layout for the foldable iPhone Duo and any screen. Fold-aware modes, split panes, side navigation, safe areas, media fit and a pose simulator.
-version: 1.0.0
+version: 1.0.1
 
 repository: https://github.com/Abojawdat/iPhone-Duo-package-
 issue_tracker: https://github.com/Abojawdat/iPhone-Duo-package-/issues

@@ -1,3 +1,17 @@
+## 1.0.1
+
+Fixes found by edge-case testing:
+
+* `DuoSplit` and `DuoListDetail` no longer crash inside scroll views or unbounded `Column`s; they fall back to one pane.
+* `DuoMedia` rejects a zero, negative, NaN or infinite `aspectRatio` in debug, and `fitSize` never returns NaN or infinity.
+* `DuoNavigationScaffold`'s rail scrolls when destinations don't fit (7 tabs on the closed-sideways Duo), caps label text at 1.3x like `NavigationBar` (3x accessibility text no longer overflows), shortens very long labels with an ellipsis, and never takes more than 30% of the window.
+
+Other changes:
+
+* Example now runs on macOS, and the showcase pose picker wraps so every chip can be reached with a mouse.
+* Integration tests that drive the real app through every pose, RTL, Split View, tabletop media and live window resizing.
+* Golden tests for every `DuoPose`, RTL and tabletop media.
+
 ## 1.0.0
 
 * First stable release.
