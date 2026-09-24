@@ -427,13 +427,13 @@ If the package helps you, a star on the repo is the best way to say thanks.
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/fold.webp" width="100%" alt="تبقى الرسالة نفسها مفتوحة بينما يُفتح هاتف iPhone Duo من لوحة واحدة إلى قائمة وتفاصيل">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/fold.webp" width="100%" alt="الطي والفتح">
 </p>
 
 <div dir="rtl">
 
-**ماذا يحدث:** عندما يكون الهاتف مطوياً تملأ الرسالة الشاشة الخارجية بعرض 466 نقطة. افتح الهاتف فتعود القائمة لتظهر بجانب الرسالة نفسها، وفي نفس موضع التمرير الذي تركتها عنده.<br>
-**لماذا:** تعتبر Apple الاستمرارية عند الطي شرطاً أساسياً، فالمستخدم يطوي الهاتف في منتصف القراءة ويتوقع أن يعود إلى المكان نفسه تماماً. لا يُعاد بناء أي شيء من الصفر؛ الحزمة تنقل عنصر الواجهة نفسه إلى مكانه الجديد.<br>
+**ماذا يحدث:** مطوياً تملأ الرسالة الشاشة. افتحه فتعود القائمة بجانب الرسالة نفسها وفي موضع التمرير نفسه.<br>
+**لماذا:** المستخدم يطوي الهاتف أثناء القراءة ويتوقع أن يعود إلى المكان نفسه.<br>
 **الكود:** `DuoListDetail` داخل `DuoNavigationScaffold`، ولا شيء غير ذلك.
 
 ### ٢. العرض المقسّم (Split View)
@@ -441,13 +441,13 @@ If the package helps you, a star on the repo is the best way to say thanks.
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/split.webp" width="100%" alt="يتقلص التطبيق إلى وضع العرض المقسّم وينتقل شريط التنقل إلى الحافة الخارجية">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/split.webp" width="100%" alt="العرض المقسّم">
 </p>
 
 <div dir="rtl">
 
-**ماذا يحدث:** ينضم تطبيق ثانٍ إلى الشاشة، فيتقلص تطبيقك مباشرة من 951 إلى 475 نقطة. وفي اللحظة التي يصبح فيها جزءاً من العرض المقسّم، ينتقل شريط التنقل من جهة الجزيرة الديناميكية إلى الحافة الخارجية للتطبيق، وتتحول القائمة إلى لوحة واحدة.<br>
-**لماذا:** هذا هو المكان الذي يضع فيه iOS 27 أشرطة التطبيق الأيسر. كل عرض وسيط يُرتَّب فعلياً، فلا توجد قفزات بين مقاسات قليلة مختارة يدوياً.<br>
+**ماذا يحدث:** ينضم تطبيق ثانٍ فيتقلص تطبيقك من 951 إلى 475 نقطة، وينتقل شريط التنقل إلى الحافة الخارجية وتصبح القائمة لوحة واحدة.<br>
+**لماذا:** هنا يضع iOS 27 أشرطة التطبيق الأيسر.<br>
 **الكود:** لا شيء إضافي. تخبرك `context.duo.isSplit` متى يحدث ذلك.
 
 ### ٣. نصف مفتوح: وضع الطاولة ووضع الكتاب
@@ -455,13 +455,13 @@ If the package helps you, a star on the repo is the best way to say thanks.
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/postures.webp" width="100%" alt="جهاز Android قابل للطي ينثني إلى وضع الطاولة ثم وضع الكتاب ويتبع التخطيط المفصل">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/postures.webp" width="100%" alt="وضع الطاولة والكتاب">
 </p>
 
 <div dir="rtl">
 
-**ماذا يحدث:** عندما يوضع الجهاز على طاولة، يقفز الفيديو إلى ما فوق خط الطي وتنزل أزرار التحكم إلى النصف السفلي. وعندما يُمسك مثل الكتاب، تنتقل أزرار التحكم إلى النصف الأخير في اتجاه القراءة.<br>
-**لماذا:** الشاشة المنثنية سطحان مختلفان. المحتوى الذي يمتد فوق خط الطي صعب القراءة وصعب اللمس، وإرشادات Apple تقول الشيء نفسه.<br>
+**ماذا يحدث:** على الطاولة يصعد الفيديو فوق خط الطي وتنزل أزرار التحكم تحته. وفي وضع الكتاب تنتقل الأزرار إلى النصف الأخير.<br>
+**لماذا:** المحتوى فوق خط الطي صعب القراءة واللمس.<br>
 **الكود:** `DuoSplit` للنصفين، و`DuoAvoidFold` لأزرار التحكم العائمة، و`context.duo.posture` لاتخاذ القرار.
 
 ### ٤. التدوير
@@ -469,13 +469,13 @@ If the package helps you, a star on the repo is the best way to say thanks.
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/rotate.webp" width="100%" alt="هاتف iPhone Duo مطوياً ومفتوحاً يدور ويتبعه التنقل">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/rotate.webp" width="100%" alt="التدوير">
 </p>
 
 <div dir="rtl">
 
-**ماذا يحدث:** عند تدوير الهاتف المطوي أفقياً، تنتقل الجزيرة الديناميكية إلى الأعلى ويبقى شريط التنقل على الجانب. وعند تدوير الهاتف المفتوح عمودياً، يتحول الشريط الجانبي إلى شريط سفلي، وهي الوضعية الوحيدة التي يُبقي فيها iOS الأشرطة أفقية.<br>
-**لماذا:** الشاشة الداخلية في Duo تتجاهل قفل الاتجاه، لذا يجب أن يتبع التخطيط النافذة لا اتجاه الجهاز.<br>
+**ماذا يحدث:** المطوي أفقياً يبقي شريط التنقل على الجانب، والمفتوح عمودياً يحوّله إلى شريط سفلي.<br>
+**لماذا:** الشاشة الداخلية تتجاهل قفل الاتجاه، فيتبع التخطيط النافذة.<br>
 **الكود:** يقرر `DuoNavigationScaffold` ذلك عبر `context.duo.prefersRail`.
 
 ### ٥. النوافذ القابلة لتغيير الحجم
@@ -483,13 +483,13 @@ If the package helps you, a star on the repo is the best way to say thanks.
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/resize.webp" width="100%" alt="نافذة على سطح المكتب تُسحب من عرض الهاتف إلى عرض واسع والتخطيط يواكبها">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/resize.webp" width="100%" alt="تغيير حجم النافذة">
 </p>
 
 <div dir="rtl">
 
 **ماذا يحدث:** تُسحب نافذة على سطح المكتب من 360 إلى 1240 نقطة، فيتحدث الوضع وعدد اللوحات ونوع التنقل في كل إطار.<br>
-**لماذا:** القواعد نفسها التي تتعامل مع Duo تتعامل أيضاً مع Stage Manager على iPad ومتصفحات الويب ونوافذ سطح المكتب. مجموعة واحدة من قرارات التخطيط تغطي كل الشاشات.<br>
+**لماذا:** القواعد نفسها تغطي Duo وiPad والويب وسطح المكتب.<br>
 **الكود:** التطبيق نفسه، دون أي فحص للمنصة.
 
 ### ٦. العربية والإنجليزية
@@ -497,7 +497,7 @@ If the package helps you, a star on the repo is the best way to say thanks.
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/rtl.webp" width="100%" alt="التطبيق ينقلب من الإنجليزية إلى واجهة عربية من اليمين إلى اليسار">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/rtl.webp" width="100%" alt="العربية والإنجليزية">
 </p>
 
 <div dir="rtl">
@@ -511,7 +511,7 @@ If the package helps you, a star on the repo is the best way to say thanks.
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/media.webp" width="100%" alt="الفيديو نفسه بنسبة 16:9 يتنقل بين أوضاع contain وcover وsmart">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/media.webp" width="100%" alt="ملاءمة الفيديو">
 </p>
 
 <div dir="rtl">
@@ -525,7 +525,7 @@ If the package helps you, a star on the repo is the best way to say thanks.
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/iphone-duo.webp" width="100%" alt="التطبيق التجريبي على iPhone Duo مطوياً ومفتوحاً وعمودياً وأفقياً وفي العرض المقسّم">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/iphone-duo.webp" width="100%" alt="iPhone Duo بكل وضعياته">
 </p>
 
 <div dir="rtl">
@@ -543,7 +543,7 @@ If the package helps you, a star on the repo is the best way to say thanks.
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/everywhere.webp" width="100%" alt="التطبيق نفسه على iPhone وجهاز Android قابل للطي بوضعي الكتاب والطاولة وعلى iPad">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/everywhere.webp" width="100%" alt="iPhone وAndroid وiPad">
 </p>
 
 <div dir="rtl">
@@ -647,43 +647,30 @@ duo.gridColumns(160); // عدد زوجي من الأعمدة حول خط الط�
 
 هذه هي النسخة المختصرة. التفاصيل الكاملة مع البدائل التي استبعدناها موجودة في [DESIGN.ar.md](https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/DESIGN.ar.md) ([English](https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/DESIGN.md)).
 
-- **الأحجام لا تُكبَّر أبداً.** لشاشتي Duo الحجم الفعلي نفسه للنقطة، نحو 153 نقطة في البوصة. لو كُبّر النص حسب العرض لقفز الخط من 16 إلى 33 نقطة عند فتح الهاتف، لذلك يكسب التخطيط لوحات إضافية لا عناصر أكبر.
-- **كل شيء يأتي من `MediaQuery`.** هذا يجعل الحزمة تفاعلية وقابلة للاختبار ومتوافقة مع المحاكاة، ولا يُعاد البناء إلا عندما تتغير النافذة فعلاً.
-- **Dart فقط.** تعمل اليوم على كل إصدار من Flutter بدءاً من 3.41 وعلى كل المنصات، دون الحاجة إلى Xcode 27.1 أو CocoaPods.
-- **يُكتشف iPhone Duo من مقاسات شاشته الدقيقة** بكثافة 3x على iOS، فلا يُخلط أبداً مع iPad أو هواتف Android أو نوافذ سطح المكتب.
+- **الأحجام لا تُكبَّر أبداً.** للشاشتين كثافة النقطة نفسها، فيكسب التخطيط لوحات إضافية لا عناصر أكبر.
+- **كل شيء يأتي من `MediaQuery`،** فلا يُعاد البناء إلا عندما تتغير النافذة.
+- **Dart فقط،** على كل المنصات بدءاً من Flutter 3.41.
+- **يُكتشف iPhone Duo من مقاسات شاشته الدقيقة** على iOS، فلا يُخلط مع iPad أو Android.
 - **الحالة تبقى بعد كل طيّة** لأن الحزمة تنقل عناصر الواجهة بدلاً من إعادة بنائها.
-- **مُختبرة بقسوة:** 97 اختباراً للوحدات وعناصر الواجهة والحالات الحدّية والصور المرجعية (golden)، إضافة إلى 9 اختبارات تكامل على تطبيق macOS الحقيقي.
+- **مُختبرة جيداً:** 97 اختباراً و9 اختبارات تكامل.
 
 ## ماذا تحتوي الحزمة
 
 | | |
 | --- | --- |
-| `context.duo` | الوضع، مطوي أو مفتوح، عدد اللوحات، خط الطي، الوضعية، المناطق الآمنة لكل جهة، الهوامش، أعمدة الشبكة. |
-| `DuoLayout` + `DuoKeep` | تخطيط منفصل للوضع المطوي وآخر للمفتوح، مع الحفاظ على حالة العناصر المشتركة وموضع التمرير. |
-| `DuoSplit` | لوحتان تحاذيان خط الطي أو المفصل، ولوحة واحدة عندما لا تتسع المساحة. نسخة Flutter من `ArrangementView` المقسّم لدى Apple. |
-| `DuoListDetail` | قائمة وتفاصيل على طريقة تطبيقات البريد، مع معالجة زر الرجوع واستمرارية الطي. |
-| `DuoNavigationScaffold` | شريط سفلي أو شريط جانبي، في المكان الذي يضع فيه iOS 27 أشرطته العمودية. ويختار `railSide` الجهة للتطبيقات من اليسار إلى اليمين ومن اليمين إلى اليسار. |
-| `DuoAvoidFold` | يُبعد أزرار التحكم عن خط الطي عند نصف الفتح: النصف الأخير في وضع الكتاب، والنصف السفلي على الطاولة. |
-| `DuoMedia` | يلائم فيديو 16:9 مع شاشة بنسبة √2، ولا يقص إلا عندما يكون الفاقد قليلاً. |
-| `DuoSimulator` + `DuoPose` | كل وضعيات iPhone Duo وأجهزة Android القابلة للطي وiPhone وiPad، على أي جهاز وفي اختبارات عناصر الواجهة. |
-| `DuoDebugOverlay` | عرض حيّ للوضع والحجم والمنطقة الآمنة وخط الطي. |
+| `context.duo` | الوضع وعدد اللوحات وخط الطي والوضعية والمناطق الآمنة. |
+| `DuoLayout` + `DuoKeep` | تخطيط للمطوي وآخر للمفتوح مع الحفاظ على الحالة. |
+| `DuoSplit` | لوحتان على خط الطي، أو لوحة واحدة إن ضاقت المساحة. |
+| `DuoListDetail` | قائمة وتفاصيل مثل تطبيق البريد. |
+| `DuoNavigationScaffold` | شريط سفلي أو جانبي حيث يضعه iOS 27. |
+| `DuoAvoidFold` | يُبعد أزرار التحكم عن خط الطي. |
+| `DuoMedia` | يلائم فيديو 16:9 مع الشاشة بأقل قص. |
+| `DuoSimulator` + `DuoPose` | كل الوضعيات على أي جهاز وفي الاختبارات. |
+| `DuoDebugOverlay` | عرض حيّ للوضع والحجم وخط الطي. |
 
 ## `context.duo`
 
-| العضو | النوع | ماذا يخبرك |
-| --- | --- | --- |
-| `mode` | `DuoMode` | `closedPortrait` و`closedLandscape` و`openLandscape` و`openPortrait` و`splitView` و`tablet` و`desktop` |
-| `isIphoneDuo` | `bool` | النافذة تطابق إحدى شاشتي iPhone Duo. |
-| `isOpen` و`isClosed` و`isSplit` | `bool` | حالة الجهاز. |
-| `isExpanded` و`columns` | `bool` و`int` | هل تتسع المساحة للوحتين (600 × 480 فأكثر). اعتمد عليهما في التخطيط. |
-| `fold` و`foldDirection` | `Rect?` و`Axis?` | مكان خط الطي بإحداثيات النافذة. |
-| `isSeparating` و`posture` | `bool` و`DuoPosture` | طية نصف مفتوحة أو مفصل: `flat` و`book` و`tabletop` و`closed`. |
-| `safe` و`symmetricSafe` | `EdgeInsets` | الحواف الآمنة لكل جهة على حدة، أو أكبرها معكوساً للمحتوى المتمركز. |
-| `margin` | `double` | 16 على الشاشات الضيقة، و24 فيما عداها (Material 3). |
-| `prefersRail` | `bool` | شريط جانبي بدلاً من الشريط السفلي. |
-| `gridColumns(minWidth)` | `int` | عدد الأعمدة الممكن، ويبقى زوجياً حول خط الطي العمودي. |
-
-ولتغيير الحدود لجزء من الشجرة استخدم `DuoScope(expandedWidth: 700, child: ...)`.
+جدول الخصائص الكامل في [القسم الإنجليزي](#contextduo). ولتغيير الحدود لجزء من الشجرة استخدم `DuoScope(expandedWidth: 700, child: ...)`.
 
 ## عناصر الواجهة
 
@@ -803,13 +790,13 @@ MaterialApp(
 
 ## قبل النشر على iPhone Duo
 
-- **ابنِ تطبيقك باستخدام iOS 27.1 SDK (Xcode 27.1).** التطبيقات المبنية بإصدارات أقدم تعمل داخل إطار ضيق على الشاشة الداخلية.
-- **اعتمد دورة حياة UIScene.** تطبيقات Xcode 27 تتوقف عند التشغيل بدونها. يقوم Flutter 3.41 وما بعده بالتحويل تلقائياً إذا لم تعدّل `AppDelegate`؛ راجع [دليل UIScene من Flutter](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate).
-- **لا تعتمد على قفل الاتجاه.** الشاشة الداخلية تتجاهل `SystemChrome.setPreferredOrientations`.
-- **لا تخزّن الأحجام داخل `State`.** اقرأ `MediaQuery` أو `context.duo` داخل `build`.
-- **عامل الحافة اليسرى واليمنى كلاً على حدة.** الجزيرة الديناميكية تمتد على جانب واحد فقط.
-- **أوقف الوسائط عند `paused` لا عند `inactive`.** في العرض المقسّم يبقى تطبيقك ظاهراً وهو في حالة `inactive`.
-- **أبعد عناصر اللمس عن خط الطي عند نصف الفتح.** استخدم `DuoAvoidFold` و`DuoSplit`.
+- **ابنِ بـ Xcode 27.1،** وإلا عمل تطبيقك في إطار ضيق على الشاشة الداخلية.
+- **اعتمد UIScene** ([الدليل](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate)).
+- **لا تعتمد على قفل الاتجاه.**
+- **اقرأ `context.duo` داخل `build`** ولا تخزّن الأحجام.
+- **الجزيرة الديناميكية على جانب واحد،** فعامل كل حافة على حدة.
+- **أوقف الوسائط عند `paused` لا `inactive`.**
+- **أبعد عناصر اللمس عن خط الطي.**
 
 ## iPhone Duo في لمحة
 
@@ -820,12 +807,11 @@ MaterialApp(
 | النقاط (ما يراه Flutter) | 466 × 678 بكثافة 3x | 669 × 951 بكثافة 3x، تُرسم بدقة 2007 × 2853 ثم تُصغَّر إلى اللوحة |
 | فئة الحجم | ضيقة (compact) | عادية × عادية (regular) |
 
-أعلنت عنه Apple في 9 سبتمبر 2026، ويصل إلى الأسواق في 23 أكتوبر 2026 بنظام iOS 27.1. أبعاده 164.6 × 117.8 ملم مفتوحاً و84.1 × 117.8 ملم مطوياً، ووزنه 254 غراماً.
 
 ## القيود الحالية
 
-- **لا توجد زاوية المفصل ولا وضعية نصف الفتح على iOS حتى الآن.** محرك Flutter على iOS لا يمرّر بيانات مفصل iPhone Duo إلى Dart ([flutter#192515](https://github.com/flutter/flutter/issues/192515)). إلى أن يحدث ذلك، تكون `posture` على Duo إما `closed` أو `unknown`، ويكون خط الطي هو خط المنتصف الفعلي المعروف. وعندما يبدأ المحرك بإرسال هذه البيانات ستلتقطها الحزمة تلقائياً عبر `displayFeatures`. وإذا احتجت زاوية المفصل الحية اليوم، فاستخدمها مع إضافة أصلية مثل [`foldable`](https://pub.dev/packages/foldable).
-- **المناطق الآمنة في المحاكاة تقديرية.** لم تنشر Apple قيم الحواف الآمنة لجهاز Duo، لذلك تستخدم `DuoPose` القيمتين 59 و21 نقطة. أما الأجهزة الحقيقية فتستخدم القيم الحية دائماً.
+- **لا زاوية مفصل على iOS بعد.** Flutter لا يمرّرها إلى Dart ([flutter#192515](https://github.com/flutter/flutter/issues/192515))، فتكون `posture` إما `closed` أو `unknown`. ستلتقطها الحزمة تلقائياً عندما تصل. وللزاوية الحية اليوم استخدم [`foldable`](https://pub.dev/packages/foldable).
+- **المناطق الآمنة في المحاكاة تقديرية** (59 و21 نقطة). الأجهزة الحقيقية تستخدم القيم الحية.
 - **جهة التطبيق في العرض المقسّم تُستنتج** من الجهة التي تحمل حافة الجزيرة الديناميكية.
 - **لا يوجد في Flutter مقابل للأشرطة العمودية الأصلية.** يحاكي `DuoNavigationScaffold` أماكنها باستخدام عناصر Material.
 

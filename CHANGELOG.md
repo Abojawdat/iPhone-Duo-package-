@@ -1,3 +1,11 @@
+## 1.0.2
+
+Docs only, no code changes:
+
+* README credits @Abojawdat with links to the GitHub profile and source, and keeps a single English / Arabic navigator at the top.
+* Smoother README on fast scrolling: smaller animations and a banner without blur filters.
+* Shorter Arabic README section, so the README passes pub.dev's English-content check (160/160 pub points).
+
 ## 1.0.1
 
 Fixes found by edge-case testing:
