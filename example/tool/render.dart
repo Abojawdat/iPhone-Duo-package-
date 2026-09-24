@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:duo_dynamic_sizing/duo_dynamic_sizing.dart';
 import 'package:duo_dynamic_sizing_example/main.dart';
@@ -34,35 +35,89 @@ void main() {
   });
 
   testWidgets('fold animation', (tester) async {
-    final t = ValueNotifier(0.0);
-    final frames = <Map<String, Object>>[];
-    Future<void> frame(double v, int ms) async {
-      t.value = v;
-      final name = 'fold_${frames.length.toString().padLeft(3, '0')}';
-      await _shoot(
-        tester,
-        const Size(1200, 720),
-        ValueListenableBuilder(
-          valueListenable: t,
-          builder: (_, v, _) => _FoldScene(v),
-        ),
-        name,
-        ratio: 1.2,
-      );
-      frames.add({'file': '$name.png', 'ms': ms});
-    }
-
-    const steps = 26;
-    await frame(0, 1100);
-    for (var i = 1; i < steps; i++) {
-      await frame(i / steps, 42);
-    }
-    await frame(1, 2200);
-    for (var i = steps - 1; i > 0; i--) {
-      await frame(i / steps, 42);
-    }
-    File('$out/fold.json').writeAsStringSync(jsonEncode(frames));
+    await _animate(
+      tester,
+      'fold',
+      _pingPong(steps: 26, hold1: 2200),
+      _FoldScene.new,
+    );
   });
+
+  testWidgets('split view animation', (tester) async {
+    await _animate(tester, 'split', _pingPong(), _SplitScene.new);
+  });
+
+  testWidgets('postures animation', (tester) async {
+    await _animate(tester, 'postures', [
+      ..._pingPong(steps: 18),
+      for (final (v, ms) in _pingPong(steps: 18)) (v + 2, ms),
+    ], _PostureScene.new);
+  });
+
+  testWidgets('rotate animation', (tester) async {
+    await _animate(tester, 'rotate', [
+      ..._pingPong(steps: 20, hold1: 1600),
+      for (final (v, ms) in _pingPong(steps: 20, hold1: 1600)) (v + 2, ms),
+    ], _RotateScene.new);
+  });
+
+  testWidgets('resize animation', (tester) async {
+    await _animate(
+      tester,
+      'resize',
+      _pingPong(steps: 34, hold0: 1200, hold1: 1800, ms: 50),
+      _ResizeScene.new,
+      stage: const Size(1400, 880),
+      ratio: 1,
+    );
+  });
+
+  testWidgets('rtl animation', (tester) async {
+    await _animate(
+      tester,
+      'rtl',
+      _pingPong(steps: 18, hold0: 1800, hold1: 2400),
+      _RtlScene.new,
+    );
+  });
+
+  testWidgets('media animation', (tester) async {
+    await _animate(tester, 'media', [
+      for (var i = 0; i < 3; i++) ...[
+        (i.toDouble(), 1700),
+        for (var f = 1; f < 9; f++) (i + f / 9, 45),
+      ],
+    ], _MediaScene.new);
+  });
+}
+
+List<(double, int)> _pingPong({
+  int steps = 22,
+  int hold0 = 1000,
+  int hold1 = 2000,
+  int ms = 42,
+}) => [
+  (0, hold0),
+  for (var i = 1; i < steps; i++) (i / steps, ms),
+  (1, hold1),
+  for (var i = steps - 1; i > 0; i--) (i / steps, ms),
+];
+
+Future<void> _animate(
+  WidgetTester tester,
+  String name,
+  List<(double, int)> timeline,
+  Widget Function(double t) scene, {
+  Size stage = const Size(1200, 720),
+  double ratio = 1.2,
+}) async {
+  final frames = <Map<String, Object>>[];
+  for (final (v, ms) in timeline) {
+    final file = '${name}_${frames.length.toString().padLeft(3, '0')}';
+    await _shoot(tester, stage, scene(v), file, ratio: ratio);
+    frames.add({'file': '$file.png', 'ms': ms});
+  }
+  File('$out/$name.json').writeAsStringSync(jsonEncode(frames));
 }
 
 Future<void> _loadFonts() async {
@@ -79,6 +134,13 @@ Future<void> _loadFonts() async {
     roboto.addFont(bytes('Roboto-$w.ttf'));
   }
   await roboto.load();
+  final arabic = File('/System/Library/Fonts/SFArabic.ttf');
+  if (arabic.existsSync()) {
+    await (FontLoader('SFArabic')..addFont(
+          Future.value(ByteData.sublistView(arabic.readAsBytesSync())),
+        ))
+        .load();
+  }
   await (FontLoader(
     'MaterialIcons',
   )..addFont(bytes('MaterialIcons-Regular.otf'))).load();
@@ -122,6 +184,7 @@ TextStyle _text(double size, {Color color = Colors.white, FontWeight? w}) =>
       fontSize: size,
       color: color,
       fontWeight: w,
+      fontFamilyFallback: const ['SFArabic'],
       letterSpacing: size > 30 ? -1 : 0,
       decoration: TextDecoration.none,
     );
@@ -842,4 +905,491 @@ class _ModePill extends StatelessWidget {
       ],
     ),
   );
+}
+
+Widget _stage(String title, Widget device, Widget pill) => _Backdrop(
+  child: Stack(
+    children: [
+      const Positioned(left: 48, top: 40, child: _Brand()),
+      Positioned(
+        left: 0,
+        right: 0,
+        top: 88,
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: _text(34, w: FontWeight.w800),
+        ),
+      ),
+      Positioned.fill(top: 150, bottom: 110, child: Center(child: device)),
+      Positioned(left: 0, right: 0, bottom: 44, child: Center(child: pill)),
+    ],
+  ),
+);
+
+Widget _swap(double e, Widget a, Widget b) => Stack(
+  alignment: Alignment.center,
+  children: [
+    Opacity(opacity: (1 - e * 2).clamp(0, 1), child: a),
+    Opacity(opacity: ((e - .5) * 2).clamp(0, 1), child: b),
+  ],
+);
+
+double _ease(double t) => Curves.easeInOutCubic.transform(t.clamp(0, 1));
+
+final _persp = Matrix4.identity()..setEntry(3, 2, .0011);
+
+class _SplitScene extends StatelessWidget {
+  const _SplitScene(this.t);
+
+  final double t;
+
+  static const s = .62;
+
+  @override
+  Widget build(BuildContext context) {
+    final e = _ease(t);
+    const full = 951.0, half = 475.5, h = 669.0;
+    final w = ui.lerpDouble(full, half, e)!;
+    final left = DuoPose(
+      'split',
+      Size(w, h),
+      padding: EdgeInsets.only(bottom: 21, right: w >= full - 59 ? 59 : 0),
+    );
+    final screen = ClipRect(
+      child: Stack(
+        children: [
+          Positioned(
+            left: 0,
+            top: 0,
+            width: w * s,
+            height: h * s,
+            child: DuoSimulator(
+              pose: left,
+              child: const MailApp(debugOverlay: false),
+            ),
+          ),
+          Positioned(
+            left: w * s + 3,
+            top: 0,
+            width: half * s,
+            height: h * s,
+            child: const DuoSimulator(
+              pose: DuoPose.splitRight,
+              child: MailApp(debugOverlay: false, initialTab: 1),
+            ),
+          ),
+          if (e > .02)
+            Positioned(
+              left: w * s,
+              top: 0,
+              width: 3,
+              height: h * s,
+              child: ColoredBox(
+                color: Colors.black,
+                child: Center(
+                  child: Container(
+                    width: 3,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF8E8E93),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+    return _stage(
+      'Split View: two apps, one fold.',
+      Frame(
+        size: const Size(full, h) * s,
+        radius: 44 * s,
+        overlay: IgnorePointer(child: _Island(DuoPose.openLandscape, s)),
+        child: ColoredBox(color: Colors.black, child: screen),
+      ),
+      _swap(
+        e,
+        const _ModePill(
+          'openLandscape',
+          '951 × 669',
+          'one app, rail by the island',
+        ),
+        const _ModePill(
+          'splitView',
+          '475 × 669',
+          'each app keeps its rail on its outer edge',
+        ),
+      ),
+    );
+  }
+}
+
+class _PostureScene extends StatelessWidget {
+  const _PostureScene(this.v);
+
+  final double v;
+
+  static const s = .5;
+
+  @override
+  Widget build(BuildContext context) {
+    final book = v >= 2;
+    final b = _ease(book ? v - 2 : v);
+    final angle = b * (book ? 48 : 58) * math.pi / 180;
+    final bent = b > .15;
+    final size = book ? const Size(840, 700) : const Size(700, 840);
+    final pose = bent
+        ? (book ? DuoPose.foldableBook : DuoPose.foldableTabletop)
+        : DuoPose(
+            'flat',
+            size,
+            platform: TargetPlatform.android,
+            devicePixelRatio: 2.625,
+            displayFeatures: [
+              DisplayFeature(
+                bounds: book
+                    ? const Rect.fromLTWH(420, 0, 0, 700)
+                    : const Rect.fromLTWH(0, 420, 700, 0),
+                type: DisplayFeatureType.fold,
+                state: DisplayFeatureState.postureFlat,
+              ),
+            ],
+          );
+    final r = 34 * s;
+    final shade = Colors.black.withValues(alpha: .22 * b);
+
+    Widget half(bool first) {
+      final screen = SizedBox.fromSize(
+        size: size * s,
+        child: DuoSimulator(
+          pose: pose,
+          child: const MailApp(debugOverlay: false, initialTab: 1),
+        ),
+      );
+      return Frame(
+        size: book
+            ? Size(size.width * s / 2, size.height * s)
+            : Size(size.width * s, size.height * s / 2),
+        corners: book
+            ? BorderRadius.horizontal(
+                left: first ? Radius.circular(r) : Radius.zero,
+                right: first ? Radius.zero : Radius.circular(r),
+              )
+            : BorderRadius.vertical(
+                top: first ? Radius.circular(r) : Radius.zero,
+                bottom: first ? Radius.zero : Radius.circular(r),
+              ),
+        child: ClipRect(
+          child: OverflowBox(
+            alignment: book
+                ? (first ? Alignment.centerLeft : Alignment.centerRight)
+                : (first ? Alignment.topCenter : Alignment.bottomCenter),
+            maxWidth: size.width * s,
+            minWidth: size.width * s,
+            maxHeight: size.height * s,
+            minHeight: size.height * s,
+            child: screen,
+          ),
+        ),
+      );
+    }
+
+    Widget shaded(Widget child) => Stack(
+      children: [
+        child,
+        Positioned.fill(
+          child: IgnorePointer(child: ColoredBox(color: shade)),
+        ),
+      ],
+    );
+
+    final device = book
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              half(true),
+              Transform(
+                alignment: Alignment.centerLeft,
+                transform: _persp.clone()..rotateY(angle),
+                child: shaded(half(false)),
+              ),
+            ],
+          )
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Transform(
+                alignment: Alignment.bottomCenter,
+                transform: _persp.clone()..rotateX(angle),
+                child: shaded(half(true)),
+              ),
+              half(false),
+            ],
+          );
+    final label = book
+        ? (bent
+              ? const _ModePill(
+                  'book',
+                  'half open',
+                  'controls slide to the trailing half',
+                )
+              : const _ModePill(
+                  'flat',
+                  'fold reported',
+                  'one layout, controls centred',
+                ))
+        : (bent
+              ? const _ModePill(
+                  'tabletop',
+                  'half open',
+                  'video above the fold, controls below',
+                )
+              : const _ModePill(
+                  'flat',
+                  'fold reported',
+                  'one layout, video centred',
+                ));
+    return _stage('Half open? The layout follows the hinge.', device, label);
+  }
+}
+
+class _RotateScene extends StatelessWidget {
+  const _RotateScene(this.v);
+
+  final double v;
+
+  @override
+  Widget build(BuildContext context) {
+    final open = v >= 2;
+    final e = _ease(open ? v - 2 : v);
+    final s = open ? .44 : .5;
+    final from = open ? DuoPose.openLandscape : DuoPose.closedPortrait;
+    final to = open ? DuoPose.openPortrait : DuoPose.closedLandscape;
+    Widget device(DuoPose p) => Device(
+      p,
+      MailApp(debugOverlay: false, initialMail: open ? 1 : null),
+      scale: s,
+    );
+    final turn = (e / .72).clamp(0.0, 1.0);
+    final settle = ((e - .72) / .28).clamp(0.0, 1.0);
+    return _stage(
+      'Turn it. Bars and panes follow.',
+      Stack(
+        alignment: Alignment.center,
+        children: [
+          Opacity(
+            opacity: 1 - settle,
+            child: Transform.rotate(
+              angle: -math.pi / 2 * turn,
+              child: device(from),
+            ),
+          ),
+          Opacity(opacity: settle, child: device(to)),
+        ],
+      ),
+      open
+          ? _swap(
+              e,
+              const _ModePill(
+                'openLandscape',
+                '951 × 669',
+                'two panes, side rail',
+              ),
+              const _ModePill(
+                'openPortrait',
+                '669 × 951',
+                'two panes, bottom bar',
+              ),
+            )
+          : _swap(
+              e,
+              const _ModePill(
+                'closedPortrait',
+                '466 × 678',
+                'one pane, rail by the island',
+              ),
+              const _ModePill(
+                'closedLandscape',
+                '678 × 466',
+                'island on top, rail on the side',
+              ),
+            ),
+    );
+  }
+}
+
+class _ResizeScene extends StatelessWidget {
+  const _ResizeScene(this.t);
+
+  final double t;
+
+  @override
+  Widget build(BuildContext context) {
+    final w = ui.lerpDouble(360, 1240, _ease(t))!.roundToDouble();
+    const h = 560.0;
+    final pose = DuoPose(
+      'window',
+      Size(w, h),
+      platform: TargetPlatform.macOS,
+      devicePixelRatio: 2,
+    );
+    final duo = DuoData(
+      size: pose.size,
+      platform: TargetPlatform.macOS,
+      devicePixelRatio: 2,
+    );
+    Widget light(Color c) => Container(
+      width: 12,
+      height: 12,
+      margin: const EdgeInsets.only(right: 8),
+      decoration: BoxDecoration(color: c, shape: BoxShape.circle),
+    );
+    final window = Container(
+      width: w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xFF1C1C22),
+        border: Border.all(color: const Color(0xFF4A4A57)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0xA6000000),
+            blurRadius: 50,
+            offset: Offset(0, 30),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: 30,
+            child: Row(
+              children: [
+                const SizedBox(width: 12),
+                light(const Color(0xFFFF5F57)),
+                light(const Color(0xFFFEBC2E)),
+                light(const Color(0xFF28C840)),
+                Expanded(
+                  child: Text(
+                    'Duo Mail',
+                    textAlign: TextAlign.center,
+                    style: _text(13, color: muted, w: FontWeight.w600),
+                  ),
+                ),
+                const SizedBox(width: 68),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: w,
+            height: h,
+            child: DuoSimulator(
+              pose: pose,
+              child: const MailApp(debugOverlay: false, initialMail: 1),
+            ),
+          ),
+        ],
+      ),
+    );
+    return _stage(
+      'Drag the window. The layout keeps up.',
+      window,
+      _ModePill(
+        duo.mode.name,
+        '${w.round()} × ${h.round()}',
+        '${duo.columns} pane${duo.columns == 2 ? 's' : ''} · '
+            '${duo.prefersRail ? 'side rail' : 'bottom bar'}',
+      ),
+    );
+  }
+}
+
+class _RtlScene extends StatelessWidget {
+  const _RtlScene(this.t);
+
+  final double t;
+
+  static const s = .62;
+
+  @override
+  Widget build(BuildContext context) {
+    final e = _ease(t);
+    final angle = e * math.pi;
+    final rtl = angle > math.pi / 2;
+    final device = Device(
+      DuoPose.openLandscape,
+      MailApp(
+        debugOverlay: false,
+        initialMail: 1,
+        textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
+        fontFallback: const ['SFArabic'],
+      ),
+      scale: s,
+    );
+    return _stage(
+      'English or Arabic. Mirrored, never misplaced.',
+      Transform(
+        alignment: Alignment.center,
+        transform: _persp.clone()..rotateY(rtl ? angle - math.pi : angle),
+        child: device,
+      ),
+      _swap(
+        e,
+        const _ModePill(
+          'LTR',
+          'English',
+          'list on the left, rail by the island',
+        ),
+        const _ModePill(
+          'RTL',
+          'العربية',
+          'list on the right, split still on the fold',
+        ),
+      ),
+    );
+  }
+}
+
+class _MediaScene extends StatelessWidget {
+  const _MediaScene(this.v);
+
+  final double v;
+
+  static const s = .62;
+  static const fits = [
+    DuoMediaFit.contain,
+    DuoMediaFit.cover,
+    DuoMediaFit.smart,
+  ];
+  static const pills = [
+    _ModePill('contain', '16:9', 'all of the video, bars above and below'),
+    _ModePill('cover', '16:9', 'fills the box, crops the edges'),
+    _ModePill('smart', '16:9', 'crops only when it loses under 15%'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final i = v.floor() % 3;
+    final f = _ease(v - v.floor());
+    final next = (i + 1) % 3;
+    Widget duo(int k) => Device(
+      DuoPose.openLandscape,
+      MailApp(debugOverlay: false, initialTab: 1, initialFit: fits[k]),
+      scale: s,
+    );
+    return _stage(
+      'Video that fits the √2 screen.',
+      Stack(
+        children: [
+          duo(i),
+          if (f > 0) Opacity(opacity: f, child: duo(next)),
+        ],
+      ),
+      _swap(f, pills[i], pills[next]),
+    );
+  }
 }
