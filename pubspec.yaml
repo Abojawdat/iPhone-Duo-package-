@@ -1,12 +1,23 @@
-name: iphone_due_sizing
-description: Scale widths, heights, radii and font sizes from an iPhone design frame to any screen size.
-version: 0.0.1
+name: duo_dynamic_sizing
+description: Adaptive layout for the foldable iPhone Duo and any screen. Fold-aware modes, split panes, side navigation, safe areas, media fit and a pose simulator.
+version: 1.0.0
 
 repository: https://github.com/Abojawdat/iPhone-Duo-package-
+issue_tracker: https://github.com/Abojawdat/iPhone-Duo-package-/issues
+topics: [foldable, responsive, adaptive, layout, iphone]
+screenshots:
+  - description: The package running on every iPhone Duo pose, closed, open and in Split View.
+    path: doc/iphone-duo.webp
+  - description: Unfolding keeps the same email open while the list slides back in.
+    path: doc/fold.webp
+  - description: The same widgets on iPhone, Android foldables and iPad.
+    path: doc/everywhere.webp
+  - description: duo_dynamic_sizing, adaptive layout for the foldable iPhone Duo.
+    path: doc/social.png
 
 environment:
-  sdk: ^3.12.2
-  flutter: ">=1.17.0"
+  sdk: ^3.11.0
+  flutter: ">=3.41.0"
 
 dependencies:
   flutter:
