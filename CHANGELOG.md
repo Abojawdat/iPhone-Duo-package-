@@ -11,7 +11,7 @@ Other changes:
 * Example now runs on macOS, and the showcase pose picker wraps so every chip can be reached with a mouse.
 * Integration tests that drive the real app through every pose, RTL, Split View, tabletop media and live window resizing.
 * Golden tests for every `DuoPose`, RTL and tabletop media.
-* Full Arabic documentation (`README.ar.md`, `DESIGN.ar.md`), a design decisions page, six new scenario animations rendered from the real app, a 40-line minimal example, and an Arabic version of the showcase in RTL.
+* Bilingual README (English and Arabic on one page, with a navigator between them), `DESIGN.ar.md`, a design decisions page, six new scenario animations rendered from the real app, a 40-line minimal example, and an Arabic version of the showcase in RTL.
 
 ## 1.0.0
 

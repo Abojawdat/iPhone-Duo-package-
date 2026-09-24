@@ -25,8 +25,7 @@ Outputs: stills in `doc/*.webp`, `doc/fold.webp` (also a pub.dev screenshot), an
 
 ## Docs (English + Arabic, keep them in sync)
 
-- `README.md`: English, also the pub.dev page. Images use absolute `raw.githubusercontent.com/.../main/...` URLs.
-- `README.ar.md`: full Arabic mirror. Prose sits in `<div dir="rtl">` blocks; code blocks go outside them so they stay LTR.
+- `README.md` (also the pub.dev page) is bilingual: the navigator buttons (`doc/nav/*.svg`) jump to `#english` and `#arabic`. The Arabic section mirrors the English one; its prose sits in `<div dir="rtl">` blocks, and code blocks go outside them so they stay LTR. Images use absolute `raw.githubusercontent.com/.../main/...` URLs.
 - `DESIGN.md` / `DESIGN.ar.md`: every design decision, its reason and the rejected alternative.
 - `example/lib/minimal.dart` is the README's minimal example; keep both copies identical.
 - Any behavior change updates both languages in the same commit. Keep the logo geometry in sync with `_LogoPainter` in `example/tool/render.dart`.

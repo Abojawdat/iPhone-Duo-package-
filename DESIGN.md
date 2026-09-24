@@ -5,7 +5,7 @@
 <h1 align="center">Why duo_dynamic_sizing works the way it does</h1>
 
 <p align="center">
-  <b>English</b> · <a href="https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/DESIGN.ar.md">العربية</a> · <a href="https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/README.md">Back to README</a>
+  <b>English</b> · <a href="https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/DESIGN.ar.md">العربية</a> · <a href="https://github.com/Abojawdat/iPhone-Duo-package-#english">Back to README</a>
 </p>
 
 Every decision below was checked against the iPhone Duo's real numbers and Apple's own guidance. Most of them replaced an earlier idea that didn't hold up, and the rejected ideas are listed too.
