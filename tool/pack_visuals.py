@@ -12,6 +12,14 @@ src = Path(sys.argv[1]) if len(sys.argv) > 1 else root / 'example/build/visuals'
 doc = root / 'doc'
 (doc / 'anim').mkdir(parents=True, exist_ok=True)
 
+# READMEs show animations at most ~900 px wide; bigger ones stutter on fast scroll
+ANIM_WIDTH = 960
+
+
+def shrink(im):
+    return im.resize((ANIM_WIDTH, round(im.height * ANIM_WIDTH / im.width)), Image.LANCZOS)
+
+
 for name in ['iphone-duo', 'everywhere']:
     Image.open(src / f'{name}.png').save(doc / f'{name}.webp', quality=90, method=6)
 
@@ -21,7 +29,7 @@ Image.open(src / 'social.png').convert('RGB').save(doc / 'social.png', optimize=
 for manifest in sorted(src.glob('*.json')):
     name = manifest.stem
     frames = json.loads(manifest.read_text())
-    imgs = [Image.open(src / f['file']).convert('RGB') for f in frames]
+    imgs = [shrink(Image.open(src / f['file']).convert('RGB')) for f in frames]
     target = doc / 'fold.webp' if name == 'fold' else doc / 'anim' / f'{name}.webp'
     imgs[0].save(
         target,

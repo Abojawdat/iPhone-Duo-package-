@@ -4,15 +4,14 @@
     <linearGradient id="lgA" x1="6" y1="14" x2="50" y2="86" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8B7CFF"/><stop offset="1" stop-color="#5B4BEF"/></linearGradient>
     <linearGradient id="lgB" x1="50" y1="14" x2="94" y2="86" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#C084FC"/><stop offset="1" stop-color="#8B3FF0"/></linearGradient>
     <clipPath id="lgBody"><rect x="6" y="14" width="88" height="72" rx="18"/></clipPath>
-    <filter id="lgGlow" x="-100%" y="-20%" width="300%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter>
+    <linearGradient id="lgGlow" x1="0" x2="1"><stop offset="0" stop-color="#22D3EE" stop-opacity="0"/><stop offset=".5" stop-color="#22D3EE" stop-opacity=".65"/><stop offset="1" stop-color="#22D3EE" stop-opacity="0"/></linearGradient>
     <clipPath id="card0"><rect width="1280" height="640" rx="28"/></clipPath>
     <radialGradient id="glowA" cx="12%" cy="0%" r="75%"><stop offset="0" stop-color="#6D5DFC" stop-opacity=".5"/><stop offset="1" stop-color="#6D5DFC" stop-opacity="0"/></radialGradient>
     <radialGradient id="glowB" cx="100%" cy="100%" r="60%"><stop offset="0" stop-color="#22D3EE" stop-opacity=".28"/><stop offset="1" stop-color="#22D3EE" stop-opacity="0"/></radialGradient>
     <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="14" cy="14" r="1.1" fill="#fff" fill-opacity=".05"/></pattern>
     <linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6D5DFC"/><stop offset="1" stop-color="#A855F7"/></linearGradient>
-    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="26" stdDeviation="24" flood-color="#000" flood-opacity=".6"/></filter>
-    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="46"/></filter>
-    <filter id="foldGlow" x="-400%" y="-10%" width="900%" height="120%"><feGaussianBlur stdDeviation="3.5"/></filter>
+    <radialGradient id="soft"><stop offset="0" stop-color="#6D5DFC" stop-opacity=".22"/><stop offset=".55" stop-color="#6D5DFC" stop-opacity=".12"/><stop offset="1" stop-color="#6D5DFC" stop-opacity="0"/></radialGradient>
+    <linearGradient id="foldGlow" x1="0" x2="1"><stop offset="0" stop-color="#22D3EE" stop-opacity="0"/><stop offset=".5" stop-color="#22D3EE" stop-opacity=".4"/><stop offset="1" stop-color="#22D3EE" stop-opacity="0"/></linearGradient>
     <clipPath id="screen">
       <rect width="475.5" height="334.5" rx="21">
         <animate attributeName="width" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="233.0;233.0;475.5;475.5;233.0;233.0"/>
@@ -26,7 +25,7 @@
     <rect width="1280" height="640" fill="url(#glowA)"/>
     <rect width="1280" height="640" fill="url(#glowB)"/>
     <rect width="1280" height="640" fill="url(#dots)"/>
-    <ellipse cx="960" cy="328" rx="290" ry="170" fill="#6D5DFC" fill-opacity=".22" filter="url(#soft)"/>
+    <ellipse cx="960" cy="328" rx="380" ry="260" fill="url(#soft)"/>
   </g>
 
   <g transform="translate(80 120) scale(.9)">
@@ -41,7 +40,7 @@
         <rect x="58" y="62" width="22" height="6" rx="3"/>
       </g>
     </g>
-    <line x1="50" y1="10" x2="50" y2="90" stroke="#22D3EE" stroke-opacity=".65" stroke-width="7" filter="url(#lgGlow)"/>
+    <rect x="43" y="8" width="14" height="84" fill="url(#lgGlow)"/>
     <line x1="50" y1="10" x2="50" y2="90" stroke="#CFFAFE" stroke-width="2.6" stroke-linecap="round"/>
   </g>
   <text x="80" y="290" font-size="54" font-weight="800" letter-spacing="-1.4" fill="#fff">duo_dynamic_sizing</text>
@@ -60,7 +59,7 @@
   <text x="102" y="506" font-family="'SF Mono', ui-monospace, Menlo, Consolas, 'Roboto Mono', monospace" font-size="18" fill="#E4E6F0"><tspan fill="#A855F7">$</tspan> flutter pub add duo_dynamic_sizing</text>
 
   <rect x="716.25" y="144.75" width="487.5" height="346.5" rx="27"
-        fill="#040406" stroke="#4A4A57" stroke-width="1.2" filter="url(#shadow)">
+        fill="#040406" stroke="#4A4A57" stroke-width="1.2">
     <animate attributeName="x" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="837.5;837.5;716.25;716.25;837.5;837.5"/>
     <animate attributeName="y" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="142.5;142.5;144.75;144.75;142.5;142.5"/>
     <animate attributeName="width" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.22;0.36;0.72;0.86;1" keySplines="0 0 1 1;.65 0 .35 1;0 0 1 1;.65 0 .35 1;0 0 1 1" values="245.0;245.0;487.5;487.5;245.0;245.0"/>
@@ -140,9 +139,9 @@
       </rect>
       <g opacity="1">
         <animate attributeName="opacity" dur="8s" repeatCount="indefinite" keyTimes="0;0.30;0.38;0.72;0.78;1" values="0;0;1;1;0;0"/>
-        <line x1="237.75" y1="0" x2="237.75" y2="334.5" stroke="#22D3EE" stroke-width="8" stroke-opacity=".55" filter="url(#foldGlow)">
-          <animate attributeName="stroke-opacity" dur="2.4s" repeatCount="indefinite" values=".35;.8;.35"/>
-        </line>
+        <rect x="231.75" y="0" width="12" height="334.5" fill="url(#foldGlow)">
+          <animate attributeName="opacity" dur="2.4s" repeatCount="indefinite" values=".6;1;.6"/>
+        </rect>
         <line x1="237.75" y1="0" x2="237.75" y2="334.5" stroke="#A5F3FC" stroke-width="1.4"/>
       </g>
     </g>
