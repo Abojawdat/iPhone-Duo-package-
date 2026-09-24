@@ -1,0 +1,35 @@
+name: Publish to pub.dev
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pub.dev
+    permissions:
+      id-token: write # pub.dev trusts this short lived token, no secrets stored
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Tag matches pubspec
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          grep -qx "version: $v" pubspec.yaml || { echo "tag $GITHUB_REF_NAME != pubspec version"; exit 1; }
+          echo "VERSION=$v" >> "$GITHUB_ENV"
+      - run: flutter pub get
+      - run: flutter test
+      - name: Already on pub.dev?
+        id: exists
+        run: |
+          if curl -sf "https://pub.dev/api/packages/duo_dynamic_sizing/versions/$VERSION" > /dev/null; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::$VERSION is already on pub.dev, nothing to publish"
+          fi
+      - if: steps.exists.outputs.skip != 'true'
+        run: flutter pub publish --force

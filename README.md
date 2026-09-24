@@ -12,6 +12,7 @@
 
 <p align="center">
   <a href="https://pub.dev/packages/duo_dynamic_sizing"><img src="https://img.shields.io/pub/v/duo_dynamic_sizing?style=flat-square&color=6D5DFC&labelColor=0A0B14&label=pub" alt="pub version"></a>
+  <a href="https://github.com/Abojawdat/iPhone-Duo-package-/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Abojawdat/iPhone-Duo-package-/ci.yml?branch=main&style=flat-square&labelColor=0A0B14&label=tests" alt="tests"></a>
   <img src="https://img.shields.io/badge/iPhone_Duo-ready-22D3EE?style=flat-square&labelColor=0A0B14" alt="iPhone Duo ready">
   <img src="https://img.shields.io/badge/Flutter-3.41%2B-A855F7?style=flat-square&labelColor=0A0B14" alt="Flutter 3.41+">
   <img src="https://img.shields.io/badge/native_code-none-8B7CFF?style=flat-square&labelColor=0A0B14" alt="no native code">

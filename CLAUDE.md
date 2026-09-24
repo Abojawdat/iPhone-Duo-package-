@@ -66,8 +66,9 @@ Outputs: stills in `doc/*.webp`, `doc/fold.webp` (also a pub.dev screenshot), an
 - Keep one short doc line per public type (pub.dev docs score).
 - Commits are authored by the maintainer, with no AI or co-author trailers.
 
-## Release
+## Release (GitHub Actions publishes to pub.dev)
 
-1. Bump `version` in `pubspec.yaml` and add a `CHANGELOG.md` entry.
-2. Run `flutter pub publish --dry-run` from a path with no trailing space. The local folder name ends with a space, which crashes pub; copy the repo elsewhere first.
-3. Tag `vX.Y.Z` and push. README images are absolute `raw.githubusercontent.com/.../main/doc/...` URLs so they also render on pub.dev.
+1. Bump `version` in `pubspec.yaml`, add a `CHANGELOG.md` entry, push to `main` and wait for CI to go green.
+2. `git tag vX.Y.Z && git push origin vX.Y.Z`. `publish.yml` checks the tag matches the pubspec, runs the tests, then publishes over OIDC (no secrets). It waits for approval in the `pub.dev` environment, and skips if the version already exists.
+3. The very first version had to be published by hand (`flutter pub publish`, from a clean clone, since the local folder name has a trailing space that crashes pub).
+4. README images are absolute `raw.githubusercontent.com/.../main/doc/...` URLs, so they also render on pub.dev.
