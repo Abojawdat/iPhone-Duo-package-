@@ -60,36 +60,28 @@ class _ShowcaseState extends State<Showcase> {
         body: SafeArea(
           child: Column(
             children: [
-              SizedBox(
-                height: 60,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     for (final p in DuoPose.values)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          label: Text(p.name),
-                          selected: p == pose,
-                          onSelected: (_) => setState(() => _pose = p),
-                        ),
+                      ChoiceChip(
+                        label: Text(p.name),
+                        selected: p == pose,
+                        onSelected: (_) => setState(() => _pose = p),
                       ),
                     FilterChip(
                       label: const Text('RTL'),
                       selected: _rtl,
                       onSelected: (v) => setState(() => _rtl = v),
                     ),
-                    const SizedBox(width: 8),
                     FilterChip(
                       label: const Text('Guides'),
                       selected: _guides,
                       onSelected: (v) => setState(() => _guides = v),
                     ),
-                    const SizedBox(width: 8),
                     ActionChip(
                       avatar: const Icon(Icons.phone_iphone),
                       label: const Text('This device'),
