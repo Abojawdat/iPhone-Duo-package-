@@ -5,7 +5,9 @@
 </p>
 
 <p align="center">
-  Made by <a href="https://github.com/Abojawdat"><b>Mohammad Othman</b></a> · صُنعت بواسطة <a href="https://github.com/Abojawdat"><b>محمد عثمان</b></a><br><br>
+  <br>
+  Made by &nbsp;<a href="https://github.com/Abojawdat"><b>@Abojawdat</b></a>
+  <br><br><br>
   <a href="https://github.com/Abojawdat"><img src="https://img.shields.io/badge/GitHub-@Abojawdat-6D5DFC?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0B14" alt="GitHub profile: @Abojawdat"></a>
   <a href="https://github.com/Abojawdat/iPhone-Duo-package-"><img src="https://img.shields.io/badge/source-iPhone--Duo--package---A855F7?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0B14" alt="Source code on GitHub"></a>
   <a href="https://github.com/Abojawdat/iPhone-Duo-package-/stargazers"><img src="https://img.shields.io/github/stars/Abojawdat/iPhone-Duo-package-?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0B14&color=22D3EE" alt="GitHub stars"></a>
@@ -45,12 +47,6 @@
 <a name="english"></a>
 
 # English
-
-<p align="center">
-  <a href="#english"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/english.svg" height="40" alt="English"></a>
-  &nbsp;&nbsp;
-  <a href="#arabic"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/arabic.svg" height="40" alt="العربية"></a>
-</p>
 
 ## See it in action
 
@@ -403,7 +399,7 @@ Bug reports and pull requests are welcome in the [issue tracker](https://github.
 
 ## Author
 
-Built and maintained by **Mohammad Othman** ([@Abojawdat](https://github.com/Abojawdat) on GitHub).
+Built and maintained by [@Abojawdat](https://github.com/Abojawdat).
 
 - Profile: [github.com/Abojawdat](https://github.com/Abojawdat)
 - Source: [github.com/Abojawdat/iPhone-Duo-package-](https://github.com/Abojawdat/iPhone-Duo-package-)
@@ -421,16 +417,6 @@ If the package helps you, a star on the repo is the best way to say thanks.
 <div dir="rtl">
 
 # العربية
-
-</div>
-
-<p align="center">
-  <a href="#english"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/english.svg" height="40" alt="English"></a>
-  &nbsp;&nbsp;
-  <a href="#arabic"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/arabic.svg" height="40" alt="العربية"></a>
-</p>
-
-<div dir="rtl">
 
 ## شاهدها وهي تعمل
 
@@ -863,7 +849,7 @@ flutter run -t lib/minimal.dart # التطبيق ذو الأربعين سطرا�
 
 ## المطوّر
 
-طوّر هذه الحزمة ويشرف عليها **محمد عثمان** ([@Abojawdat](https://github.com/Abojawdat) على GitHub).
+طوّر هذه الحزمة ويشرف عليها [@Abojawdat](https://github.com/Abojawdat).
 
 - الحساب: [github.com/Abojawdat](https://github.com/Abojawdat)
 - الشيفرة المصدرية: [github.com/Abojawdat/iPhone-Duo-package-](https://github.com/Abojawdat/iPhone-Duo-package-)
@@ -880,6 +866,6 @@ flutter run -t lib/minimal.dart # التطبيق ذو الأربعين سطرا�
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/logo.svg" width="56" alt="duo_dynamic_sizing logo"><br>
-  <sub>MIT © <a href="https://github.com/Abojawdat">Mohammad Othman</a> · <a href="https://github.com/Abojawdat/iPhone-Duo-package-">Source on GitHub</a></sub><br>
+  <sub>MIT © <a href="https://github.com/Abojawdat">@Abojawdat</a> · <a href="https://github.com/Abojawdat/iPhone-Duo-package-">Source on GitHub</a></sub><br>
   <sub>iPhone and iPhone Duo are trademarks of Apple Inc. This package isn't affiliated with or endorsed by Apple.</sub>
 </p>
