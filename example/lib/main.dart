@@ -5,9 +5,9 @@ void main() => runApp(const Showcase());
 
 const brand = Color(0xFF6D5DFC);
 
-ThemeData appTheme(Brightness brightness) {
+ThemeData appTheme(Brightness brightness, {List<String>? fontFallback}) {
   final scheme = ColorScheme.fromSeed(seedColor: brand, brightness: brightness);
-  final base = ThemeData(colorScheme: scheme);
+  final base = ThemeData(colorScheme: scheme, fontFamilyFallback: fontFallback);
   return base.copyWith(
     scaffoldBackgroundColor: scheme.surface,
     appBarTheme: AppBarTheme(
@@ -31,6 +31,193 @@ ThemeData appTheme(Brightness brightness) {
     ),
   );
 }
+
+typedef Mail = ({
+  String from,
+  String subject,
+  String preview,
+  String time,
+  bool unread,
+});
+
+typedef Copy = ({
+  List<String> tabs,
+  String pick,
+  String reply,
+  String forward,
+  String toMe,
+  String body,
+  String compose,
+  String to,
+  String send,
+  String close,
+  String video,
+  List<Mail> mails,
+});
+
+const Copy en = (
+  tabs: ['Inbox', 'Watch', 'Device'],
+  pick: 'Pick an email',
+  reply: 'Reply',
+  forward: 'Forward',
+  toMe: 'to me',
+  body:
+      'Fold the phone and this email stays open. Unfold it and the list '
+      'comes back right next to it, scrolled where you left it.',
+  compose: 'Compose',
+  to: 'To',
+  send: 'Send',
+  close: 'Close',
+  video: 'Night drive',
+  mails: [
+    (
+      from: 'Sara Haddad',
+      subject: 'Duo build is green',
+      preview: 'All checks passed on the foldable simulator, shipping tonight.',
+      time: '9:41',
+      unread: true,
+    ),
+    (
+      from: 'Omar Khalil',
+      subject: 'Split View feedback',
+      preview: 'The rail follows the left app, exactly like the native bars.',
+      time: '9:12',
+      unread: true,
+    ),
+    (
+      from: 'Lina Park',
+      subject: 'Crease test results',
+      preview: 'Nothing interactive sits on the fold anymore. Shots attached.',
+      time: '8:55',
+      unread: false,
+    ),
+    (
+      from: 'Yousef Amin',
+      subject: 'Release notes 1.0',
+      preview: 'Draft is up, can you add the media fit section?',
+      time: 'Yesterday',
+      unread: false,
+    ),
+    (
+      from: 'Maya Chen',
+      subject: 'Tabletop mode ideas',
+      preview: 'Video on top, controls on the bottom half. Feels natural.',
+      time: 'Yesterday',
+      unread: false,
+    ),
+    (
+      from: 'Adam Novak',
+      subject: 'Lunch on Thursday?',
+      preview: 'New place next to the office, great shawarma.',
+      time: 'Mon',
+      unread: false,
+    ),
+    (
+      from: 'Noor Saleh',
+      subject: 'Design review',
+      preview: 'Loved the passport shape layouts, few notes on spacing.',
+      time: 'Mon',
+      unread: false,
+    ),
+    (
+      from: 'Ethan Brooks',
+      subject: 'Android foldables',
+      preview: 'Half open fold, the panes split right at the hinge.',
+      time: 'Sun',
+      unread: false,
+    ),
+  ],
+);
+
+const Copy ar = (
+  tabs: ['البريد', 'المشاهدة', 'الجهاز'],
+  pick: 'اختر رسالة',
+  reply: 'رد',
+  forward: 'إعادة توجيه',
+  toMe: 'إليّ',
+  body:
+      'اطوِ الهاتف وستبقى هذه الرسالة مفتوحة. افتحه وستعود القائمة بجانبها '
+      'في نفس موضع التمرير الذي تركتها عنده.',
+  compose: 'رسالة جديدة',
+  to: 'إلى',
+  send: 'إرسال',
+  close: 'إغلاق',
+  video: 'قيادة ليلية',
+  mails: [
+    (
+      from: 'سارة حداد',
+      subject: 'نسخة Duo جاهزة',
+      preview: 'نجحت كل الاختبارات على محاكي الجهاز القابل للطي، سننشر الليلة.',
+      time: '9:41',
+      unread: true,
+    ),
+    (
+      from: 'عمر خليل',
+      subject: 'ملاحظات على Split View',
+      preview: 'شريط التنقل يتبع التطبيق الأيسر تماماً مثل الأشرطة الأصلية.',
+      time: '9:12',
+      unread: true,
+    ),
+    (
+      from: 'لينا ناصر',
+      subject: 'نتائج اختبار الطية',
+      preview: 'لم يعد أي عنصر قابل للنقر يقع على الطية. الصور مرفقة.',
+      time: '8:55',
+      unread: false,
+    ),
+    (
+      from: 'يوسف أمين',
+      subject: 'ملاحظات الإصدار 1.0',
+      preview: 'المسودة جاهزة، هل يمكنك إضافة قسم ملاءمة الوسائط؟',
+      time: 'أمس',
+      unread: false,
+    ),
+    (
+      from: 'مايا سعيد',
+      subject: 'أفكار لوضع الطاولة',
+      preview: 'الفيديو في الأعلى وأزرار التحكم في النصف السفلي. تجربة طبيعية.',
+      time: 'أمس',
+      unread: false,
+    ),
+    (
+      from: 'آدم يوسف',
+      subject: 'غداء يوم الخميس؟',
+      preview: 'مطعم جديد بجانب المكتب، والشاورما عندهم رائعة.',
+      time: 'الإثنين',
+      unread: false,
+    ),
+    (
+      from: 'نور صالح',
+      subject: 'مراجعة التصميم',
+      preview: 'أعجبتني التخطيطات بشكل جواز السفر، لدي ملاحظات على المسافات.',
+      time: 'الإثنين',
+      unread: false,
+    ),
+    (
+      from: 'أحمد العلي',
+      subject: 'أجهزة أندرويد القابلة للطي',
+      preview: 'عند فتح الجهاز نصف فتحة تنقسم اللوحات عند المفصل تماماً.',
+      time: 'الأحد',
+      unread: false,
+    ),
+  ],
+);
+
+Copy copyOf(BuildContext context) =>
+    Directionality.of(context) == TextDirection.rtl ? ar : en;
+
+const _avatarColors = [
+  Color(0xFF6D5DFC),
+  Color(0xFFEC4899),
+  Color(0xFF14B8A6),
+  Color(0xFFF59E0B),
+  Color(0xFF3B82F6),
+  Color(0xFF8B5CF6),
+  Color(0xFF10B981),
+  Color(0xFFEF4444),
+];
+
+Color colorAt(int i) => _avatarColors[i % _avatarColors.length];
 
 class Showcase extends StatefulWidget {
   const Showcase({super.key});
@@ -117,14 +304,20 @@ class MailApp extends StatelessWidget {
     this.debugOverlay = true,
     this.initialTab = 0,
     this.initialMail,
+    this.initialFit = DuoMediaFit.smart,
     this.textDirection,
+    this.fontFallback,
   });
 
   final VoidCallback? onSimulate;
   final bool debugOverlay;
   final int initialTab;
   final int? initialMail;
+  final DuoMediaFit initialFit;
+
+  /// rtl also switches the content to Arabic.
   final TextDirection? textDirection;
+  final List<String>? fontFallback;
 
   @override
   Widget build(BuildContext context) {
@@ -132,8 +325,8 @@ class MailApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Duo Mail',
-      theme: appTheme(Brightness.light),
-      darkTheme: appTheme(Brightness.dark),
+      theme: appTheme(Brightness.light, fontFallback: fontFallback),
+      darkTheme: appTheme(Brightness.dark, fontFallback: fontFallback),
       themeMode: ThemeMode.light,
       builder: (context, child) {
         final app = DuoDebugOverlay(enabled: debugOverlay, child: child!);
@@ -145,6 +338,7 @@ class MailApp extends StatelessWidget {
         onSimulate: onSimulate,
         initialTab: initialTab,
         initialMail: initialMail,
+        initialFit: initialFit,
       ),
     );
   }
@@ -156,29 +350,31 @@ class Home extends StatefulWidget {
     this.onSimulate,
     this.initialTab = 0,
     this.initialMail,
+    this.initialFit = DuoMediaFit.smart,
   });
 
   final VoidCallback? onSimulate;
   final int initialTab;
   final int? initialMail;
+  final DuoMediaFit initialFit;
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  static const _titles = ['Inbox', 'Watch', 'Device'];
   late int _tab = widget.initialTab;
 
   @override
   Widget build(BuildContext context) {
+    final copy = copyOf(context);
     return DuoNavigationScaffold(
       appBar: AppBar(
-        title: Text(_titles[_tab]),
+        title: Text(copy.tabs[_tab]),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
           const Padding(
-            padding: EdgeInsets.only(right: 12, left: 4),
+            padding: EdgeInsetsDirectional.only(end: 12, start: 4),
             child: CircleAvatar(
               radius: 16,
               backgroundColor: brand,
@@ -195,134 +391,56 @@ class _HomeState extends State<Home> {
       floatingActionButton: _tab == 0
           ? FloatingActionButton(
               onPressed: _compose,
-              tooltip: 'Compose',
+              tooltip: copy.compose,
               elevation: 0,
               child: const Icon(Icons.edit_outlined),
             )
           : null,
-      destinations: const [
+      destinations: [
         DuoDestination(
-          icon: Icon(Icons.inbox_outlined),
-          selectedIcon: Icon(Icons.inbox),
-          label: 'Inbox',
+          icon: const Icon(Icons.inbox_outlined),
+          selectedIcon: const Icon(Icons.inbox),
+          label: copy.tabs[0],
         ),
         DuoDestination(
-          icon: Icon(Icons.play_circle_outline),
-          selectedIcon: Icon(Icons.play_circle),
-          label: 'Watch',
+          icon: const Icon(Icons.play_circle_outline),
+          selectedIcon: const Icon(Icons.play_circle),
+          label: copy.tabs[1],
         ),
         DuoDestination(
-          icon: Icon(Icons.devices_fold_outlined),
-          selectedIcon: Icon(Icons.devices_fold),
-          label: 'Device',
+          icon: const Icon(Icons.devices_fold_outlined),
+          selectedIcon: const Icon(Icons.devices_fold),
+          label: copy.tabs[2],
         ),
       ],
       body: IndexedStack(
         index: _tab,
         children: [
           Inbox(initialMail: widget.initialMail),
-          const WatchPage(),
+          WatchPage(initialFit: widget.initialFit),
           DevicePage(onSimulate: widget.onSimulate),
         ],
       ),
     );
   }
 
-  void _compose() => showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('New message'),
-      content: const TextField(decoration: InputDecoration(hintText: 'To')),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Send'),
-        ),
-      ],
-    ),
-  );
+  void _compose() {
+    final copy = copyOf(context);
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(copy.compose),
+        content: TextField(decoration: InputDecoration(hintText: copy.to)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(copy.send),
+          ),
+        ],
+      ),
+    );
+  }
 }
-
-typedef Mail = ({
-  String from,
-  String subject,
-  String preview,
-  String time,
-  bool unread,
-});
-
-const _inbox = <Mail>[
-  (
-    from: 'Sara Haddad',
-    subject: 'Duo build is green',
-    preview: 'All checks passed on the foldable simulator, shipping tonight.',
-    time: '9:41',
-    unread: true,
-  ),
-  (
-    from: 'Omar Khalil',
-    subject: 'Split View feedback',
-    preview: 'The rail follows the left app, exactly like the native bars.',
-    time: '9:12',
-    unread: true,
-  ),
-  (
-    from: 'Lina Park',
-    subject: 'Crease test results',
-    preview: 'Nothing interactive sits on the fold anymore. Shots attached.',
-    time: '8:55',
-    unread: false,
-  ),
-  (
-    from: 'Yousef Amin',
-    subject: 'Release notes 1.0',
-    preview: 'Draft is up, can you add the media fit section?',
-    time: 'Yesterday',
-    unread: false,
-  ),
-  (
-    from: 'Maya Chen',
-    subject: 'Tabletop mode ideas',
-    preview: 'Video on top, controls on the bottom half. Feels natural.',
-    time: 'Yesterday',
-    unread: false,
-  ),
-  (
-    from: 'Adam Novak',
-    subject: 'Lunch on Thursday?',
-    preview: 'New place next to the office, great shawarma.',
-    time: 'Mon',
-    unread: false,
-  ),
-  (
-    from: 'Noor Saleh',
-    subject: 'Design review',
-    preview: 'Loved the passport shape layouts, few notes on spacing.',
-    time: 'Mon',
-    unread: false,
-  ),
-  (
-    from: 'Ethan Brooks',
-    subject: 'Android foldables',
-    preview: 'Half open fold, the panes split right at the hinge.',
-    time: 'Sun',
-    unread: false,
-  ),
-];
-
-const _avatarColors = [
-  Color(0xFF6D5DFC),
-  Color(0xFFEC4899),
-  Color(0xFF14B8A6),
-  Color(0xFFF59E0B),
-  Color(0xFF3B82F6),
-  Color(0xFF8B5CF6),
-  Color(0xFF10B981),
-  Color(0xFFEF4444),
-];
-
-Mail mailAt(int i) => _inbox[i % _inbox.length];
-Color colorAt(int i) => _avatarColors[i % _avatarColors.length];
 
 class Inbox extends StatefulWidget {
   const Inbox({super.key, this.initialMail});
@@ -338,6 +456,7 @@ class _InboxState extends State<Inbox> {
 
   @override
   Widget build(BuildContext context) {
+    final mails = copyOf(context).mails;
     return DuoListDetail<int>(
       selected: _open,
       onClose: () => setState(() => _open = null),
@@ -346,14 +465,14 @@ class _InboxState extends State<Inbox> {
         padding: const EdgeInsets.only(top: 4, bottom: 16),
         itemCount: 24,
         itemBuilder: (context, i) => _MailTile(
-          mail: mailAt(i),
+          mail: mails[i % mails.length],
           color: colorAt(i),
           selected: i == _open,
           onTap: () => setState(() => _open = i),
         ),
       ),
       detail: (context, i) => MailView(
-        mail: mailAt(i),
+        mail: mails[i % mails.length],
         color: colorAt(i),
         onClose: () => setState(() => _open = null),
       ),
@@ -388,7 +507,7 @@ class _MailTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+            padding: const EdgeInsets.all(12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -396,7 +515,7 @@ class _MailTile extends StatelessWidget {
                   radius: 20,
                   backgroundColor: color,
                   child: Text(
-                    mail.from[0],
+                    mail.from.characters.first,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -448,7 +567,10 @@ class _MailTile extends StatelessWidget {
                 ),
                 if (mail.unread)
                   Padding(
-                    padding: const EdgeInsets.only(left: 8, top: 26),
+                    padding: const EdgeInsetsDirectional.only(
+                      start: 8,
+                      top: 26,
+                    ),
                     child: CircleAvatar(
                       radius: 4,
                       backgroundColor: scheme.primary,
@@ -479,6 +601,7 @@ class MailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final copy = copyOf(context);
     final m = context.duo.margin;
     return Material(
       color: scheme.surface,
@@ -502,7 +625,7 @@ class MailView extends StatelessWidget {
               ),
               IconButton(
                 onPressed: onClose,
-                tooltip: 'Close',
+                tooltip: copy.close,
                 icon: const Icon(Icons.close),
               ),
             ],
@@ -514,7 +637,7 @@ class MailView extends StatelessWidget {
                 radius: 20,
                 backgroundColor: color,
                 child: Text(
-                  mail.from[0],
+                  mail.from.characters.first,
                   style: const TextStyle(color: Colors.white),
                 ),
               ),
@@ -525,7 +648,7 @@ class MailView extends StatelessWidget {
                   children: [
                     Text(mail.from, style: theme.textTheme.titleSmall),
                     Text(
-                      'to me · ${mail.time}',
+                      '${copy.toMe} · ${mail.time}',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
@@ -537,9 +660,7 @@ class MailView extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            '${mail.preview}\n\nFold the phone and this email stays open. '
-            'Unfold it and the list comes back right next to it, scrolled '
-            'where you left it.',
+            '${mail.preview}\n\n${copy.body}',
             style: theme.textTheme.bodyLarge?.copyWith(height: 1.5),
           ),
           const SizedBox(height: 20),
@@ -563,12 +684,12 @@ class MailView extends StatelessWidget {
               FilledButton.icon(
                 onPressed: () {},
                 icon: const Icon(Icons.reply),
-                label: const Text('Reply'),
+                label: Text(copy.reply),
               ),
               OutlinedButton.icon(
                 onPressed: () {},
                 icon: const Icon(Icons.forward),
-                label: const Text('Forward'),
+                label: Text(copy.forward),
               ),
             ],
           ),
@@ -591,7 +712,7 @@ class _Empty extends StatelessWidget {
           Icon(Icons.mark_email_read_outlined, size: 56, color: scheme.outline),
           const SizedBox(height: 12),
           Text(
-            'Pick an email',
+            copyOf(context).pick,
             style: TextStyle(color: scheme.onSurfaceVariant),
           ),
         ],
@@ -601,14 +722,16 @@ class _Empty extends StatelessWidget {
 }
 
 class WatchPage extends StatefulWidget {
-  const WatchPage({super.key});
+  const WatchPage({super.key, this.initialFit = DuoMediaFit.smart});
+
+  final DuoMediaFit initialFit;
 
   @override
   State<WatchPage> createState() => _WatchPageState();
 }
 
 class _WatchPageState extends State<WatchPage> {
-  var _fit = DuoMediaFit.smart;
+  late var _fit = widget.initialFit;
 
   @override
   Widget build(BuildContext context) {
@@ -632,11 +755,11 @@ class _WatchPageState extends State<WatchPage> {
           fit: StackFit.expand,
           children: [
             DuoMedia(aspectRatio: 16 / 9, fit: _fit, child: const _Video()),
-            Positioned(
-              left: 12,
+            PositionedDirectional(
+              start: 12,
               top: 12,
               child: _Tag(
-                'Night drive · 16:9 · '
+                '${copyOf(context).video} · 16:9 · '
                 '${shown.width.round()} × ${shown.height.round()}',
               ),
             ),
