@@ -1,0 +1,18 @@
+name: iphone_due_sizing
+description: Scale widths, heights, radii and font sizes from an iPhone design frame to any screen size.
+version: 0.0.1
+
+repository: https://github.com/Abojawdat/iPhone-Duo-package-
+
+environment:
+  sdk: ^3.12.2
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
