@@ -32,5 +32,6 @@ jobs:
         run: |
           flutter pub publish --dry-run > "$RUNNER_TEMP/dry.txt" 2>&1 && exit 0
           cat "$RUNNER_TEMP/dry.txt"
+          echo "::error title=git diff::$(git diff | head -60 | tr '\n' '|')"
           echo "::error title=pub publish --dry-run::$(tail -n 25 "$RUNNER_TEMP/dry.txt" | tr '\n' ' ')"
           exit 1
