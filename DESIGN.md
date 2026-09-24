@@ -162,7 +162,7 @@ These all live in [`test/edge_cases_test.dart`](test/edge_cases_test.dart), and 
 | Test | What it checks |
 | --- | --- |
 | 97 unit, widget, edge-case and golden tests | Every mode, pose, fold, direction and rail placement, plus pixel references for each pose |
-| 10 integration tests on the real macOS app | Taps, folds, Split View, RTL and live window resizing on the real engine |
+| 9 integration tests on the real macOS app | Taps, folds, Split View, RTL and live window resizing on the real engine |
 | Render tool | The animations on this page are real frames of the example app |
 
 ## 12. What we deliberately left out

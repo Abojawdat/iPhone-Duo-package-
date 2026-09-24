@@ -209,7 +209,7 @@ The short version is below. The full reasoning, with the alternatives we rejecte
 - **Pure Dart.** It works today on every Flutter version from 3.41 and every platform, with no Xcode 27.1 or pods required.
 - **The iPhone Duo is detected by its exact screen sizes** at 3x on iOS, so iPads, Android phones and desktop windows are never mistaken for it.
 - **State survives every fold** because the package moves widgets instead of rebuilding them.
-- **Tested hard:** 97 unit, widget, edge-case and golden tests, plus 10 integration tests on the real macOS app.
+- **Tested hard:** 97 unit, widget, edge-case and golden tests, plus 9 integration tests on the real macOS app.
 
 ## What's inside
 
