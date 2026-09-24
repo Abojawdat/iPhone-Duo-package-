@@ -13,7 +13,10 @@ class DuoMedia extends StatelessWidget {
     this.fit = DuoMediaFit.smart,
     this.maxCrop = .15,
     this.background = const Color(0xFF000000),
-  });
+  }) : assert(
+         aspectRatio > 0 && aspectRatio < double.infinity,
+         'aspectRatio must be a positive, finite number.',
+       );
 
   final double aspectRatio;
   final Widget child;
@@ -27,6 +30,10 @@ class DuoMedia extends StatelessWidget {
     DuoMediaFit fit = DuoMediaFit.smart,
     double maxCrop = .15,
   }) {
+    // bad ratio or empty box: just fill it, never hand out NaN or infinity
+    if (!(aspectRatio > 0) || aspectRatio.isInfinite || box.isEmpty) {
+      return box;
+    }
     final wider = box.width / box.height > aspectRatio;
     final contain = wider
         ? Size(box.height * aspectRatio, box.height)

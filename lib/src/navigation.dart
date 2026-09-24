@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'duo_data.dart';
@@ -83,23 +85,41 @@ class _DuoNavigationScaffoldState extends State<DuoNavigationScaffold> {
       right: right,
       top: false,
       bottom: false,
-      child: MediaQuery.removePadding(
-        context: context,
-        removeLeft: true,
-        removeRight: true,
-        child: NavigationRail(
-          selectedIndex: widget.selectedIndex,
-          onDestinationSelected: widget.onDestinationSelected,
-          labelType: NavigationRailLabelType.all,
-          leading: widget.floatingActionButton,
-          destinations: [
-            for (final d in widget.destinations)
-              NavigationRailDestination(
-                icon: d.icon,
-                selectedIcon: d.selectedIcon,
-                label: Text(d.label),
+      // long labels or huge text can't push the body off screen
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: math.max(80, duo.size.width * .3),
+        ),
+        child: MediaQuery.removePadding(
+          context: context,
+          removeLeft: true,
+          removeRight: true,
+          // natural width (80) unless labels are huge, then the cap.
+          // same 1.3 label cap NavigationBar uses
+          child: IntrinsicWidth(
+            child: MediaQuery.withClampedTextScaling(
+              maxScaleFactor: 1.3,
+              child: NavigationRail(
+                scrollable: true,
+                selectedIndex: widget.selectedIndex,
+                onDestinationSelected: widget.onDestinationSelected,
+                labelType: NavigationRailLabelType.all,
+                leading: widget.floatingActionButton,
+                destinations: [
+                  for (final d in widget.destinations)
+                    NavigationRailDestination(
+                      icon: d.icon,
+                      selectedIcon: d.selectedIcon,
+                      label: Text(
+                        d.label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                ],
               ),
-          ],
+            ),
+          ),
         ),
       ),
     );

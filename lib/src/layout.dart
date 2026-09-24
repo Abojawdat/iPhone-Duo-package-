@@ -138,7 +138,8 @@ class _DuoSplitState extends State<DuoSplit> {
   double? ratio,
   TextDirection textDirection = TextDirection.ltr,
 }) {
-  assert(size.isFinite, 'DuoSplit needs a bounded size, not a scroll view.');
+  // unbounded (scroll view, Column) = no room to split, show one pane
+  if (!size.isFinite) return null;
   final box = Offset.zero & size;
   final fold = duo.fold?.shift(-origin);
   final crossesFold = fold != null && fold.overlaps(box);
