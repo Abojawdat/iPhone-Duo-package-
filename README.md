@@ -17,6 +17,8 @@
   <a href="#english"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/english.svg" height="56" alt="English"></a>
   &nbsp;&nbsp;
   <a href="#arabic"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/arabic.svg" height="56" alt="العربية"></a>
+  &nbsp;&nbsp;
+  <a href="#try-it"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/try.svg" height="56" alt="Try it"></a>
 </p>
 
 <p align="center">
@@ -47,6 +49,24 @@
 <a name="english"></a>
 
 # English
+
+<a name="try-it"></a>
+
+## Try it in 30 seconds
+
+No iPhone Duo needed: any phone, emulator, simulator or desktop works. Paste this in a terminal:
+
+```sh
+dart pub unpack duo_dynamic_sizing
+cd duo_dynamic_sizing-*/example
+flutter run
+```
+
+1. A help sheet opens and explains everything on screen. Close it with **Start testing**.
+2. Tap a pose under the phone (`closedPortrait`, `openLandscape`, `splitLeft`…) or press **Tour** to fold by itself.
+3. Play a song, then unfold: it keeps playing and the list slides in next to it.
+
+Using it in your own app instead? `flutter pub add duo_dynamic_sizing`, then see the [minimal example](#minimal-example).
 
 ## See it in action
 
@@ -385,13 +405,16 @@ Apple announced it on 9 September 2026, and it ships on 23 October 2026 with iOS
 
 ## Example
 
+No clone needed, this pulls the package with its example from pub.dev:
+
 ```sh
-cd example
-flutter run                    # the full showcase with a pose picker
+dart pub unpack duo_dynamic_sizing
+cd duo_dynamic_sizing-*/example
+flutter run                     # the playground, on any phone, emulator or desktop
 flutter run -t lib/minimal.dart # the 40-line app above
 ```
 
-In the showcase, pick any pose from the chip bar to simulate it on whatever device you're using, turn on **RTL** for the Arabic version, or choose **This device** to run it for real.
+The playground is a music player, a photo gallery and a live readout of `context.duo`. A help sheet opens on start and explains everything. Pick a pose under the phone to simulate it, press **Tour** to watch it fold by itself, or pick **real device** to use your actual screen (a Pixel Fold emulator reports a real hinge). Red areas are what the system covers, like the Duo's Dynamic Island strip; the blue line is the fold.
 
 ## Contributing
 
@@ -418,6 +441,22 @@ If the package helps you, a star on the repo is the best way to say thanks.
 <div dir="rtl">
 
 # العربية
+
+## جرّبها بـ 30 ثانية
+
+ما تحتاج iPhone Duo، أي موبايل أو محاكي أو كمبيوتر يمشي. الصق هذا بالـ terminal:
+
+</div>
+
+```sh
+dart pub unpack duo_dynamic_sizing
+cd duo_dynamic_sizing-*/example
+flutter run
+```
+
+<div dir="rtl">
+
+يفتح دليل يشرح كلشي. اختار وضعية جوه التلفون أو دوس **Tour**، شغّل أغنية وافتحه: تبقى تشتغل.
 
 ## شوفها شلون تشتغل
 
@@ -821,14 +860,15 @@ MaterialApp(
 </div>
 
 ```sh
-cd example
-flutter run                    # العرض الكامل ويا أداة اختيار الوضعيات
-flutter run -t lib/minimal.dart # تطبيق الأربعين سطر اللي فوگ
+dart pub unpack duo_dynamic_sizing
+cd duo_dynamic_sizing-*/example
+flutter run                     # the playground
+flutter run -t lib/minimal.dart # the 40-line app
 ```
 
 <div dir="rtl">
 
-بالعرض الكامل، اختار أي وضعية من شريط الخيارات حتى تحاكيها على جهازك، أو شغّل **RTL** حتى تشوف النسخة العربية، أو اختار **This device** حتى يشتغل على جهازك صدگ.
+مشغّل أغاني ومعرض صور وقراءة حية لـ `context.duo`، ويفتح دليل يشرح كلشي. اختار وضعية جوه التلفون، أو **Tour** حتى يطبّگ وحده، أو **real device** لشاشتك الحقيقية. الأحمر اللي يغطيه النظام، والأزرق خط الطبگة.
 
 ## تريد تساعد؟
 

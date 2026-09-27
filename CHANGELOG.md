@@ -1,3 +1,9 @@
+## 1.0.10
+
+Docs only, no code changes:
+
+* A **Try it** button at the top of the README jumps to a new "Try it in 30 seconds" section: three commands that download and run the example app, and what to do first. Both languages have it, and the Example section at the bottom uses the same commands.
+
 ## 1.0.9
 
 Docs only, no code changes:
