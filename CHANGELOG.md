@@ -1,3 +1,9 @@
+## 1.0.8
+
+Docs only, no code changes:
+
+* Every README image and animation is re-rendered from the new example app, in light mode: the fold, Split View, half-open postures, rotation, resizing, Arabic and media fit, plus the pose galleries and the social preview.
+
 ## 1.0.7
 
 Docs only, no code changes:
