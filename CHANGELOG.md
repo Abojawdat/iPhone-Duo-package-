@@ -1,3 +1,10 @@
+## 1.0.4
+
+Example only, no package code changes:
+
+* New example app: a music player, a photo gallery and a live `context.duo` lab, with a pose picker, an automatic fold tour, a help sheet that explains every control and an English / Iraqi Arabic switch.
+* Integration tests drive the new app through every pose.
+
 ## 1.0.3
 
 Docs only, no code changes:

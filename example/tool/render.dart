@@ -160,9 +160,12 @@ Future<void> _shoot(
   debugDisableShadows = false;
   final key = GlobalKey();
   await tester.pumpWidget(
-    Directionality(
-      textDirection: TextDirection.ltr,
-      child: RepaintBoundary(key: key, child: scene),
+    MediaQuery(
+      data: const MediaQueryData(disableAnimations: true),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: RepaintBoundary(key: key, child: scene),
+      ),
     ),
   );
   await tester.pump();
@@ -246,67 +249,126 @@ class Logo extends StatelessWidget {
       CustomPaint(size: Size.square(size), painter: _LogoPainter());
 }
 
+// same geometry as doc/logo.svg and the app icon (tool/make_icon.py)
 class _LogoPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.scale(size.width / 100);
-    final body = RRect.fromLTRBR(6, 14, 94, 86, const Radius.circular(18));
     canvas
+      ..scale(size.width / 100)
       ..save()
-      ..clipRRect(body)
+      ..clipRRect(RRect.fromLTRBR(0, 0, 100, 100, const Radius.circular(22)))
       ..drawRect(
-        const Rect.fromLTRB(6, 14, 50, 86),
+        const Rect.fromLTRB(0, 0, 100, 100),
         Paint()
-          ..shader = ui.Gradient.linear(
-            const Offset(6, 14),
-            const Offset(50, 86),
-            [const Color(0xFF8B7CFF), const Color(0xFF5B4BEF)],
-          ),
+          ..shader = ui.Gradient.linear(Offset.zero, const Offset(100, 100), [
+            const Color(0xFF3B2FC9),
+            const Color(0xFFE24B9B),
+          ]),
       )
-      ..drawRect(
-        const Rect.fromLTRB(50, 14, 94, 86),
+      ..drawCircle(
+        const Offset(50, 50),
+        38,
         Paint()
-          ..shader = ui.Gradient.linear(
-            const Offset(50, 14),
-            const Offset(94, 86),
-            [const Color(0xFFC084FC), const Color(0xFF8B3FF0)],
-          ),
+          ..shader = ui.Gradient.radial(const Offset(50, 50), 38, [
+            Colors.white.withValues(alpha: .22),
+            Colors.white.withValues(alpha: 0),
+          ]),
+      )
+      ..drawRRect(
+        RRect.fromLTRBR(15, 28, 85, 78, const Radius.circular(6)),
+        Paint()
+          ..color = const Color(0x99140A3C)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.6),
+      )
+      ..drawRRect(
+        RRect.fromLTRBR(15, 25, 85, 75, const Radius.circular(6)),
+        Paint()..color = const Color(0xFF12121A),
       );
-    final white = Paint()..color = Colors.white.withValues(alpha: .9);
-    for (final y in [28.0, 42.0, 56.0]) {
-      canvas
-        ..drawCircle(Offset(18, y + 3), 4, white)
-        ..drawRRect(
-          RRect.fromLTRBR(26, y, 42, y + 6, const Radius.circular(3)),
-          white,
-        );
+    const top = 27.2, bottom = 72.8, screen = Radius.circular(4.5);
+    Paint vertical(Color a, Color b) => Paint()
+      ..shader = ui.Gradient.linear(
+        const Offset(0, top),
+        const Offset(0, bottom),
+        [a, b],
+      );
+
+    // left screen: the record
+    const c = Offset(33.3, 50);
+    const r = (bottom - top) * .34;
+    canvas
+      ..drawRRect(
+        RRect.fromLTRBR(17.2, top, 49.4, bottom, screen),
+        vertical(const Color(0xFF2A2255), const Color(0xFF141422)),
+      )
+      ..drawCircle(c, r, Paint()..color = const Color(0xFF08080C));
+    final groove = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .3
+      ..color = const Color(0xFF2D2D3C);
+    for (var k = 0; k < 5; k++) {
+      canvas.drawCircle(c, r * (.55 + k * .09), groove);
     }
     canvas
-      ..drawRRect(
-        RRect.fromLTRBR(58, 26, 86, 56, const Radius.circular(6)),
-        white,
-      )
-      ..drawRRect(
-        RRect.fromLTRBR(58, 62, 80, 68, const Radius.circular(3)),
-        white,
-      )
-      ..restore()
-      ..drawLine(
-        const Offset(50, 10),
-        const Offset(50, 90),
+      ..drawCircle(
+        c,
+        r * .38,
         Paint()
-          ..color = cyan.withValues(alpha: .55)
-          ..strokeWidth = 9
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+          ..shader = ui.Gradient.linear(
+            c - const Offset(6, 6),
+            c + const Offset(6, 6),
+            [const Color(0xFFFF6B6B), const Color(0xFF6D5DFC)],
+          ),
       )
-      ..drawLine(
-        const Offset(50, 10),
-        const Offset(50, 90),
-        Paint()
-          ..color = const Color(0xFFCFFAFE)
-          ..strokeWidth = 2.6
-          ..strokeCap = StrokeCap.round,
+      ..drawCircle(c, r * .05, Paint()..color = const Color(0xFF08080C));
+
+    // right screen: the sunset
+    const photo = Rect.fromLTRB(50.6, top, 82.8, bottom);
+    canvas
+      ..save()
+      ..clipRRect(RRect.fromRectAndRadius(photo, screen))
+      ..drawRect(
+        photo,
+        vertical(const Color(0xFF2B2D6E), const Color(0xFFFF8A5B)),
+      )
+      ..drawCircle(
+        Offset(photo.left + photo.width * .62, top + photo.height * .42),
+        photo.height * .13,
+        Paint()..color = const Color(0xFFFFD68C),
       );
+    const ridges = [Color(0xFF583C82), Color(0xFF3A2860), Color(0xFF1E163C)];
+    for (var k = 0; k < 3; k++) {
+      final path = Path()..moveTo(photo.left, bottom);
+      for (var i = 0; i <= 32; i++) {
+        final wave = math.sin(i / 32 * math.pi * (2 + k) + k * 1.7);
+        path.lineTo(
+          photo.left + photo.width * i / 32,
+          top + photo.height * (.6 + k * .13) - (wave + 1) * photo.height * .06,
+        );
+      }
+      path
+        ..lineTo(photo.right, bottom)
+        ..close();
+      canvas.drawPath(path, Paint()..color = ridges[k]);
+    }
+    canvas
+      ..restore()
+      // the fold, glowing
+      ..drawLine(
+        const Offset(50, 21),
+        const Offset(50, 79),
+        Paint()
+          ..color = const Color(0xFF8CC8FF)
+          ..strokeWidth = 1.2
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.2),
+      )
+      ..drawLine(
+        const Offset(50, 26.1),
+        const Offset(50, 73.9),
+        Paint()
+          ..color = const Color(0xFFDCF0FF)
+          ..strokeWidth = .4,
+      )
+      ..restore();
   }
 
   @override
@@ -474,14 +536,14 @@ class _SplitDevice extends StatelessWidget {
               size: half,
               child: const DuoSimulator(
                 pose: DuoPose.splitLeft,
-                child: MailApp(debugOverlay: false),
+                child: DuoApp(dark: false),
               ),
             ),
             SizedBox.fromSize(
               size: half,
               child: const DuoSimulator(
                 pose: DuoPose.splitRight,
-                child: MailApp(debugOverlay: false, initialTab: 1),
+                child: DuoApp(dark: false, initialTab: 1),
               ),
             ),
           ],
@@ -558,33 +620,24 @@ Widget _duoGallery() => const _Gallery(
   rows: [
     [
       _Shot(
-        Device(DuoPose.closedPortrait, MailApp(debugOverlay: false)),
+        Device(DuoPose.closedPortrait, DuoApp(dark: false)),
         'Closed',
         '466 × 678 · one pane, rail by the island',
       ),
       _Shot(
-        Device(
-          DuoPose.openLandscape,
-          MailApp(debugOverlay: false, initialMail: 1),
-        ),
+        Device(DuoPose.openLandscape, DuoApp(dark: false, initialTrack: 1)),
         'Open',
         '951 × 669 · list + detail, split at the fold',
       ),
       _Shot(
-        Device(
-          DuoPose.openPortrait,
-          MailApp(debugOverlay: false, initialMail: 2),
-        ),
+        Device(DuoPose.openPortrait, DuoApp(dark: false, initialTrack: 2)),
         'Open, upright',
         '669 × 951 · two panes, bottom bar',
       ),
     ],
     [
       _Shot(
-        Device(
-          DuoPose.closedLandscape,
-          MailApp(debugOverlay: false, initialTab: 1),
-        ),
+        Device(DuoPose.closedLandscape, DuoApp(dark: false, initialPhoto: 0)),
         'Closed, sideways',
         '678 × 466 · one pane, media fit',
       ),
@@ -603,32 +656,22 @@ Widget _elsewhere() => const _Gallery(
   rows: [
     [
       _Shot(
-        Device(DuoPose.iPhone, MailApp(debugOverlay: false)),
+        Device(DuoPose.iPhone, DuoApp(dark: false)),
         'iPhone',
         '402 × 874 · bottom bar',
       ),
       _Shot(
-        Device(
-          DuoPose.foldableBook,
-          MailApp(debugOverlay: false, initialMail: 3),
-        ),
+        Device(DuoPose.foldableBook, DuoApp(dark: false, initialTrack: 3)),
         'Android fold, book',
         'panes split right at the hinge',
       ),
       _Shot(
-        Device(
-          DuoPose.foldableTabletop,
-          MailApp(debugOverlay: false, initialTab: 1),
-        ),
+        Device(DuoPose.foldableTabletop, DuoApp(dark: false, initialPhoto: 0)),
         'Android fold, tabletop',
-        'video up top, controls below the fold',
+        'photo up top, details below the fold',
       ),
       _Shot(
-        Device(
-          DuoPose.iPad,
-          MailApp(debugOverlay: false, initialMail: 4),
-          scale: .4,
-        ),
+        Device(DuoPose.iPad, DuoApp(dark: false, initialTrack: 4), scale: .4),
         'iPad',
         '1032 × 1376 · list + detail, side rail',
       ),
@@ -682,18 +725,14 @@ Widget _social() => _Backdrop(
         top: 140,
         child: Device(
           DuoPose.openLandscape,
-          MailApp(debugOverlay: false, initialMail: 1),
+          DuoApp(dark: false, initialTrack: 1),
           scale: .54,
         ),
       ),
       const Positioned(
         right: 424,
         top: 250,
-        child: Device(
-          DuoPose.closedPortrait,
-          MailApp(debugOverlay: false),
-          scale: .5,
-        ),
+        child: Device(DuoPose.closedPortrait, DuoApp(dark: false), scale: .5),
       ),
     ],
   ),
@@ -736,8 +775,8 @@ class _FoldScene extends StatelessWidget {
     final half = open.width / 2;
     final hinge = ui.lerpDouble(cx - closed.width / 2, cx, e)!;
     final r = 44 * s;
-    const outerApp = MailApp(debugOverlay: false, initialMail: 2);
-    const innerApp = MailApp(debugOverlay: false, initialMail: 2);
+    const outerApp = DuoApp(dark: false, initialTrack: 2);
+    const innerApp = DuoApp(dark: false, initialTrack: 2);
 
     Widget innerHalf(bool left) => SizedBox(
       width: half,
@@ -852,7 +891,7 @@ class _FoldScene extends StatelessWidget {
                   child: const _ModePill(
                     'closedPortrait',
                     '466 × 678',
-                    'one pane, same email open',
+                    'one pane, same track playing',
                   ),
                 ),
                 Opacity(
@@ -964,10 +1003,7 @@ class _SplitScene extends StatelessWidget {
             top: 0,
             width: w * s,
             height: h * s,
-            child: DuoSimulator(
-              pose: left,
-              child: const MailApp(debugOverlay: false),
-            ),
+            child: DuoSimulator(pose: left, child: const DuoApp(dark: false)),
           ),
           Positioned(
             left: w * s + 3,
@@ -976,7 +1012,7 @@ class _SplitScene extends StatelessWidget {
             height: h * s,
             child: const DuoSimulator(
               pose: DuoPose.splitRight,
-              child: MailApp(debugOverlay: false, initialTab: 1),
+              child: DuoApp(dark: false, initialTab: 1),
             ),
           ),
           if (e > .02)
@@ -1066,7 +1102,7 @@ class _PostureScene extends StatelessWidget {
         size: size * s,
         child: DuoSimulator(
           pose: pose,
-          child: const MailApp(debugOverlay: false, initialTab: 1),
+          child: const DuoApp(dark: false, initialPhoto: 0),
         ),
       );
       return Frame(
@@ -1134,7 +1170,7 @@ class _PostureScene extends StatelessWidget {
               ? const _ModePill(
                   'book',
                   'half open',
-                  'controls slide to the trailing half',
+                  'details slide to the trailing half',
                 )
               : const _ModePill(
                   'flat',
@@ -1145,12 +1181,12 @@ class _PostureScene extends StatelessWidget {
               ? const _ModePill(
                   'tabletop',
                   'half open',
-                  'video above the fold, controls below',
+                  'photo above the fold, details below',
                 )
               : const _ModePill(
                   'flat',
                   'fold reported',
-                  'one layout, video centred',
+                  'one layout, photo centred',
                 ));
     return _stage('Half open? The layout follows the hinge.', device, label);
   }
@@ -1168,11 +1204,8 @@ class _RotateScene extends StatelessWidget {
     final s = open ? .44 : .5;
     final from = open ? DuoPose.openLandscape : DuoPose.closedPortrait;
     final to = open ? DuoPose.openPortrait : DuoPose.closedLandscape;
-    Widget device(DuoPose p) => Device(
-      p,
-      MailApp(debugOverlay: false, initialMail: open ? 1 : null),
-      scale: s,
-    );
+    Widget device(DuoPose p) =>
+        Device(p, DuoApp(dark: false, initialTrack: open ? 1 : null), scale: s);
     final turn = (e / .72).clamp(0.0, 1.0);
     final settle = ((e - .72) / .28).clamp(0.0, 1.0);
     return _stage(
@@ -1275,7 +1308,7 @@ class _ResizeScene extends StatelessWidget {
                 light(const Color(0xFF28C840)),
                 Expanded(
                   child: Text(
-                    'Duo Mail',
+                    'Duo Playground',
                     textAlign: TextAlign.center,
                     style: _text(13, color: muted, w: FontWeight.w600),
                   ),
@@ -1289,7 +1322,7 @@ class _ResizeScene extends StatelessWidget {
             height: h,
             child: DuoSimulator(
               pose: pose,
-              child: const MailApp(debugOverlay: false, initialMail: 1),
+              child: const DuoApp(dark: false, initialTrack: 1),
             ),
           ),
         ],
@@ -1322,10 +1355,10 @@ class _RtlScene extends StatelessWidget {
     final rtl = angle > math.pi / 2;
     final device = Device(
       DuoPose.openLandscape,
-      MailApp(
-        debugOverlay: false,
-        initialMail: 1,
-        textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
+      DuoApp(
+        dark: false,
+        initialTrack: 1,
+        arabic: rtl,
         fontFallback: const ['SFArabic'],
       ),
       scale: s,
@@ -1366,7 +1399,7 @@ class _MediaScene extends StatelessWidget {
     DuoMediaFit.smart,
   ];
   static const pills = [
-    _ModePill('contain', '16:9', 'all of the video, bars above and below'),
+    _ModePill('contain', '16:9', 'the whole photo, bars around it'),
     _ModePill('cover', '16:9', 'fills the box, crops the edges'),
     _ModePill('smart', '16:9', 'crops only when it loses under 15%'),
   ];
@@ -1378,11 +1411,11 @@ class _MediaScene extends StatelessWidget {
     final next = (i + 1) % 3;
     Widget duo(int k) => Device(
       DuoPose.openLandscape,
-      MailApp(debugOverlay: false, initialTab: 1, initialFit: fits[k]),
+      DuoApp(dark: false, initialPhoto: 0, initialFit: fits[k]),
       scale: s,
     );
     return _stage(
-      'Video that fits the √2 screen.',
+      'Photos and video that fit the √2 screen.',
       Stack(
         children: [
           duo(i),

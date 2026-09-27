@@ -1,4 +1,4 @@
-// drives the real showcase app. screenshots come back thru flutter drive:
+// drives the real playground app. screenshots come back thru flutter drive:
 //   flutter drive -d macos --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart
 // or just the checks: flutter test integration_test -d macos
 import 'dart:convert';
@@ -28,18 +28,38 @@ void main() {
 
   Future<void> launch(
     WidgetTester tester, [
-    Size window = const Size(1400, 900),
+    Size window = const Size(1400, 1000),
   ]) async {
     tester.view.physicalSize = window * tester.view.devicePixelRatio;
     addTearDown(tester.view.reset);
+    // reduce motion, so the record stands still and pumpAndSettle settles
     await tester.pumpWidget(
-      RepaintBoundary(key: root, child: const Showcase()),
+      MediaQuery.fromView(
+        view: tester.view,
+        child: Builder(
+          builder: (context) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(disableAnimations: true),
+            child: RepaintBoundary(
+              key: root,
+              child: const Playground(helpOnStart: false),
+            ),
+          ),
+        ),
+      ),
     );
     await tester.pumpAndSettle();
   }
 
   Future<void> pose(WidgetTester tester, String name) async {
-    await tester.tap(find.widgetWithText(ChoiceChip, name));
+    final chip = find.widgetWithText(ChoiceChip, name);
+    await tester.ensureVisible(chip);
+    await tester.pumpAndSettle();
+    await tester.tap(chip);
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> tab(WidgetTester tester, String label) async {
+    await tester.tap(find.text(label).last);
     await tester.pumpAndSettle();
   }
 
@@ -48,85 +68,69 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  bool railOnRight(WidgetTester tester) {
-    final rail = tester.getCenter(find.byType(NavigationRail)).dx;
-    final list = tester.getCenter(find.byType(DuoListDetail<int>)).dx;
-    return rail > list;
-  }
+  final list = find.byType(DuoListDetail<int>);
+  final track = find.text(iso('Two Screens, One Heart')).first;
 
-  double listScroll(WidgetTester tester) => tester
-      .state<ScrollableState>(
-        find
-            .descendant(
-              of: find.byType(DuoListDetail<int>),
-              matching: find.byType(Scrollable),
-            )
-            .first,
-      )
-      .position
-      .pixels;
+  bool railOnRight(WidgetTester tester) =>
+      tester.getCenter(find.byType(NavigationRail)).dx >
+      tester.getCenter(list).dx;
 
-  final mail = find.text('Omar Khalil').first;
-  final mailList = find
-      .descendant(
-        of: find.byType(DuoListDetail<int>),
-        matching: find.byType(ListView),
-      )
-      .first;
-  final subject = find.text('Split View feedback');
+  Finder listScrollable() =>
+      find.descendant(of: list, matching: find.byType(Scrollable)).first;
 
-  testWidgets('open Duo: list, then list + detail', (tester) async {
+  testWidgets('open Duo: list, then list + player', (tester) async {
     await launch(tester);
-    expect(find.text('Pick an email'), findsOneWidget);
-    expect(find.byType(NavigationRail), findsOneWidget);
+    await pose(tester, 'openLandscape');
+    expect(find.text(en.pick), findsOneWidget);
     expect(railOnRight(tester), isTrue);
     await shot(tester, '01_open_empty');
 
-    await tester.tap(mail);
+    await tester.tap(track);
     await tester.pumpAndSettle();
-    expect(subject, findsWidgets);
-    expect(find.text('Pick an email'), findsNothing);
-    await shot(tester, '02_open_detail');
+    expect(find.byType(NowPlaying), findsOneWidget);
+    expect(find.text(en.pick), findsNothing);
+    await shot(tester, '02_open_playing');
   });
 
-  testWidgets('fold keeps the email, back shows the list', (tester) async {
+  testWidgets('fold keeps the player, close shows the list', (tester) async {
     await launch(tester);
-    await tester.tap(mail);
+    await pose(tester, 'openLandscape');
+    await tester.tap(track);
     await tester.pumpAndSettle();
+    final player = tester.state(find.byType(NowPlaying));
 
     await pose(tester, 'closedPortrait');
-    expect(find.textContaining('Fold the phone'), findsOneWidget);
-    expect(find.byTooltip('Close'), findsOneWidget);
+    expect(tester.state(find.byType(NowPlaying)), same(player));
     expect(find.byType(ListTile), findsNothing);
-    expect(railOnRight(tester), isTrue);
-    await shot(tester, '03_closed_detail');
+    await shot(tester, '03_closed_playing');
 
-    await tester.tap(find.byTooltip('Close'));
+    await pose(tester, 'openLandscape');
+    expect(tester.state(find.byType(NowPlaying)), same(player));
+
+    await pose(tester, 'closedPortrait');
+    await tester.tap(find.byTooltip(en.close));
     await tester.pumpAndSettle();
-    expect(find.byTooltip('Close'), findsNothing);
+    expect(find.byType(NowPlaying), findsNothing);
+    expect(find.byType(ListTile), findsWidgets);
     await shot(tester, '04_closed_list');
   });
 
   testWidgets('list scroll survives fold and unfold', (tester) async {
     await launch(tester);
-    await pose(tester, 'closedPortrait');
-    await tester.drag(
-      find
-          .descendant(
-            of: find.byType(DuoListDetail<int>),
-            matching: find.byType(Scrollable),
-          )
-          .first,
-      const Offset(0, -260),
-    );
+    await pose(tester, 'closedLandscape');
+    await tester.drag(listScrollable(), const Offset(0, -200));
     await tester.pumpAndSettle();
-    final before = listScroll(tester);
+    final before = tester
+        .state<ScrollableState>(listScrollable())
+        .position
+        .pixels;
     expect(before, greaterThan(0));
 
     await pose(tester, 'openLandscape');
-    expect(listScroll(tester), before);
-    await pose(tester, 'closedPortrait');
-    expect(listScroll(tester), before);
+    expect(
+      tester.state<ScrollableState>(listScrollable()).position.pixels,
+      before,
+    );
   });
 
   testWidgets('every pose: bar or rail on the right side', (tester) async {
@@ -155,60 +159,115 @@ void main() {
     }
   });
 
-  testWidgets('tabletop: video above the fold, controls below', (tester) async {
+  testWidgets('Lab state survives every pose', (tester) async {
+    await launch(tester);
+    await tab(tester, 'Lab');
+    await tester.ensureVisible(find.byIcon(Icons.add));
+    await tester.pumpAndSettle();
+    for (var i = 0; i < 3; i++) {
+      await tester.tap(find.byIcon(Icons.add));
+    }
+    await tester.enterText(find.byType(TextField), 'still here');
+    await tester.pumpAndSettle();
+    for (final p in [
+      'openLandscape',
+      'closedPortrait',
+      'foldableBook',
+      'iPad',
+    ]) {
+      await pose(tester, p);
+      expect(find.widgetWithText(Card, '3'), findsOneWidget, reason: p);
+      expect(find.text('still here'), findsOneWidget, reason: p);
+    }
+    await shot(tester, '06_lab_ipad');
+  });
+
+  testWidgets('tabletop: photo above the fold, info below', (tester) async {
     await launch(tester);
     await pose(tester, 'foldableTabletop');
-    await tester.tap(find.text('Watch').last);
+    await tab(tester, 'Gallery');
+    await tester.tap(
+      find
+          .descendant(of: find.byType(GridView), matching: find.byType(Hero))
+          .first,
+    );
     await tester.pumpAndSettle();
     final media = tester.getRect(find.byType(DuoMedia));
-    final controls = tester.getRect(find.byIcon(Icons.play_arrow));
-    expect(controls.top, greaterThan(media.bottom));
-    await shot(tester, '06_tabletop_watch');
+    final info = tester.getRect(find.text('16:9 · ${en.photo}'));
+    expect(info.top, greaterThanOrEqualTo(media.bottom));
+    await shot(tester, '07_tabletop_photo');
   });
 
   testWidgets('media fit modes', (tester) async {
     await launch(tester);
-    await tester.tap(find.text('Watch').last);
+    await pose(tester, 'openLandscape');
+    await tab(tester, 'Gallery');
+    await tester.tap(
+      find
+          .descendant(of: find.byType(GridView), matching: find.byType(Hero))
+          .first,
+    );
     await tester.pumpAndSettle();
     for (final fit in ['contain', 'cover', 'smart']) {
-      await tester.tap(find.text(fit));
+      await tester.tap(find.byTooltip(fit));
       await tester.pumpAndSettle();
-      await shot(tester, '07_media_$fit');
+      expect(find.textContaining('$fit ·'), findsOneWidget);
+      await shot(tester, '08_media_$fit');
     }
   });
 
-  testWidgets('rtl mirrors the panes, split stays on the fold', (tester) async {
+  testWidgets('arabic mirrors the panes, split stays on the fold', (
+    tester,
+  ) async {
     await launch(tester);
-    await tester.tap(mail);
+    await pose(tester, 'openLandscape');
+    await tester.tap(track);
     await tester.pumpAndSettle();
-    final ltrList = tester.getCenter(mailList).dx;
+    final ltrList = tester.getCenter(listScrollable()).dx;
 
-    await tester.tap(find.widgetWithText(FilterChip, 'RTL'));
+    await tester.tap(find.byIcon(Icons.translate));
     await tester.pumpAndSettle();
-    final rtlList = tester.getCenter(mailList).dx;
-    expect(rtlList, greaterThan(ltrList));
-    await shot(tester, '08_rtl_open');
+    expect(find.text(ar.tabs.first), findsWidgets);
+    expect(tester.getCenter(listScrollable()).dx, greaterThan(ltrList));
+    await shot(tester, '09_arabic_open');
 
     await pose(tester, 'foldableBook');
-    await shot(tester, '09_rtl_book');
+    await shot(tester, '10_arabic_book');
   });
 
-  testWidgets('compose dialog stays on the simulated screen', (tester) async {
+  testWidgets('dialog and card stay on the simulated screen', (tester) async {
     await launch(tester);
-    await tester.tap(find.byTooltip('Compose'));
-    await tester.pumpAndSettle();
-    final dialog = tester.getRect(find.byType(AlertDialog));
+    await pose(tester, 'foldableBook');
+    await tab(tester, 'Lab');
     final screen = tester.getRect(find.byType(DuoSimulator));
-    expect(screen.contains(dialog.center), isTrue);
-    await shot(tester, '10_compose_dialog');
+
+    await tester.tap(find.text(en.dialog));
+    await tester.pumpAndSettle();
+    expect(screen.contains(tester.getCenter(find.byType(AlertDialog))), isTrue);
+    await tester.tap(find.text(en.ok));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(en.popCard));
+    await tester.pumpAndSettle();
+    final card = tester.getRect(find.text(en.cardBody));
+    // one half of the book, never across the hinge
+    final hinge = screen.left + screen.width / 2;
+    expect(card.right <= hinge || card.left >= hinge, isTrue);
+    await shot(tester, '11_avoid_fold_card');
+  });
+
+  testWidgets('help sheet explains the lab', (tester) async {
+    await launch(tester);
+    await tester.tap(find.byTooltip('How to test'));
+    await tester.pumpAndSettle();
+    expect(find.text('How to test duo_dynamic_sizing'), findsOneWidget);
+    await shot(tester, '12_help');
   });
 
   testWidgets('this device: live window resizing on macOS', (tester) async {
     await launch(tester, const Size(1280, 800));
-    await tester.tap(find.text('This device'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Device').last);
-    await tester.pumpAndSettle();
+    await pose(tester, 'real device');
+    await tab(tester, 'Lab');
 
     final windows = {
       'desktop': const Size(1280, 800),
@@ -220,7 +279,7 @@ void main() {
       expect(find.text(mode), findsWidgets, reason: '$size');
       await shot(
         tester,
-        '11_mac_${mode}_${size.width.round()}x${size.height.round()}',
+        '13_mac_${mode}_${size.width.round()}x${size.height.round()}',
       );
     }
     await resize(tester, const Size(420, 860));
