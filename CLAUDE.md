@@ -28,7 +28,7 @@ Regenerate every image and animation in `doc/` (real renders of the example app;
 cd example && flutter test tool/render.dart && python3 ../tool/pack_visuals.py   # needs Pillow
 ```
 
-Outputs: stills in `doc/*.webp`, `doc/fold.webp` (also a pub.dev screenshot), and scenario animations in `doc/anim/*.webp` (kept out of the pub archive by `.pubignore`). `doc/banner.svg` (animated, SMIL) and `doc/logo.svg` are hand-written SVGs.
+Outputs: stills in `doc/*.webp`, `doc/fold.webp` (also a pub.dev screenshot), and scenario animations in `doc/anim/*.webp` (kept out of the pub archive by `.pubignore`). `doc/banner.svg` (animated, SMIL) and `doc/logo.svg` are hand-written SVGs. The logo is the app icon: `cd example && python3 tool/make_icon.py` regenerates every platform's icon from the same geometry.
 
 ## Docs (English + Arabic, keep them in sync)
 

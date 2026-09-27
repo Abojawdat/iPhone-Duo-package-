@@ -1,22 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="256" height="256">
   <title>duo_dynamic_sizing</title>
   <defs>
-    <linearGradient id="lgA" x1="6" y1="14" x2="50" y2="86" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8B7CFF"/><stop offset="1" stop-color="#5B4BEF"/></linearGradient>
-    <linearGradient id="lgB" x1="50" y1="14" x2="94" y2="86" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#C084FC"/><stop offset="1" stop-color="#8B3FF0"/></linearGradient>
-    <clipPath id="lgBody"><rect x="6" y="14" width="88" height="72" rx="18"/></clipPath>
-    <filter id="lgGlow" x="-100%" y="-20%" width="300%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter>
+    <linearGradient id="lgBg" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3B2FC9"/><stop offset="1" stop-color="#E24B9B"/></linearGradient>
+    <radialGradient id="lgHalo" cx="50" cy="50" r="38" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="lgLeft" x1="0" y1="27.2" x2="0" y2="72.8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2A2255"/><stop offset="1" stop-color="#141422"/></linearGradient>
+    <linearGradient id="lgSky" x1="0" y1="27.2" x2="0" y2="72.8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2B2D6E"/><stop offset="1" stop-color="#FF8A5B"/></linearGradient>
+    <linearGradient id="lgLabel" x1="27.3" y1="44" x2="39.3" y2="56" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF6B6B"/><stop offset="1" stop-color="#6D5DFC"/></linearGradient>
+    <clipPath id="lgIcon"><rect width="100" height="100" rx="22"/></clipPath>
+    <clipPath id="lgRight"><rect x="50.6" y="27.2" width="32.2" height="45.6" rx="4.5"/></clipPath>
+    <filter id="lgBlur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.6"/></filter>
+    <filter id="lgGlow" x="-400%" y="-10%" width="900%" height="120%"><feGaussianBlur stdDeviation="1.2"/></filter>
   </defs>
-    <g clip-path="url(#lgBody)">
-      <rect x="6" y="14" width="44" height="72" fill="url(#lgA)"/>
-      <rect x="50" y="14" width="44" height="72" fill="url(#lgB)"/>
-      <g fill="#fff" fill-opacity=".92">
-        <circle cx="18" cy="31" r="4"/><rect x="26" y="28" width="16" height="6" rx="3"/>
-        <circle cx="18" cy="45" r="4"/><rect x="26" y="42" width="16" height="6" rx="3"/>
-        <circle cx="18" cy="59" r="4"/><rect x="26" y="56" width="16" height="6" rx="3"/>
-        <rect x="58" y="26" width="28" height="30" rx="6"/>
-        <rect x="58" y="62" width="22" height="6" rx="3"/>
-      </g>
+  <g clip-path="url(#lgIcon)">
+    <rect width="100" height="100" fill="url(#lgBg)"/>
+    <rect width="100" height="100" fill="url(#lgHalo)"/>
+    <rect x="15" y="28" width="70" height="50" rx="6" fill="#140A3C" fill-opacity=".6" filter="url(#lgBlur)"/>
+    <rect x="15" y="25" width="70" height="50" rx="6" fill="#12121A"/>
+    <rect x="17.2" y="27.2" width="32.2" height="45.6" rx="4.5" fill="url(#lgLeft)"/>
+    <circle cx="33.3" cy="50" r="15.5" fill="#08080C"/>
+    <g fill="none" stroke="#2D2D3C" stroke-width=".3"><circle cx="33.3" cy="50" r="8.53"/><circle cx="33.3" cy="50" r="9.92"/><circle cx="33.3" cy="50" r="11.32"/><circle cx="33.3" cy="50" r="12.71"/><circle cx="33.3" cy="50" r="14.11"/></g>
+    <circle cx="33.3" cy="50" r="5.89" fill="url(#lgLabel)"/>
+    <circle cx="33.3" cy="50" r="0.78" fill="#08080C"/>
+    <g clip-path="url(#lgRight)">
+      <rect x="50.6" y="27.2" width="32.2" height="45.6" fill="url(#lgSky)"/>
+      <circle cx="70.56" cy="46.35" r="5.93" fill="#FFD68C"/>
+      <path d="M50.6 72.8 L50.6 51.82 L51.61 51.29 L52.61 50.78 L53.62 50.3 L54.62 49.89 L55.63 49.55 L56.64 49.3 L57.64 49.14 L58.65 49.09 L59.66 49.14 L60.66 49.3 L61.67 49.55 L62.67 49.89 L63.68 50.3 L64.69 50.78 L65.69 51.29 L66.7 51.82 L67.71 52.36 L68.71 52.87 L69.72 53.34 L70.72 53.76 L71.73 54.1 L72.74 54.35 L73.74 54.51 L74.75 54.56 L75.76 54.51 L76.76 54.35 L77.77 54.1 L78.78 53.76 L79.78 53.34 L80.79 52.87 L81.79 52.36 L82.8 51.82 L82.8 72.8Z" fill="#583C82"/><path d="M50.6 72.8 L50.6 55.04 L51.61 55.26 L52.61 55.69 L53.62 56.3 L54.62 57.04 L55.63 57.84 L56.64 58.63 L57.64 59.34 L58.65 59.92 L59.66 60.31 L60.66 60.48 L61.67 60.42 L62.67 60.12 L63.68 59.63 L64.69 58.97 L65.69 58.2 L66.7 57.4 L67.71 56.63 L68.71 55.95 L69.72 55.43 L70.72 55.11 L71.73 55.02 L72.74 55.16 L73.74 55.53 L74.75 56.08 L75.76 56.78 L76.76 57.57 L77.77 58.37 L78.78 59.12 L79.78 59.75 L80.79 60.2 L81.79 60.45 L82.8 60.47 L82.8 72.8Z" fill="#3A2860"/><path d="M50.6 72.8 L50.6 64.38 L51.61 65.34 L52.61 66.04 L53.62 66.39 L54.62 66.33 L55.63 65.86 L56.64 65.06 L57.64 64.05 L58.65 62.98 L59.66 62.02 L60.66 61.32 L61.67 60.97 L62.67 61.03 L63.68 61.5 L64.69 62.3 L65.69 63.31 L66.7 64.38 L67.71 65.34 L68.71 66.04 L69.72 66.39 L70.72 66.33 L71.73 65.86 L72.74 65.06 L73.74 64.05 L74.75 62.98 L75.76 62.02 L76.76 61.32 L77.77 60.97 L78.78 61.03 L79.78 61.5 L80.79 62.3 L81.79 63.31 L82.8 64.38 L82.8 72.8Z" fill="#1E163C"/>
     </g>
-    <line x1="50" y1="10" x2="50" y2="90" stroke="#22D3EE" stroke-opacity=".65" stroke-width="7" filter="url(#lgGlow)"/>
-    <line x1="50" y1="10" x2="50" y2="90" stroke="#CFFAFE" stroke-width="2.6" stroke-linecap="round"/>
+    <line x1="50" y1="21" x2="50" y2="79" stroke="#8CC8FF" stroke-width="1.2" filter="url(#lgGlow)"/>
+    <line x1="50" y1="26.1" x2="50" y2="73.9" stroke="#DCF0FF" stroke-width=".4"/>
+  </g>
 </svg>

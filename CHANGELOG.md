@@ -1,3 +1,9 @@
+## 1.0.7
+
+Docs only, no code changes:
+
+* New package logo, the same design as the example app icon: an open iPhone Duo with a record on one screen, a sunset on the other and the fold glowing between them. It replaces the old logo in `doc/logo.svg` and the README banner.
+
 ## 1.0.6
 
 Docs only, no code changes:
