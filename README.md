@@ -55,10 +55,10 @@ Every clip below is the real [example app](example/lib/main.dart) running this p
 ### 1. Fold and unfold
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/fold.webp" width="100%" alt="The same email stays open while an iPhone Duo unfolds from one pane into list and detail">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/fold.webp" width="100%" alt="The same track keeps playing while an iPhone Duo unfolds from one pane into list and player">
 </p>
 
-**What happens:** closed, the email fills the 466 pt outer screen. Open the phone and the list slides back in beside the same email, still scrolled where you left it.<br>
+**What happens:** closed, the player fills the 466 pt outer screen. Open the phone and the list slides back in beside the same track, still playing from the same second.<br>
 **Why:** Apple treats continuity across a fold as a requirement. People fold in the middle of reading and expect to land exactly where they were. Nothing here rebuilds from scratch: the package moves the same widget element to its new place.<br>
 **Code:** `DuoListDetail` inside `DuoNavigationScaffold`, nothing else.
 
@@ -78,7 +78,7 @@ Every clip below is the real [example app](example/lib/main.dart) running this p
   <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/postures.webp" width="100%" alt="An Android foldable bends into tabletop and book posture and the layout follows the hinge">
 </p>
 
-**What happens:** on a table, the video jumps above the fold and the controls drop to the bottom half. Held like a book, the controls slide to the trailing half.<br>
+**What happens:** on a table, the photo jumps above the fold and its details drop to the bottom half. Held like a book, the details slide to the trailing half.<br>
 **Why:** a bent screen has two surfaces. Content that straddles the crease is hard to read and hard to tap, and Apple's guidance says the same.<br>
 **Code:** `DuoSplit` for the two halves, `DuoAvoidFold` for floating controls, `context.duo.posture` to decide.
 
@@ -115,17 +115,17 @@ Every clip below is the real [example app](example/lib/main.dart) running this p
 ### 7. Media fit
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/media.webp" width="100%" alt="The same 16:9 video cycles through contain, cover and smart fit">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/media.webp" width="100%" alt="The same 16:9 photo cycles through contain, cover and smart fit">
 </p>
 
-**What happens:** the same 16:9 video cycles through `contain` (bars), `cover` (cropped) and `smart`, which crops only when it loses less than 15%.<br>
+**What happens:** the same 16:9 photo cycles through `contain` (bars), `cover` (cropped) and `smart`, which crops only when it loses less than 15%.<br>
 **Why:** the inner screen is √2 shaped, so 16:9 video leaves 134 pt of black bars. Sometimes a small crop is the better trade, and sometimes it isn't.<br>
 **Code:** `DuoMedia(aspectRatio: 16 / 9, child: player)`.
 
 ## iPhone Duo, every pose
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/iphone-duo.webp" width="100%" alt="The showcase app on the iPhone Duo closed, open, upright, sideways and in Split View">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/iphone-duo.webp" width="100%" alt="The example app on the iPhone Duo closed, open, upright, sideways and in Split View">
 </p>
 
 | Pose | Window (pt) | What your app gets |
@@ -433,7 +433,7 @@ If the package helps you, a star on the repo is the best way to say thanks.
 
 <div dir="rtl">
 
-**شنو يصير:** وهو مطبوگ الرسالة تملّي الشاشة. افتحه وترجع القائمة يم نفس الرسالة، بنفس المكان اللي وگفت تسحب بي.<br>
+**شنو يصير:** وهو مطبوگ المشغّل يملّي الشاشة. افتحه وترجع القائمة يم نفس الأغنية، وهي بعدها تشتغل من نفس الثانية.<br>
 **ليش:** المستخدم يطبّگ الموبايل وهو يقرا، ويريد يرجع لنفس المكان.<br>
 **الكود:** `DuoListDetail` جوة `DuoNavigationScaffold`، وبس.
 
@@ -461,7 +461,7 @@ If the package helps you, a star on the repo is the best way to say thanks.
 
 <div dir="rtl">
 
-**شنو يصير:** عالميز الفيديو يصعد فوگ خط الطبگة والأزرار تنزل جوته. ومثل الكتاب الأزرار تروح للنص الثاني.<br>
+**شنو يصير:** عالميز الصورة تصعد فوگ خط الطبگة وتفاصيلها تنزل جوته. ومثل الكتاب التفاصيل تروح للنص الثاني.<br>
 **ليش:** الشي اللي فوگ خط الطبگة صعب تقراه وتدوس عليه.<br>
 **الكود:** `DuoSplit` للنصين، و`DuoAvoidFold` للأزرار الطايفة، و`context.duo.posture` حتى تقرر.
 
@@ -507,17 +507,17 @@ If the package helps you, a star on the repo is the best way to say thanks.
 **ليش:** اتجاه القراية يحدد وين اللوحة الأساسية، والمفصل يحدد وين التقسيم. لو خلطتهم المحتوى يوگع فوگ خط الطبگة.<br>
 **الكود:** أوتوماتيك حسب `Directionality` بتطبيقك. وتگدر تغيره بـ `textDirection:` و`railSide:`.
 
-### ٧. الفيديو شلون يلبس الشاشة
+### ٧. الصورة شلون تلبس الشاشة
 
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/media.webp" width="100%" alt="الفيديو شلون يلبس الشاشة">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/media.webp" width="100%" alt="الصورة شلون تلبس الشاشة">
 </p>
 
 <div dir="rtl">
 
-**شنو يصير:** نفس فيديو الـ 16:9 يتنقل بين `contain` (أشرطة سودة)، و`cover` (يگص)، و`smart` اللي ما يگص إلا إذا اللي يروح أقل من 15%.<br>
+**شنو يصير:** نفس صورة الـ 16:9 تتنقل بين `contain` (أشرطة سودة)، و`cover` (يگص)، و`smart` اللي ما يگص إلا إذا اللي يروح أقل من 15%.<br>
 **ليش:** الشاشة الداخلية شكلها √2، ففيديو 16:9 يخلي أشرطة سودة طولها 134 نقطة. مرات گصة صغيرة أحسن، ومرات لا.<br>
 **الكود:** `DuoMedia(aspectRatio: 16 / 9, child: player)`.
 

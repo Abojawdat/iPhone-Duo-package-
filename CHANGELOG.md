@@ -1,3 +1,9 @@
+## 1.0.9
+
+Docs only, no code changes:
+
+* README captions describe the new example in English and Arabic: the track that keeps playing through a fold, the photo that sits above the fold on a table, and the 16:9 photo that cycles through the media fit modes.
+
 ## 1.0.8
 
 Docs only, no code changes:
