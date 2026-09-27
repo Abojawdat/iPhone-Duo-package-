@@ -1,3 +1,10 @@
+## 1.0.5
+
+Example only, no package code changes:
+
+* The example app has its own icon on Android, iOS, macOS and web: an open iPhone Duo with music on one screen and a photo on the other, the fold glowing between them. `example/tool/make_icon.py` regenerates every size.
+* The app is called Duo Playground on every platform.
+
 ## 1.0.4
 
 Example only, no package code changes:

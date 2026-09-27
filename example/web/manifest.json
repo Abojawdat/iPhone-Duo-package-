@@ -1,6 +1,6 @@
 {
-    "name": "duo_dynamic_sizing_example",
-    "short_name": "duo_dynamic_sizing_example",
+    "name": "Duo Playground",
+    "short_name": "Duo Playground",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
