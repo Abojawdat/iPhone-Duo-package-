@@ -1,3 +1,9 @@
+## 1.0.6
+
+Docs only, no code changes:
+
+* The Example tab on pub.dev is now a short guide: the three commands to run the playground, what every control does, what the red and blue areas mean, and four things to try.
+
 ## 1.0.5
 
 Example only, no package code changes:
