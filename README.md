@@ -26,7 +26,7 @@
   <a href="https://github.com/Abojawdat/iPhone-Duo-package-/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Abojawdat/iPhone-Duo-package-/ci.yml?branch=main&style=flat-square&labelColor=0A0B14&label=tests" alt="tests"></a>
   <img src="https://img.shields.io/badge/iPhone_Duo-ready-22D3EE?style=flat-square&labelColor=0A0B14" alt="iPhone Duo ready">
   <img src="https://img.shields.io/badge/Flutter-3.41%2B-A855F7?style=flat-square&labelColor=0A0B14" alt="Flutter 3.41+">
-  <img src="https://img.shields.io/badge/native_code-none-8B7CFF?style=flat-square&labelColor=0A0B14" alt="no native code">
+  <img src="https://img.shields.io/badge/hinge-live-8B7CFF?style=flat-square&labelColor=0A0B14" alt="live hinge data">
   <img src="https://img.shields.io/badge/RTL-ready-34D399?style=flat-square&labelColor=0A0B14" alt="RTL ready">
   <a href="https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-9AA0B8?style=flat-square&labelColor=0A0B14" alt="MIT license"></a>
 </p>
@@ -34,13 +34,13 @@
 <p align="center">
   <b>One <code>context.duo</code> that knows if the phone is folded, open, sideways or sharing the screen.</b><br>
   Widgets that lay out, navigate and keep state the way iOS 27 does on Apple's first foldable.<br>
-  Pure Dart. Works today on iOS, Android, web and desktop, in English, Arabic and every other language.
+  Live hinge angle, posture and fold on iOS and Android. Works on iOS, Android, web and desktop, in English, Arabic and every other language.
 </p>
 
 <div dir="rtl">
 <p align="center">
   <b>واجهة وحدة <code>context.duo</code> تعرف إذا الموبايل مطبوگ لو مفتوح لو نص مفتوح لو تطبيق ثاني يتگاسم وياك الشاشة.</b><br>
-  مكتوبة بـ Dart بس، وتشتغل هسه على iOS وAndroid والويب والديسكتوب، بالعربي والإنگليزي.
+  تقرا زاوية المفصل والوضعية لايف على iOS وAndroid، وتشتغل على iOS وAndroid والويب والديسكتوب، بالعربي والإنگليزي.
 </p>
 </div>
 
@@ -162,7 +162,7 @@ Every clip below is the real [example app](example/lib/main.dart) running this p
   <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/everywhere.webp" width="100%" alt="The same app on an iPhone, an Android foldable in book and tabletop posture, and an iPad">
 </p>
 
-On Android foldables the package reads the real fold from `MediaQuery.displayFeatures`. Phones, tablets, web and desktop get the same widgets, driven by window size.
+On Android foldables the package reads the real fold from `MediaQuery.displayFeatures` and the live hinge angle from the hinge sensor. Phones, tablets, web and desktop get the same widgets, driven by window size.
 
 ## Install
 
@@ -170,7 +170,7 @@ On Android foldables the package reads the real fold from `MediaQuery.displayFea
 flutter pub add duo_dynamic_sizing
 ```
 
-Needs Flutter 3.41+ (Dart 3.11+). There's no setup, no platform code and no permissions.
+Needs Flutter 3.41+ (Dart 3.11+) and iOS 15+. No permissions. For live hinge data, wrap your app once in `DuoHardwareScope` (see [Live hinge data](#live-hinge-data)); everything else works without it.
 
 ## Minimal example
 
@@ -180,7 +180,8 @@ A complete app in about 40 lines: a mail list that becomes list + detail when th
 import 'package:duo_dynamic_sizing/duo_dynamic_sizing.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(const MaterialApp(home: Inbox()));
+void main() =>
+    runApp(const DuoHardwareScope(child: MaterialApp(home: Inbox())));
 
 class Inbox extends StatefulWidget {
   const Inbox({super.key});
@@ -250,11 +251,11 @@ duo.gridColumns(160); // even across the fold
 The short version is below. The full reasoning, with the alternatives we rejected, is in [DESIGN.md](https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/DESIGN.md) ([العربية](https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/DESIGN.ar.md)).
 
 - **Sizes never scale.** Both Duo screens have the same physical point size, about 153 points per inch. Width-scaled 16 pt text would jump to 33 pt when you unfold, so layouts gain panes, not bigger widgets.
-- **Everything comes from `MediaQuery`.** That makes it reactive, testable and simulator-friendly, and it only rebuilds when the window really changes.
-- **Pure Dart.** It works today on every Flutter version from 3.41 and every platform, with no Xcode 27.1 or pods required.
+- **Everything comes from `MediaQuery` and the hinge.** That makes it reactive, testable and simulator-friendly, and it only rebuilds when the window or the posture really changes, never on every degree of the angle.
+- **Native code only where the data lives.** A small Swift file reads Apple's hinge, fold and camera APIs, looked up at runtime so it builds on any Xcode, and a small Java file reads Android's hinge sensor. Web and desktop stay pure Dart.
 - **The iPhone Duo is detected by its exact screen sizes** at 3x on iOS, so iPads, Android phones and desktop windows are never mistaken for it.
 - **State survives every fold** because the package moves widgets instead of rebuilding them.
-- **Tested hard:** 97 unit, widget, edge-case and golden tests, plus 9 integration tests on the real macOS app.
+- **Tested hard:** 141 unit, widget, edge-case and golden tests, plus integration tests on macOS, the iOS simulator and a Pixel Fold emulator, including a live fold from flat to shut and back.
 
 ## What's inside
 
@@ -267,8 +268,10 @@ The short version is below. The full reasoning, with the alternatives we rejecte
 | `DuoNavigationScaffold` | Bottom bar or side rail, placed where iOS 27 puts its vertical bars. `railSide` picks the side for LTR and RTL apps. |
 | `DuoAvoidFold` | Keeps controls off a half-open fold: trailing half in book posture, bottom half on a table. |
 | `DuoMedia` | Fits 16:9 video to the √2 screen, cropping only when little is lost. |
-| `DuoSimulator` + `DuoPose` | Every iPhone Duo pose, Android folds, iPhone and iPad, on any device and in widget tests. |
-| `DuoDebugOverlay` | Live readout of mode, size, safe area and fold. |
+| `DuoHardwareScope` + `DuoHardware` | Live hinge angle, posture, the 40 pt fold and camera regions, size classes and the vertical bar edge, from iOS 27.1 and Android. |
+| `DuoGlass` | Real Liquid Glass on iOS 26+, a matching blur elsewhere. `DuoNavigationScaffold(glass: true)` puts the rail on it. |
+| `DuoSimulator` + `DuoPose` | Every iPhone Duo pose, half open too, Android folds, iPhone and iPad, on any device and in widget tests. |
+| `DuoDebugOverlay` | Live readout of mode, size, safe area, fold, posture and angle. |
 
 ## `context.duo`
 
@@ -280,12 +283,57 @@ The short version is below. The full reasoning, with the alternatives we rejecte
 | `isExpanded`, `columns` | `bool`, `int` | Room for two panes (600 × 480 and up). Drive layout off these. |
 | `fold`, `foldDirection` | `Rect?`, `Axis?` | Where the fold runs, in window coordinates. |
 | `isSeparating`, `posture` | `bool`, `DuoPosture` | Half-open fold or hinge: `flat`, `book`, `tabletop`, `closed`. |
+| `hardware` | `DuoHardware` | Hinge status, angle, fold and camera regions, size classes, bar edge. Needs `DuoHardwareScope`. |
+| `cameras`, `cameraInsets` | `List<Rect>`, `EdgeInsets` | Cameras in use, and the padding that keeps content clear of them. |
 | `safe`, `symmetricSafe` | `EdgeInsets` | Per-side insets, or the mirrored maximum for centred content. |
 | `margin` | `double` | 16 on compact widths, 24 otherwise (Material 3). |
 | `prefersRail` | `bool` | Side rail instead of a bottom bar. |
 | `gridColumns(minWidth)` | `int` | Columns that fit, kept even across a vertical fold. |
 
 Change the thresholds for a subtree with `DuoScope(expandedWidth: 700, child: ...)`.
+
+<a name="live-hinge-data"></a>
+
+## Live hinge data
+
+Wrap the app once, above `MaterialApp`:
+
+```dart
+void main() => runApp(const DuoHardwareScope(child: MyApp()));
+```
+
+From then on `context.duo` knows the real posture, and the fold is Apple's own 40 pt region while the phone is half open. Your layouts don't change: `DuoSplit` keeps both panes off the fold, `DuoAvoidFold` moves controls to one half, and the rail sits on the side iOS reports for its vertical bar.
+
+```dart
+final duo = context.duo;
+duo.posture;         // DuoPosture.book, from the hinge
+duo.fold;            // Rect(455.5, 0, 40, 669) while half open
+duo.cameraInsets;    // padding that clears the inner camera while it's in use
+
+DuoHardware.angleOf(context); // live angle, rebuilds only this widget
+DuoHardware.angleStream.listen((degrees) {}); // for per-frame effects
+```
+
+Layout readers rebuild on posture, fold, camera and size class changes, never on every degree of the angle. That follows Apple's guidance: drive layout from posture, and effects from the angle.
+
+| Platform | What you get |
+| --- | --- |
+| iOS 27.1 (iPhone Duo) | Angle, hinge status, fold and camera regions, size classes, vertical bar edge |
+| iOS before 27.1 | Size classes. Everything else stays empty, and nothing breaks |
+| Android foldables | Angle and status from the hinge sensor. Posture and fold come from Android itself |
+| Web, desktop, other phones | Nothing, `DuoHardware.none` |
+
+**Dialogs and sheets.** Flutter squeezes every dialog, bottom sheet and picker onto one side of a half-open fold it finds in `MediaQuery.displayFeatures`. So by default the scope doesn't write there, and your dialogs keep their full width. Opt in with `bridge`:
+
+| `bridge` | Effect |
+| --- | --- |
+| `DuoBridge.none` (default) | Nothing published. Framework behaviour unchanged. |
+| `DuoBridge.cameras` | Cameras in use only, as cutouts. Surfaces keep their width. |
+| `DuoBridge.all` | The fold too, only while half open. Dialogs and sheets move to one half. |
+
+The fold is never published while the phone is flat or closed, or when it has no width, and the scope steps aside if Flutter starts reporting folds on iOS itself ([flutter#192515](https://github.com/flutter/flutter/issues/192515)).
+
+In tests, pin the data instead of reading a device: `DuoHardwareScope(hardware: DuoHardware(...), child: ...)`, or give a `DuoPose` a `hardware`. If something looks off on a real device, `DuoHardware.describeNative()` returns what the running OS actually exposes.
 
 ## Widgets
 
@@ -324,6 +372,13 @@ Stack(children: [
 DuoMedia(aspectRatio: 16 / 9, child: player) // smart: crops up to 15%, else letterboxes
 ```
 
+**Liquid Glass:**
+
+```dart
+DuoNavigationScaffold(glass: true, ...) // the rail on real Liquid Glass on iOS 26+
+DuoGlass(child: toolbar)                // any capsule, follows your app's light or dark theme
+```
+
 ## RTL and LTR
 
 Everything follows your app's `Directionality`, so Arabic, Hebrew and Persian apps get mirrored layouts with no extra code. When panes swap sides, the split still lands exactly on the physical fold.
@@ -338,7 +393,7 @@ You choose where the navigation rail goes with `railSide`:
 
 | `railSide` | iPhone Duo | Everywhere else |
 | --- | --- | --- |
-| `auto` (default) | Right, next to the Dynamic Island, like iOS 27's vertical bars in every language | Start side: left in LTR, right in RTL |
+| `auto` (default) | The side iOS reports for its vertical bar, else right next to the Dynamic Island, in every language | Start side: left in LTR, right in RTL |
 | `start` | Start side | Start side |
 | `end` | End side | End side |
 | `left`, `right` | Always that side | Always that side |
@@ -364,7 +419,7 @@ testWidgets('unfolding keeps the draft', (tester) async {
 });
 ```
 
-Built-in poses: `closedPortrait`, `closedLandscape`, `openLandscape`, `openPortrait`, `splitLeft`, `splitRight`, `foldableBook`, `foldableTabletop`, `iPhone`, `iPad`. You can also build your own with `DuoPose(...)`.
+Built-in poses: `closedPortrait`, `closedLandscape`, `openLandscape`, `openPortrait`, `splitLeft`, `splitRight`, `halfOpenBook`, `halfOpenTabletop`, `foldableBook`, `foldableTabletop`, `iPhone`, `iPad`. The two half-open Duo poses carry the hinge data iOS reports, 40 pt fold included. You can also build your own with `DuoPose(...)`.
 
 To see the live values while you develop:
 
@@ -377,7 +432,8 @@ MaterialApp(
 
 ## Shipping on the iPhone Duo
 
-- **Build with the iOS 27.1 SDK (Xcode 27.1).** Apps built with older SDKs run letterboxed on the inner screen.
+- **Build with the iOS 27.1 SDK (Xcode 27.1).** Apps built with older SDKs run letterboxed on the inner screen, and the fold and camera regions only exist from 27.1. The package itself builds on any Xcode.
+- **Use iOS 15 or newer as the deployment target.** Xcode 27.1 rejects anything lower, including in pods. If Flutter's own pods still say 13.0, set `IPHONEOS_DEPLOYMENT_TARGET = '15.0'` for every target in your Podfile's `post_install`.
 - **Adopt the UIScene lifecycle.** Xcode 27 builds crash at launch without it. Flutter 3.41+ migrates an unmodified `AppDelegate` for you; see Flutter's [UIScene guide](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate).
 - **Don't count on orientation locks.** The inner screen ignores `SystemChrome.setPreferredOrientations`.
 - **Never cache sizes in `State`.** Read `MediaQuery` or `context.duo` in `build`.
@@ -398,10 +454,11 @@ Apple announced it on 9 September 2026, and it ships on 23 October 2026 with iOS
 
 ## Limitations
 
-- **No hinge angle or half-open posture on iOS yet.** Flutter's iOS engine doesn't forward the iPhone Duo hinge to Dart ([flutter#192515](https://github.com/flutter/flutter/issues/192515)). Until it does, `posture` on the Duo is `closed` or `unknown`, and the fold is the known physical centre line. When the engine starts reporting it, this package picks it up automatically through `displayFeatures`. For live hinge angles today, pair it with a native plugin such as [`foldable`](https://pub.dev/packages/foldable).
+- **Live hinge data needs `DuoHardwareScope` and, on iOS, the 27.1 runtime.** Without it, `posture` on the Duo is `closed` or `unknown` and the fold is the known physical centre line. The iOS side is written against Apple's iOS 27.1 headers and looks every API up at runtime, so a missing or changed API turns the feature off instead of crashing. It's tested on iOS 26 simulators, macOS and a Pixel Fold emulator; if a real Duo reports something odd, `DuoHardware.describeNative()` shows what the OS exposes.
+- **On Android the angle can start empty.** After the phone wakes, Android may have no reading until the hinge first moves. Posture still comes from Android's own fold data.
 - **Simulator safe areas are estimates.** Apple hasn't published the Duo's inset values, so `DuoPose` uses 59 pt and 21 pt. Real devices always use the live values.
 - **The Split View side is inferred** from which side has the Dynamic Island inset.
-- **Native vertical bars have no Flutter equivalent.** `DuoNavigationScaffold` mirrors their placement with Material widgets.
+- **UIKit's own toolbars aren't bridged.** `DuoNavigationScaffold` places a Material rail on the side iOS reports for its vertical bar, and `glass: true` draws it on real Liquid Glass.
 
 ## Example
 
@@ -414,7 +471,7 @@ flutter run                     # the playground, on any phone, emulator or desk
 flutter run -t lib/minimal.dart # the 40-line app above
 ```
 
-The playground is a music player, a photo gallery and a live readout of `context.duo`. A help sheet opens on start and explains everything. Pick a pose under the phone to simulate it, press **Tour** to watch it fold by itself, or pick **real device** to use your actual screen (a Pixel Fold emulator reports a real hinge). Red areas are what the system covers, like the Duo's Dynamic Island strip; the blue line is the fold.
+The playground is a music player, a photo gallery and a live readout of `context.duo`, including the hinge status, angle, cameras and bar edge. A help sheet opens on start and explains everything. Pick a pose under the phone to simulate it, press **Tour** to watch it fold by itself, or pick **real device** to use your actual screen (a Pixel Fold emulator reports a real hinge). Red areas are what the system covers, like the Duo's Dynamic Island strip; the blue line is the fold.
 
 ## Contributing
 
@@ -588,7 +645,7 @@ flutter run
 
 <div dir="rtl">
 
-على موبايلات Android اللي تنطبگ، الحزمة تقرا خط الطبگة الحقيقي من `MediaQuery.displayFeatures`. والموبايلات والتابلتات والويب والديسكتوب ياخذون نفس عناصر الواجهة، حسب حجم الشباك.
+على موبايلات Android اللي تنطبگ، الحزمة تقرا خط الطبگة الحقيقي من `MediaQuery.displayFeatures`، وزاوية المفصل من حساس المفصل. والموبايلات والتابلتات والويب والديسكتوب ياخذون نفس عناصر الواجهة، حسب حجم الشباك.
 
 ## التنصيب
 
@@ -600,7 +657,7 @@ flutter pub add duo_dynamic_sizing
 
 <div dir="rtl">
 
-تحتاج Flutter 3.41 أو أحدث (Dart 3.11 أو أحدث). لا إعدادات، ولا كود خاص بالمنصات، ولا صلاحيات.
+تحتاج Flutter 3.41 أو أحدث (Dart 3.11 أو أحدث) وiOS 15 أو أحدث، وبلا صلاحيات. وحتى تاخذ بيانات المفصل لايف، لف تطبيقك مرة وحدة بـ `DuoHardwareScope`. باقي الأشياء تشتغل بدونه.
 
 ## مثال سهل
 
@@ -612,7 +669,8 @@ flutter pub add duo_dynamic_sizing
 import 'package:duo_dynamic_sizing/duo_dynamic_sizing.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(const MaterialApp(home: Inbox()));
+void main() =>
+    runApp(const DuoHardwareScope(child: MaterialApp(home: Inbox())));
 
 class Inbox extends StatefulWidget {
   const Inbox({super.key});
@@ -688,11 +746,11 @@ duo.gridColumns(160); // عدد زوجي من الأعمدة حوالي خط ا�
 هاي النسخة المختصرة. التفاصيل كلها، وشنو ذبينا وليش، موجودة بـ [DESIGN.ar.md](https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/DESIGN.ar.md) ([English](https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/DESIGN.md)).
 
 - **الأحجام أبد ما تكبر.** الشاشتين إلهن نفس كثافة النقطة، فالتخطيط ياخذ لوحات زيادة مو عناصر أكبر.
-- **كلشي يجي من `MediaQuery`،** فما ينبني من جديد إلا لمن يتغير الشباك.
-- **Dart بس،** على كل المنصات من Flutter 3.41 وطالع.
+- **كلشي يجي من `MediaQuery` ومن المفصل،** فما ينبني من جديد إلا لمن يتغير الشباك أو الوضعية، مو ويه كل درجة من الزاوية.
+- **كود أصلي بس وين لازم:** ملف Swift صغير يقرا مفصل Apple، وملف Java يقرا حساس Android، والويب والديسكتوب Dart بس.
 - **نعرف الـ iPhone Duo من قياسات شاشته بالضبط** على iOS، فما يتلخبط ويا iPad أو Android.
 - **ماكو شي يضيع لمن تطبّگ** لأن الحزمة تنقل عناصر الواجهة بدل ما تبنيها من جديد.
-- **مجربة زين:** 97 اختبار و9 اختبارات تكامل.
+- **مجربة زين:** 141 اختبار، واختبارات تكامل على macOS ومحاكي iOS ومحاكي Pixel Fold، وبيها طبگة لايف من مفتوح لمسكّر.
 
 ## شنو بالحزمة
 
@@ -705,12 +763,30 @@ duo.gridColumns(160); // عدد زوجي من الأعمدة حوالي خط ا�
 | `DuoNavigationScaffold` | شريط التنقل الجوة أو الشريط الجانبي، وين ما يحطه iOS 27. |
 | `DuoAvoidFold` | يبعّد الأزرار عن خط الطبگة. |
 | `DuoMedia` | يلبّس فيديو 16:9 عالشاشة بأقل گص. |
+| `DuoHardwareScope` + `DuoHardware` | زاوية المفصل والوضعية وخط الطبگة (40 نقطة) والكاميرات، من iOS 27.1 وAndroid. |
+| `DuoGlass` | Liquid Glass حقيقي على iOS 26 وأحدث، وتمويه يشبهه بباقي الأجهزة. |
 | `DuoSimulator` + `DuoPose` | كل الوضعيات على أي جهاز وبالاختبارات. |
 | `DuoDebugOverlay` | يراويك الوضع والحجم وخط الطبگة لايف. |
 
 ## `context.duo`
 
 جدول الخصائص كامل بـ [القسم الإنگليزي](#contextduo). وإذا تريد تغير الحدود لجزء من الشجرة استخدم `DuoScope(expandedWidth: 700, child: ...)`.
+
+## بيانات المفصل لايف
+
+لف التطبيق مرة وحدة فوگ `MaterialApp`، ومن هناك `context.duo` يعرف الوضعية الحقيقية، وخط الطبگة يصير المنطقة اللي يحددها iOS (40 نقطة) لمن يكون نص مفتوح:
+
+</div>
+
+```dart
+void main() => runApp(const DuoHardwareScope(child: MyApp()));
+
+DuoHardware.angleOf(context); // الزاوية لايف
+```
+
+<div dir="rtl">
+
+افتراضياً ما نكتب بـ `displayFeatures`، حتى تبقى الحوارات والـ sheets بعرضها الكامل. `bridge: DuoBridge.all` يخليها تروح لنص واحد لمن الموبايل نص مفتوح. الجداول الكاملة بـ [القسم الإنگليزي](#live-hinge-data).
 
 ## عناصر الواجهة
 
@@ -779,7 +855,7 @@ DuoMedia(aspectRatio: 16 / 9, child: player) // smart: يگص لحد 15%، وإ�
 
 | `railSide` | iPhone Duo | باقي الأجهزة |
 | --- | --- | --- |
-| `auto` (الافتراضي) | اليمين يم الجزيرة الديناميكية، مثل أشرطة iOS 27 العمودية بكل اللغات | جهة البداية: اليسار بالإنگليزي، واليمين بالعربي |
+| `auto` (الافتراضي) | الجهة اللي يحطها iOS لشريطه العمودي، وإلا اليمين يم الجزيرة الديناميكية، بكل اللغات | جهة البداية: اليسار بالإنگليزي، واليمين بالعربي |
 | `start` | جهة البداية | جهة البداية |
 | `end` | جهة النهاية | جهة النهاية |
 | `left` و`right` | ديمة هاي الجهة | ديمة هاي الجهة |
@@ -813,7 +889,7 @@ testWidgets('unfolding keeps the draft', (tester) async {
 
 <div dir="rtl">
 
-الوضعيات الحاضرة: `closedPortrait` و`closedLandscape` و`openLandscape` و`openPortrait` و`splitLeft` و`splitRight` و`foldableBook` و`foldableTabletop` و`iPhone` و`iPad`. وتگدر تسوي وضعياتك الخاصة بـ `DuoPose(...)`.
+الوضعيات الحاضرة: `closedPortrait` و`closedLandscape` و`openLandscape` و`openPortrait` و`splitLeft` و`splitRight` و`halfOpenBook` و`halfOpenTabletop` و`foldableBook` و`foldableTabletop` و`iPhone` و`iPad`. وتگدر تسوي وضعياتك الخاصة بـ `DuoPose(...)`.
 
 وحتى تشوف القيم لايف وإنت تطوّر:
 
@@ -831,6 +907,7 @@ MaterialApp(
 ## گبل لا تنزّل تطبيقك على iPhone Duo
 
 - **ابني بـ Xcode 27.1،** لو لا تطبيقك يشتغل بإطار ضيگ على الشاشة الداخلية.
+- **خلّي أقل نسخة iOS 15،** لأن Xcode 27.1 يرفض الأقل.
 - **حوّل لـ UIScene** ([الدليل](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate)).
 - **لا تعتمد على قفل الاتجاه.**
 - **اقرا `context.duo` جوة `build`** ولا تخزن الأحجام.
@@ -850,10 +927,11 @@ MaterialApp(
 
 ## الشغلات اللي بعد ما تصير
 
-- **بعد ماكو زاوية مفصل على iOS.** Flutter بعده ما يوصلها لـ Dart ([flutter#192515](https://github.com/flutter/flutter/issues/192515))، فـ `posture` يا `closed` يا `unknown`. الحزمة راح تلگفها أوتوماتيك أول ما توصل. وإذا تريد الزاوية لايف هسه استخدم [`foldable`](https://pub.dev/packages/foldable).
+- **بيانات المفصل تحتاج `DuoHardwareScope`،** وعلى iOS تحتاج نظام 27.1. وبدونها `posture` يا `closed` يا `unknown`.
+- **على Android الزاوية ممكن تبدي فاضية** لحد ما يتحرك المفصل أول مرة بعد ما يصحى الموبايل.
 - **المناطق الآمنة بالمحاكاة تقريبية** (59 و21 نقطة). الأجهزة الحقيقية تستخدم القيم الحقيقية.
 - **جهة التطبيق بالـ Split View نستنتجها** من الصوب اللي بي حافة الجزيرة الديناميكية.
-- **ماكو بـ Flutter مقابل للأشرطة العمودية الأصلية.** `DuoNavigationScaffold` يقلّد أماكنها بعناصر Material.
+- **أشرطة UIKit نفسها ما منقولة.** الشريط الجانبي ينحط بالجهة اللي يگولها iOS، و`glass: true` يرسمه على Liquid Glass حقيقي.
 
 ## التطبيق التجريبي
 

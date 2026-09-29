@@ -2,7 +2,8 @@
 import 'package:duo_dynamic_sizing/duo_dynamic_sizing.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(const MaterialApp(home: Inbox()));
+void main() =>
+    runApp(const DuoHardwareScope(child: MaterialApp(home: Inbox())));
 
 class Inbox extends StatefulWidget {
   const Inbox({super.key});

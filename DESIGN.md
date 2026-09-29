@@ -27,19 +27,21 @@ A point is the same size on both screens, so the inner screen is simply more spa
 
 **What we rejected:** screenutil-style width scaling. The very first version of this project (0.0.1) did exactly that, and the research on the real device numbers is what killed it.
 
-## 2. Everything comes from `MediaQuery`
+## 2. Everything comes from `MediaQuery` and the hinge
 
-**Decision:** `context.duo` is built only from `MediaQuery.sizeOf`, `paddingOf`, `displayFeaturesOf` and `devicePixelRatioOf`.
+**Decision:** `context.duo` is built from `MediaQuery.sizeOf`, `paddingOf`, `displayFeaturesOf` and `devicePixelRatioOf`, plus the hinge data of the nearest `DuoHardwareScope`.
 
 **Why:**
 - **The window is what your app actually has.** In Split View, Stage Manager or a desktop window, the window is smaller than the device, and layout has to follow the window.
 - **Rebuilds are precise.** Those four aspects rebuild a widget on fold, rotation and Split View, but never on keyboard or text-size changes. A test proves it.
-- **It can be simulated.** Because the whole package reads `MediaQuery`, `DuoSimulator` can fake any device, in tests and in a running app.
+- **It can be simulated.** Because the whole package reads `MediaQuery` and the scope, `DuoSimulator` can fake any device, hinge included, in tests and in a running app.
+- **The hinge rebuilds layout only when layout changes.** The scope is an `InheritedModel` with two aspects. `context.duo` and `DuoHardware.of` rebuild on posture, fold, camera, size class and bar edge changes; only `DuoHardware.angleOf` readers rebuild on every angle tick. Apple's own guidance is to drive layout from posture and effects from the angle.
 
 **What we rejected:**
 - **`View.of(context).display`:** it isn't reactive, and Apple warns that the main screen is ambiguous on a two-screen device.
 - **Device model strings:** they need native code and can't tell you about Split View.
 - **Orientation checks:** the Duo's inner screen ignores orientation locks.
+- **Rebuilding on every angle tick:** the angle updates many times a second while the hinge moves, and relaying out the whole app for each degree would drop frames for no visible change.
 
 ## 3. The Duo is recognized by its exact sizes
 
@@ -54,6 +56,8 @@ A point is the same size on both screens, so the inner screen is simply more spa
 | Any narrower slice of the inner screen | `splitView` |
 
 **Why:** no other iPhone has these sizes at 3x. iPads are 2x, and Android and desktop never report iOS. An iPad Stage Manager window of 466 × 678 is therefore never mistaken for a Duo.
+
+**Or by its hinge.** When a `DuoHardwareScope` reports a hinge on iOS, the window counts as the Duo even when it matches none of these sizes, for example an app built against an older SDK that iOS letterboxes. The hinge status then picks the mode, a window under 600 × 480 is Split View, and the fold falls back to the window's centre when iOS reports no region.
 
 **What we rejected:**
 - **Aspect-ratio guesses:** Android foldables have similar ratios, which would cause false positives.
@@ -88,7 +92,8 @@ A point is the same size on both screens, so the inner screen is simply more spa
 ## 6. Split at the fold, mirror by direction
 
 **Decision:**
-- **Where the split goes:** `DuoSplit` splits exactly on the fold. That's 475.5 pt on the Duo's inner screen, or the hinge Android reports.
+- **Where the split goes:** `DuoSplit` splits exactly on the fold. That's 475.5 pt on the Duo's inner screen, Apple's 40 pt fold region while the Duo is half open, or the hinge Android reports.
+- **A fold hugging an edge is ignored:** in Split View the 40 pt region reaches 20 pt into the window beside it. Splitting there would leave a second pane 0 pt wide, so a fold that leaves less than an eighth of the box on either side doesn't split it.
 - **Offset boxes:** it measures its own position after each frame, so it still lines up when it sits under an app bar or beside a rail.
 - **RTL:** in right-to-left apps the panes swap sides, but the split never moves.
 
@@ -97,11 +102,12 @@ A point is the same size on both screens, so the inner screen is simply more spa
 **What we rejected:**
 - **Half of the local box:** it misses the fold whenever the box is offset.
 - **Mirroring the geometry in RTL:** it moves the split off the fold.
+- **Splitting wherever a fold touches the box:** it gave Split View apps a 0 pt pane. The edge-case tests caught it.
 
 ## 7. Navigation goes where iOS 27 puts it
 
 **Decision:**
-- **The Duo:** the rail sits on the physical right, next to the Dynamic Island, in every language, because Apple aligns vertical bars with the hardware.
+- **The Duo:** the rail sits on the side iOS reports for its vertical bar. Until the hinge scope reports one, that's the physical right, next to the Dynamic Island, in every language, because Apple aligns vertical bars with the hardware.
 - **Split View:** the left-hand app gets its rail on the left edge.
 - **Open upright:** this is the only pose with a bottom bar.
 - **Other devices:** Material 3 rules apply (a rail from 600 pt, start side).
@@ -112,6 +118,7 @@ A point is the same size on both screens, so the inner screen is simply more spa
 - **Scrolling:** the rail scrolls when items don't fit. Seven tabs used to overflow the 386 pt of height on the closed-sideways Duo.
 - **Long labels** are shortened with an ellipsis.
 - **Width:** the rail never takes more than 30% of the window. It keeps its natural 80 pt width by using `IntrinsicWidth` inside that cap. The golden tests caught the first version stretching the rail to 140 pt.
+- **Glass:** `glass: true` draws the rail on real `UIGlassEffect` on iOS 26+, and on a blur with a 1 px light edge elsewhere. It follows the app's theme, not the system's: a dark app on a light phone first got light-gray glass, which the iPad simulator screenshots caught.
 
 ## 8. Smart media fit at 15%
 
@@ -129,18 +136,39 @@ Photos and most social video fill the screen; cinematic video keeps its edges.
 
 **What we rejected:** always cropping, which cuts subtitles and faces, and always letterboxing, which wastes a fifth of a $1,999 screen.
 
-## 9. Pure Dart, no native code
+## 9. Native code only where the data lives
 
-**Decision:** the package has no platform channels, no iOS or Android code and no pods.
+**Decision:** a small Swift file on iOS and a small Java file on Android feed `DuoHardwareScope`. Web and desktop stay pure Dart, declared as Dart-only plugin platforms so pub.dev still lists all six.
 
 **Why:**
-- **It works today** with any Flutter from 3.41, any Xcode and any platform, including web and desktop.
-- **iOS doesn't pass the hinge to Flutter yet** ([flutter#192515](https://github.com/flutter/flutter/issues/192515)). When it does, `displayFeatures` will carry it and this package picks it up with no change.
-- **Apple itself says hinge data is for effects,** not layout. Layout needs the window, and the window is already in Dart.
+- **The hinge only exists natively.** Flutter's iOS engine doesn't forward it ([flutter#192515](https://github.com/flutter/flutter/issues/192515)), and Android passes the fold but not the angle. Without native code, posture on the Duo can only ever be `closed` or `unknown`.
+- **It builds on any Xcode.** Every iOS 27.1 type is looked up at runtime and never named in Swift. A missing or reshaped API turns the feature off instead of crashing, and `DuoHardware.describeNative()` shows what the running OS really exposes.
+- **Regions are read during layout.** UIKit has no notification for reserved regions, but it reruns a view's layout when a region read during layout changes. So a clear probe view over the Flutter view reads them in `layoutSubviews`.
+- **Java on Android** builds the same on AGP 8 and AGP 9, which set up Kotlin differently.
 
-**What we rejected:** writing a native plugin. It would need Xcode 27.1, work only on iOS, and carry native maintenance. Packages such as [`foldable`](https://pub.dev/packages/foldable) already cover live hinge angles, and they combine well with this one.
+**What we rejected:**
+- **Staying pure Dart:** no posture, fold width or cameras on the Duo until the engine catches up.
+- **A companion package:** two installs and two releases for one feature.
+- **Wrapping another hinge plugin:** its release schedule and iOS-only scope would become ours.
+- **Typed Swift against the 27.1 SDK:** it would force Xcode 27.1 on every app that depends on this package.
 
-## 10. Never crash on bad input
+## 10. The fold splits only while half open
+
+**Decision:** Apple's fold region separates content only while the hinge reads `partiallyOpen`. Flat, it's a zero-width line at its centre. Closed, there's no fold, because the view is on the cover screen. A zero-width region never splits.
+
+**Why:** the region's `isActive` flag lags the hinge. Laying the phone flat clears it a few milliseconds later, but folding sets it only about a second later, once the hinge comes to rest, and nothing announces the change. Posture is the reliable signal, so `isActive` is only trusted while the hinge status is still unknown.
+
+**What we rejected:** trusting `isActive` alone. Right after the phone is laid flat it can still read true, which would keep a 40 pt gap in every split on a flat screen.
+
+## 11. Dialogs keep their full width by default
+
+**Decision:** `DuoHardwareScope` doesn't write to `MediaQuery.displayFeatures` unless asked with `bridge: DuoBridge.cameras` or `DuoBridge.all`. Even then the fold is published only while half open, never flat, closed or zero-width, and the scope steps aside if Flutter starts reporting folds on iOS itself.
+
+**Why:** Flutter's `DisplayFeatureSubScreen` puts every dialog, bottom sheet, menu and picker on one side of a half-open fold. On the Duo's 951 pt inner screen that turns a full-width dialog into about 455 pt. Adding a dependency mustn't change every Material surface in an app. Our own widgets don't need the bridge: `DuoSplit` and `DuoAvoidFold` read the hinge fold directly.
+
+**What we rejected:** publishing the fold by default, which silently halves every dialog, and publishing the raw regions, which would split layouts on a flat phone.
+
+## 12. Never crash on bad input
 
 **Decision:** anything a developer can do by accident should degrade gracefully.
 
@@ -152,23 +180,28 @@ Photos and most social video fill the screen; cinematic video keeps its edges.
 | Tri-fold phone with two hinges | Splits at the first fold |
 | Fold outside the window | Ignored |
 | No `MaterialApp` or `Navigator` | `DuoListDetail` still works |
+| Junk or errors from the platform channel | Ignored; the data becomes `DuoHardware.none` |
+| No plugin (widget tests, web, desktop) | `DuoHardware.none`, no errors |
+| iOS before 27.1, or an API that changed shape | Size classes only; the rest stays empty |
+| Android angle before the hinge first moves after a wake | `null`; posture still comes from Android |
+| iOS fold region overlapping a Split View window's edge | One pane |
 
 These all live in [`test/edge_cases_test.dart`](test/edge_cases_test.dart), and every bug fix gets a case there.
 
-## 11. Tested without the hardware
+## 13. Tested without the hardware
 
-**Decision:** everything can be tested before the iPhone Duo ships, and without the Xcode 27.1 simulator.
+**Decision:** everything can be tested before the iPhone Duo ships, and without the Xcode 27.1 simulator. The iOS hinge code is written against the iOS 27.1 API as documented from its SDK headers, and it has run on iOS 26 simulators, where that API is absent. It hasn't run on a Duo yet.
 
 | Test | What it checks |
 | --- | --- |
-| 97 unit, widget, edge-case and golden tests | Every mode, pose, fold, direction and rail placement, plus pixel references for each pose |
-| 9 integration tests on the real macOS app | Taps, folds, Split View, RTL and live window resizing on the real engine |
+| 141 unit, widget, edge-case and golden tests | Every mode, pose, fold, direction and rail placement, pixel references for each pose, hinge data, bridge modes, junk channel data and rebuild isolation |
+| Integration tests on macOS, the iOS simulator and a Pixel Fold emulator | Taps, folds, Split View, RTL, window resizing, the live native side and Liquid Glass on the real engine |
+| A live fold on the Pixel Fold emulator | The hinge sensor driven from flat through half open, rapid flapping and shut, and back, with no errors |
 | Render tool | The animations on this page are real frames of the example app |
 
-## 12. What we deliberately left out
+## 14. What we deliberately left out
 
-- **The hinge angle on iOS.** The Flutter engine doesn't expose it yet.
-- **Native vertical bars** (`toolbarVerticalBehavior`, `ArrangementView`). Flutter has no equivalent, so `DuoNavigationScaffold` mirrors their placement instead.
+- **UIKit's own bars** (`toolbarVerticalBehavior`, `ArrangementView`). The rail goes where iOS reports its vertical bar and can sit on real Liquid Glass, but UIKit bar items aren't bridged.
 - **Automatic scaling.** See decision 1.
 - **Multi-window scene APIs.** They're outside a layout package.
 

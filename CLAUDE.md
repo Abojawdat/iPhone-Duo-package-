@@ -1,6 +1,6 @@
 # duo_dynamic_sizing
 
-Pure-Dart Flutter package: adaptive layout for Apple's foldable iPhone Duo and every other screen. Published as `duo_dynamic_sizing`, repo https://github.com/Abojawdat/iPhone-Duo-package-.
+Flutter package: adaptive layout for Apple's foldable iPhone Duo and every other screen, with live hinge data from small native parts (Swift on iOS, Java on Android). Web and desktop stay pure Dart. Published as `duo_dynamic_sizing`, repo https://github.com/Abojawdat/iPhone-Duo-package-.
 
 ## Working with the maintainer
 
@@ -20,7 +20,11 @@ cd example && flutter run       # showcase with a pose picker
 flutter test --update-goldens test/golden_test.dart   # goldens, macOS only (skipped elsewhere)
 cd example && flutter test integration_test -d macos  # real app, every pose. keep its window visible: macOS throttles hidden windows and the run crawls
 cd example && flutter drive -d macos --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart  # same + screenshots in example/build/screens
+cd example && flutter test integration_test/hardware_test.dart -d <device>   # the live native side on macOS, an iOS simulator or an Android emulator
+cd example && flutter test integration_test/fold_sweep_test.dart -d emulator-5554  # watches a live fold for 30 s; skips without a hinge
 ```
+
+Run integration files one at a time on macOS (launching the next app while the last one quits fails with "Unable to start the app"). The Pixel 9 Pro Fold emulator moves its hinge with `adb -s emulator-5554 emu sensor set hinge-angle0 <degrees>`. Folding it shut puts it to sleep and reopening doesn't wake it, so the next run can't reach the app: wake it with `adb -s emulator-5554 shell input keyevent KEYCODE_WAKEUP` and `adb -s emulator-5554 shell wm dismiss-keyguard`. The iOS hinge APIs need Xcode 27.1 and the Duo simulator; on iOS 26 simulators the plugin runs and reports only size classes.
 
 Regenerate every image and animation in `doc/` (real renders of the example app; Arabic uses macOS's SF Arabic):
 
@@ -32,7 +36,7 @@ Outputs: stills in `doc/*.webp`, `doc/fold.webp` (also a pub.dev screenshot), an
 
 ## Docs (English + Arabic, keep them in sync)
 
-- `README.md` (also the pub.dev page) is bilingual: the navigator buttons (`doc/nav/*.svg`) at the top jump to `#english` and `#arabic`. The Arabic section is a shorter mirror of the English one (reference tables stay English-only), because pub.dev drops 5 points when over 20% of the README's non-space characters are non-ASCII. It's at 18.5%; check with `pana .` (needs `brew install webp`) before adding Arabic text; its prose sits in `<div dir="rtl">` blocks, and code blocks go outside them so they stay LTR. Images use absolute `raw.githubusercontent.com/.../main/...` URLs.
+- `README.md` (also the pub.dev page) is bilingual: the navigator buttons (`doc/nav/*.svg`) at the top jump to `#english` and `#arabic`. The Arabic section is a shorter mirror of the English one (reference tables stay English-only), because pub.dev drops 5 points when over 20% of the README's non-space characters are non-ASCII. It's at about 16.6% since 2.0.0; check with `pana .` (needs `brew install webp`) before adding Arabic text; its prose sits in `<div dir="rtl">` blocks, and code blocks go outside them so they stay LTR. Images use absolute `raw.githubusercontent.com/.../main/...` URLs.
 - `DESIGN.md` / `DESIGN.ar.md`: every design decision, its reason and the rejected alternative.
 - `example/lib/minimal.dart` is the README's minimal example; keep both copies identical.
 - Any behavior change updates both languages in the same commit. Keep the logo geometry in sync with `_LogoPainter` in `example/tool/render.dart`.
@@ -44,18 +48,25 @@ Outputs: stills in `doc/*.webp`, `doc/fold.webp` (also a pub.dev screenshot), an
 - `lib/src/navigation.dart`: `DuoNavigationScaffold` (bar or rail, rail by the island on the Duo).
 - `lib/src/media.dart`: `DuoMedia` (smart fit).
 - `lib/src/tools.dart`: `DuoPose`, `DuoSimulator`, `DuoDebugOverlay`.
+- `lib/src/hardware.dart`: `DuoHardware` (hinge data, parsing, streams, `describeNative`), `DuoHardwareScope` (an `InheritedModel` with layout and angle aspects, plus the `displayFeatures` bridge), and the Dart-only plugin class for web and desktop.
+- `lib/src/glass.dart`: `DuoGlass` (a `UiKitView` of `UIGlassEffect` on iOS, a blur elsewhere).
 - `lib/src/window.dart`: internal, not exported. Lets `DuoSplit` measure against the simulated window.
+- `ios/duo_dynamic_sizing/Sources/duo_dynamic_sizing/`: `DuoDynamicSizingPlugin.swift` (probe view, hinge interaction, reserved regions, size classes, bar edge) and `DuoGlass.swift`. Built by both SwiftPM (`Package.swift`) and CocoaPods (`ios/duo_dynamic_sizing.podspec`).
+- `android/src/main/java/.../DuoDynamicSizingPlugin.java`: the hinge angle sensor.
 
 ## Rules
 
-- **Pure Dart only.** No platform channels or native code; that's the package's reason to exist (`foldable` and `nitro_fold_duo` cover native hinge data).
-- **Everything derives from `MediaQuery`,** so widgets reading `context.duo` rebuild on fold, rotation and split, and on nothing else. Don't read `View` or `Display`.
+- **Native code only for hinge data.** On iOS, never name an iOS 27 type in Swift: look it up at runtime (`NSClassFromString`, `responds(to:)` before every KVC read), so any Xcode builds the package and a missing API turns the feature off instead of crashing. Android stays Java (AGP 8 and 9 set up Kotlin differently). Keep web, macOS, Windows and Linux declared as Dart-only plugin platforms (`dartPluginClass` / `fileName` to `src/hardware.dart`), or pub.dev drops them.
+- **Everything derives from `MediaQuery` and `DuoHardwareScope`,** so widgets reading `context.duo` rebuild on fold, rotation, split and posture, and on nothing else. Layout readers use the layout aspect; only `DuoHardware.angleOf` rebuilds on every angle tick. Don't read `View` or `Display`.
 - **Never scale sizes.** Both Duo screens share point density (about 153 pt/in); layouts gain panes, not bigger widgets.
 - **Layout goes off `isExpanded` (600 × 480), not `mode`.** `mode` describes the device.
 - **State continuity comes from GlobalKey reparenting** (`DuoKeep`, `DuoSplit` panes, `DuoListDetail`, the scaffold body key, the stable Stack in `DuoSimulator`). Any change to tree shape between poses needs a key, or state resets on fold. Tests cover this.
-- **Direction:** panes and `DuoAvoidFold` follow the ambient `Directionality`; `textDirection` overrides it on `DuoSplit` and `DuoListDetail`. In RTL, `splitPanes` swaps which pane sits where but keeps the split on the physical fold. The rail uses `DuoRailSide`, where `auto` means the physical right on the Duo and the start side elsewhere.
-- **Duo detection means exact sizes on iOS at 3x only,** with ±1 pt tolerance, partial windows for older SDKs, and Split View slices. Keep iPads (2x), Android and web from matching.
-- **iOS gives no hinge or posture.** It's `unknown` until flutter/flutter#192515 lands; then `displayFeatures` carries it and the Android path handles it with no changes here.
+- **Direction:** panes and `DuoAvoidFold` follow the ambient `Directionality`; `textDirection` overrides it on `DuoSplit` and `DuoListDetail`. In RTL, `splitPanes` swaps which pane sits where but keeps the split on the physical fold. The rail uses `DuoRailSide`, where `auto` means the side iOS reports for its vertical bar, else the physical right on the Duo, and the start side elsewhere.
+- **Duo detection means exact sizes on iOS at 3x,** with ±1 pt tolerance, partial windows for older SDKs, and Split View slices, or a hinge reported on iOS by `DuoHardwareScope`. Keep iPads (2x), Android and web from matching; an Android hinge sensor never makes a Duo.
+- **Posture, not `isActive`, decides whether the iOS fold separates.** The region's `isActive` lags the hinge by up to a second. Half open, the fold is the 40 pt region; flat, a zero-width line at its centre; closed, none. Zero-width regions never split.
+- **The `displayFeatures` bridge stays off by default.** Publishing a half-open fold makes every Flutter dialog and sheet half width. Our own widgets read the hinge fold directly (`DuoSplit`, `DuoAvoidFold`). The scope stands down if flutter/flutter#192515 lands and the engine reports features itself.
+- **The simulator never shows the real hinge.** `DuoSimulator` always wraps its window in `DuoHardwareScope(hardware: pose.hardware ?? DuoHardware.none)`.
+- **In widget tests, never `await` a platform-channel cancel.** Fake async time never delivers the reply and the test hangs; use `unawaited(sub.cancel())` and pump.
 - **Rail sizing:** keep `IntrinsicWidth` inside the 30% width cap. A bounded `NavigationRail` stretches to fill its width, which silently took 60 pt from the content before the goldens caught it.
 - **Edge cases live in `test/edge_cases_test.dart`:** zero and tiny windows, bad input, unbounded layouts, tri-folds, rapid folding, 3x text, keyboard rebuilds. Add a case there for every bug fix.
 - **The Flutter floor is 3.41 (Dart 3.11).** The local SDK is newer, so don't use APIs added after 3.41.
@@ -65,6 +76,8 @@ Outputs: stills in `doc/*.webp`, `doc/fold.webp` (also a pub.dev screenshot), an
 - Outer: 1398×2034 px, 460 ppi, which is 466×678 pt @3x.
 - Inner: 1878×2670 px, 430 ppi, drawn at 2007×2853 = 669×951 pt @3x.
 - Open pose is 951×669 with the fold at x = 475.5. Split View is 50/50.
+- iOS 27.1 reports the fold (`divisionRegionKind`) as a 40 pt region, x 455.5 to 495.5, still present but inactive while flat; the inner camera (`occlusionRegionKind`) is active only while in use. Region frames include their margins.
+- `UIHingeStatus` is unknown 0, closed 1, partiallyOpen 2, fullyOpen 3. `UIHinge.angle` is radians, 0 shut and π flat. `UIVerticalBarEdge` is unspecified 0, leading 1, trailing 2; the Swift side converts it to the physical side.
 - The vertical Dynamic Island is on the right. `DuoPose` insets (59 / 21) are estimates.
 
 ## Style
