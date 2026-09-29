@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
+
 import 'package:flutter/widgets.dart';
 
 import 'duo_data.dart';
@@ -142,7 +145,8 @@ class _DuoSplitState extends State<DuoSplit> {
   if (!size.isFinite) return null;
   final box = Offset.zero & size;
   final fold = duo.fold?.shift(-origin);
-  final crossesFold = fold != null && fold.overlaps(box);
+  final crossesFold =
+      fold != null && fold.overlaps(box) && _leavesRoom(fold, size, duo);
   final rtl = textDirection == TextDirection.rtl;
   // rtl keeps the split on the fold, only swaps wich pane sits where
   (Rect, Rect) sides(Rect left, Rect right) =>
@@ -200,6 +204,16 @@ class _DuoSplitState extends State<DuoSplit> {
           Rect.fromLTWH(0, 0, size.width, at),
           Rect.fromLTWH(0, at, size.width, size.height - at),
         );
+}
+
+// a fold hugging an edge, like the 40 pt iOS fold beside a Split View
+// window, leaves no real second pane
+bool _leavesRoom(Rect fold, Size size, DuoData duo) {
+  final vertical = duo.foldDirection == Axis.vertical;
+  final length = vertical ? size.width : size.height;
+  final before = vertical ? fold.left : fold.top;
+  final after = length - (vertical ? fold.right : fold.bottom);
+  return math.min(before, after) >= length / 8;
 }
 
 /// List and detail. One pane shows the detail once selected, system back
@@ -270,7 +284,7 @@ class _DuoListDetailState<T> extends State<DuoListDetail<T>> {
 }
 
 /// Keeps child off a seperating fold, trailing half for book and bottom half
-/// for tabletop.
+/// for tabletop. Works with the iOS hinge fold too, bridged or not.
 class DuoAvoidFold extends StatelessWidget {
   const DuoAvoidFold({super.key, required this.child});
 
@@ -284,6 +298,24 @@ class DuoAvoidFold extends StatelessWidget {
     final anchor = duo.foldDirection == Axis.horizontal
         ? Offset(s.width / 2, s.height)
         : Offset(rtl ? 0 : s.width, s.height / 2);
-    return DisplayFeatureSubScreen(anchorPoint: anchor, child: child);
+    final avoid = DisplayFeatureSubScreen(anchorPoint: anchor, child: child);
+    final fold = duo.fold;
+    // DisplayFeatureSubScreen only reads MediaQuery, which lacks an unbridged
+    // hinge fold
+    if (fold == null || !duo.isSeparating || duo.displayFeatures.isNotEmpty) {
+      return avoid;
+    }
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        displayFeatures: [
+          DisplayFeature(
+            bounds: fold,
+            type: DisplayFeatureType.fold,
+            state: DisplayFeatureState.postureHalfOpened,
+          ),
+        ],
+      ),
+      child: avoid,
+    );
   }
 }

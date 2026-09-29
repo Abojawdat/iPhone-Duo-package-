@@ -4,6 +4,8 @@ import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'hardware.dart';
+
 /// Window mode, exact on iPhone Duo and size or fold based elsewhere.
 enum DuoMode {
   closedPortrait,
@@ -15,10 +17,10 @@ enum DuoMode {
   desktop,
 }
 
-/// Fold posture, unknown on iOS untill the engine forwards the hinge.
+/// Fold posture, on iOS it needs a DuoHardwareScope.
 enum DuoPosture { unknown, closed, flat, book, tabletop }
 
-/// Window snapshot from MediaQuery, read it with context.duo.
+/// Window snapshot from MediaQuery and the hinge, read it with context.duo.
 @immutable
 class DuoData {
   const DuoData({
@@ -30,6 +32,7 @@ class DuoData {
     this.isWeb = false,
     this.expandedWidth = 600,
     this.expandedHeight = 480,
+    this.hardware = DuoHardware.none,
   });
 
   factory DuoData.of(BuildContext context) {
@@ -43,6 +46,7 @@ class DuoData {
       isWeb: scope?.platform == null && kIsWeb,
       expandedWidth: scope?.expandedWidth ?? 600,
       expandedHeight: scope?.expandedHeight ?? 480,
+      hardware: DuoHardware.of(context),
     );
   }
 
@@ -62,6 +66,9 @@ class DuoData {
 
   final double expandedWidth;
   final double expandedHeight;
+
+  /// Angle here only refreshes with the layout, use DuoHardware.angleOf.
+  final DuoHardware hardware;
 
   DuoMode get mode => _duoMode ?? _otherMode;
 
@@ -96,17 +103,70 @@ class DuoData {
 
   double get margin => size.width < 600 ? 16 : 24;
 
-  /// Window coords, zero thick when flat. On the Duo inner screen its the
-  /// physical center line since iOS dosent report it.
+  /// Window coords, zero thick when flat. On the Duo its the hinge's region
+  /// (40 pt while half open) or else the physical center line.
   Rect? get fold {
     final feature = _foldFeature;
     if (feature != null) return feature.bounds;
-    const middle = 475.5;
+    final region = _hingeFold;
+    if (region != null) {
+      if (_hingeSeparating) return region.frame;
+      final r = region.frame, c = r.center;
+      return r.height >= r.width
+          ? Rect.fromLTWH(c.dx, r.top, 0, r.height)
+          : Rect.fromLTWH(r.left, c.dy, r.width, 0);
+    }
+    final exact = _duoSize != null;
     return switch (_duoMode) {
-      DuoMode.openLandscape => Rect.fromLTWH(middle, 0, 0, size.height),
-      DuoMode.openPortrait => Rect.fromLTWH(0, middle, size.width, 0),
+      DuoMode.openLandscape => Rect.fromLTWH(
+        exact ? 475.5 : size.width / 2,
+        0,
+        0,
+        size.height,
+      ),
+      DuoMode.openPortrait => Rect.fromLTWH(
+        0,
+        exact ? 475.5 : size.height / 2,
+        size.width,
+        0,
+      ),
       _ => null,
     };
+  }
+
+  /// Active cameras in window coords, from the hinge data.
+  List<Rect> get cameras => [
+    for (final c in hardware.cameras)
+      if (c.isActive && !c.frame.isEmpty) c.frame,
+  ];
+
+  /// Insets clearing each active camera from its nearest window edge.
+  EdgeInsets get cameraInsets {
+    double l = 0, t = 0, r = 0, b = 0;
+    for (final c in cameras) {
+      final gaps = [
+        c.left,
+        c.top,
+        size.width - c.right,
+        size.height - c.bottom,
+      ];
+      switch (gaps.indexOf(gaps.reduce(math.min))) {
+        case 0:
+          l = math.max(l, c.right);
+        case 1:
+          t = math.max(t, c.bottom);
+        case 2:
+          r = math.max(r, size.width - c.left);
+        default:
+          b = math.max(b, size.height - c.top);
+      }
+    }
+    return EdgeInsets.fromLTRB(
+      l.clamp(0, size.width),
+      t.clamp(0, size.height),
+      r.clamp(0, size.width),
+      b.clamp(0, size.height),
+    );
   }
 
   Axis? get foldDirection {
@@ -117,10 +177,10 @@ class DuoData {
 
   bool get isSeparating {
     final f = _foldFeature;
-    return f != null &&
-        (f.type == DisplayFeatureType.hinge ||
-            f.bounds.shortestSide > 0 ||
-            f.state == DisplayFeatureState.postureHalfOpened);
+    if (f == null) return _hingeSeparating;
+    return f.type == DisplayFeatureType.hinge ||
+        f.bounds.shortestSide > 0 ||
+        f.state == DisplayFeatureState.postureHalfOpened;
   }
 
   DuoPosture get posture {
@@ -135,7 +195,16 @@ class DuoData {
         _ => DuoPosture.unknown,
       };
     }
-    return isClosed && isIphoneDuo ? DuoPosture.closed : DuoPosture.unknown;
+    return switch (hardware.status) {
+      DuoHingeStatus.closed => DuoPosture.closed,
+      DuoHingeStatus.fullyOpen => DuoPosture.flat,
+      DuoHingeStatus.partiallyOpen =>
+        foldDirection == Axis.horizontal
+            ? DuoPosture.tabletop
+            : DuoPosture.book,
+      DuoHingeStatus.unknown =>
+        isClosed && isIphoneDuo ? DuoPosture.closed : DuoPosture.unknown,
+    };
   }
 
   bool get prefersRail {
@@ -164,8 +233,41 @@ class DuoData {
     return null;
   }
 
+  // none on the cover screen, where the view has no fold
+  DuoRegion? get _hingeFold => hardware.status == DuoHingeStatus.closed
+      ? null
+      : hardware.folds.firstOrNull;
+
+  // posture decides, isActive lags the hinge by up to a second
+  bool get _hingeSeparating {
+    final r = _hingeFold;
+    if (r == null || r.frame.isEmpty) return false;
+    return switch (hardware.status) {
+      DuoHingeStatus.partiallyOpen => true,
+      DuoHingeStatus.unknown => r.isActive,
+      _ => false,
+    };
+  }
+
+  DuoMode? get _duoMode => _duoSize ?? _duoHinge;
+
+  // the hinge says Duo even when an older SDK letterboxes the window
+  DuoMode? get _duoHinge {
+    if (platform != TargetPlatform.iOS || isWeb || !hardware.hasHinge) {
+      return null;
+    }
+    final landscape = size.width > size.height;
+    return switch (hardware.status) {
+      DuoHingeStatus.closed =>
+        landscape ? DuoMode.closedLandscape : DuoMode.closedPortrait,
+      DuoHingeStatus.unknown => null,
+      _ when !isExpanded => DuoMode.splitView,
+      _ => landscape ? DuoMode.openLandscape : DuoMode.openPortrait,
+    };
+  }
+
   // 3x iOS only so iPads and android dont false positive
-  DuoMode? get _duoMode {
+  DuoMode? get _duoSize {
     if (platform != TargetPlatform.iOS ||
         isWeb ||
         (devicePixelRatio - 3).abs() > .01) {
@@ -220,7 +322,8 @@ class DuoData {
         ' · safe L${n(p.left)} T${n(p.top)} R${n(p.right)} B${n(p.bottom)}'
         ' · $columns col'
         '${f == null ? '' : ' · fold ${foldDirection!.name} @${n(at!)}'}'
-        '${posture == DuoPosture.unknown ? '' : ' · ${posture.name}'}';
+        '${posture == DuoPosture.unknown ? '' : ' · ${posture.name}'}'
+        '${hardware.angle == null ? '' : ' ${hardware.angle!.round()}°'}';
   }
 }
 

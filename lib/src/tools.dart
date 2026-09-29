@@ -3,6 +3,7 @@ import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 import 'package:flutter/widgets.dart';
 
 import 'duo_data.dart';
+import 'hardware.dart';
 import 'window.dart';
 
 /// Pose for DuoSimulator. Duo insets are estimates (59 island strip, 21 home
@@ -16,6 +17,7 @@ class DuoPose {
     this.displayFeatures = const [],
     this.platform = TargetPlatform.iOS,
     this.devicePixelRatio = 3,
+    this.hardware,
   });
 
   final String name;
@@ -24,6 +26,9 @@ class DuoPose {
   final List<DisplayFeature> displayFeatures;
   final TargetPlatform platform;
   final double devicePixelRatio;
+
+  /// Fake hinge data the simulator feeds instead of the device.
+  final DuoHardware? hardware;
 
   static const closedPortrait = DuoPose(
     'closedPortrait',
@@ -59,6 +64,39 @@ class DuoPose {
     'splitRight',
     Size(475.5, 669),
     padding: EdgeInsets.only(right: 59, bottom: 21),
+  );
+
+  /// Inner screen half open like a book, 40 pt fold as iOS reports it.
+  static const halfOpenBook = DuoPose(
+    'halfOpenBook',
+    Size(951, 669),
+    padding: EdgeInsets.only(right: 59, bottom: 21),
+    hardware: DuoHardware(
+      supported: true,
+      hasHinge: true,
+      status: DuoHingeStatus.partiallyOpen,
+      angle: 110,
+      folds: [DuoRegion(Rect.fromLTWH(455.5, 0, 40, 669))],
+      horizontalSizeClass: DuoSizeClass.regular,
+      verticalSizeClass: DuoSizeClass.regular,
+      barEdge: DuoBarEdge.right,
+    ),
+  );
+
+  /// Inner screen half open on a table, fold across the middle.
+  static const halfOpenTabletop = DuoPose(
+    'halfOpenTabletop',
+    Size(669, 951),
+    padding: EdgeInsets.only(top: 59, bottom: 21),
+    hardware: DuoHardware(
+      supported: true,
+      hasHinge: true,
+      status: DuoHingeStatus.partiallyOpen,
+      angle: 110,
+      folds: [DuoRegion(Rect.fromLTWH(0, 455.5, 669, 40))],
+      horizontalSizeClass: DuoSizeClass.regular,
+      verticalSizeClass: DuoSizeClass.regular,
+    ),
   );
 
   static const foldableBook = DuoPose(
@@ -109,6 +147,8 @@ class DuoPose {
     openPortrait,
     splitLeft,
     splitRight,
+    halfOpenBook,
+    halfOpenTabletop,
     foldableBook,
     foldableTabletop,
     iPhone,
@@ -167,16 +207,20 @@ class _DuoSimulatorState extends State<DuoSimulator> {
               expandedWidth: scope?.expandedWidth ?? 600,
               expandedHeight: scope?.expandedHeight ?? 480,
               platform: pose.platform,
-              child: DuoWindow(
-                box: _window,
-                child: Stack(
-                  textDirection: TextDirection.ltr,
-                  fit: StackFit.expand,
-                  children: [
-                    widget.child,
-                    if (widget.showGuides)
-                      const IgnorePointer(child: _Guides()),
-                  ],
+              // the real device never leaks into the fake window
+              child: DuoHardwareScope(
+                hardware: pose.hardware ?? DuoHardware.none,
+                child: DuoWindow(
+                  box: _window,
+                  child: Stack(
+                    textDirection: TextDirection.ltr,
+                    fit: StackFit.expand,
+                    children: [
+                      widget.child,
+                      if (widget.showGuides)
+                        const IgnorePointer(child: _Guides()),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -215,14 +259,21 @@ class _GuidesPainter extends CustomPainter {
         Rect.fromLTWH(0, size.height - p.bottom, size.width, p.bottom),
         tint,
       );
+    for (final c in duo.cameras) {
+      canvas.drawRect(c, tint);
+    }
     final fold = duo.fold;
     if (fold == null) return;
+    const blue = Color(0xCC007AFF);
+    if (!fold.isEmpty) {
+      canvas.drawRect(fold, Paint()..color = blue.withValues(alpha: .25));
+    }
     final vertical = duo.foldDirection == Axis.vertical;
     canvas.drawLine(
       vertical ? fold.topCenter : fold.centerLeft,
       vertical ? fold.bottomCenter : fold.centerRight,
       Paint()
-        ..color = const Color(0xCC007AFF)
+        ..color = blue
         ..strokeWidth = 2,
     );
   }
