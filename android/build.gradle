@@ -1,0 +1,18 @@
+group = "io.github.abojawdat.duo_dynamic_sizing"
+version = "2.0.0"
+
+apply plugin: "com.android.library"
+
+android {
+    namespace = "io.github.abojawdat.duo_dynamic_sizing"
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 21
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}

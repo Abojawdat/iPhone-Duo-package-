@@ -1,10 +1,10 @@
 name: duo_dynamic_sizing
-description: Adaptive layout for the foldable iPhone Duo and any screen. Fold-aware modes, split panes, side navigation, safe areas, media fit and a pose simulator.
+description: Adaptive layout for the foldable iPhone Duo and any screen. Live hinge angle, posture, fold and camera regions, split panes, side navigation and a pose simulator.
 version: 1.0.10
 
 repository: https://github.com/Abojawdat/iPhone-Duo-package-
 issue_tracker: https://github.com/Abojawdat/iPhone-Duo-package-/issues
-topics: [foldable, responsive, adaptive, layout, iphone]
+topics: [foldable, iphone-duo, responsive, adaptive, layout]
 screenshots:
   - description: The package running on every iPhone Duo pose, closed, open and in Split View.
     path: doc/iphone-duo.webp
@@ -27,3 +27,24 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: io.github.abojawdat.duo_dynamic_sizing
+        pluginClass: DuoDynamicSizingPlugin
+      ios:
+        pluginClass: DuoDynamicSizingPlugin
+      macos:
+        dartPluginClass: DuoHardwarePlugin
+        dartFileName: src/hardware.dart
+      windows:
+        dartPluginClass: DuoHardwarePlugin
+        dartFileName: src/hardware.dart
+      linux:
+        dartPluginClass: DuoHardwarePlugin
+        dartFileName: src/hardware.dart
+      web:
+        pluginClass: DuoHardwarePlugin
+        fileName: src/hardware.dart
