@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:duo_dynamic_sizing/duo_dynamic_sizing.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const Playground());
@@ -353,10 +354,13 @@ class _PlaygroundState extends State<Playground>
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: theme(Brightness.dark),
-      home: Builder(key: _home, builder: stage),
+    // the real hinge, used when the pose is 'real device'
+    return DuoHardwareScope(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: theme(Brightness.dark),
+        home: Builder(key: _home, builder: stage),
+      ),
     );
   }
 
@@ -594,6 +598,15 @@ class _PlaygroundState extends State<Playground>
     'iPhone Duo, Split View, right app',
     'This is the right one, next to the island. One pane.',
   ),
+  'halfOpenBook' => (
+    'iPhone Duo, half open',
+    'Inner screen bent like a book. iOS reports a 40 pt fold, panes '
+        'split around it.',
+  ),
+  'halfOpenTabletop' => (
+    'iPhone Duo, tabletop',
+    'Inner screen upright, bent on a table. Top and bottom halves.',
+  ),
   'foldableBook' => (
     'Android foldable, half open',
     'Held like a book with a real hinge. Panes split at it.',
@@ -610,10 +623,15 @@ class _PlaygroundState extends State<Playground>
 const statHelp = {
   'mode': 'What kind of window this is: closed, open, split view, tablet…',
   'posture':
-      'How a foldable is bent. iOS does not report it yet, so it '
-      'stays unknown on the Duo.',
+      'How a foldable is bent: closed, flat, book or tabletop. Comes from '
+      'the hinge on the Duo and from Android on other foldables.',
+  'hinge': 'Hinge status and live angle, 0° shut and 180° flat.',
+  'cameras': 'Cameras in use that content should keep clear of.',
+  'bar': 'The side iOS puts its vertical bar on, where the rail goes.',
   'size': 'Window size in points.',
-  'iPhone Duo': 'True only for the exact Duo sizes on iOS.',
+  'iPhone Duo':
+      'True for the exact Duo sizes on iOS, or when the hinge '
+      'says so.',
   'expanded': 'Room for two panes (at least 600 × 480). Layouts use this.',
   'columns': '1 or 2, from expanded.',
   'rail': 'Side rail instead of a bottom bar.',
@@ -875,7 +893,8 @@ IconData poseIcon(DuoPose? p) => switch (p?.name) {
   'closedLandscape' => Icons.stay_current_landscape,
   'openLandscape' || 'openPortrait' => Icons.menu_book,
   'splitLeft' || 'splitRight' => Icons.vertical_split,
-  'foldableBook' => Icons.auto_stories,
+  'foldableBook' || 'halfOpenBook' => Icons.auto_stories,
+  'halfOpenTabletop' => Icons.laptop_mac,
   'foldableTabletop' => Icons.laptop,
   'iPad' => Icons.tablet_mac,
   _ => Icons.phone_iphone,
@@ -1002,6 +1021,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final c = context.copy;
     return DuoNavigationScaffold(
+      // real Liquid Glass needs iOS, the renders stay plain
+      glass: !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS,
       selectedIndex: tab,
       onDestinationSelected: (i) => setState(() => tab = i),
       appBar: AppBar(
@@ -2001,6 +2022,12 @@ class _Readout extends StatelessWidget {
     final stats = {
       'mode': duo.mode.name,
       'posture': duo.posture.name,
+      'hinge': [
+        duo.hardware.status.name,
+        if (DuoHardware.angleOf(context) case final a?) '${a.round()}°',
+      ].join(' '),
+      'cameras': '${duo.cameras.length}',
+      'bar': duo.hardware.barEdge.name,
       'size': '${n(duo.size.width)}×${n(duo.size.height)}',
       'iPhone Duo': '${duo.isIphoneDuo}',
       'expanded': '${duo.isExpanded}',
@@ -2184,6 +2211,27 @@ class _FoldButtons extends StatelessWidget {
           ),
           icon: const Icon(Icons.chat_bubble_outline),
           label: Text(c.dialog),
+        ),
+        // what the running OS exposes, for bug reports
+        TextButton.icon(
+          onPressed: () async {
+            final text = await DuoHardware.describeNative();
+            if (!context.mounted) return;
+            showDialog<void>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Native API'),
+                content: SingleChildScrollView(
+                  child: SelectableText(
+                    text,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Icons.memory),
+          label: const Text('Native API'),
         ),
       ],
     );

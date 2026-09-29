@@ -35,3 +35,35 @@ jobs:
           echo "::error title=git diff::$(git diff | head -60 | tr '\n' '|')"
           echo "::error title=pub publish --dry-run::$(tail -n 25 "$RUNNER_TEMP/dry.txt" | tr '\n' ' ')"
           exit 1
+
+  native:
+    name: Native build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: android
+            os: ubuntu-latest
+          - target: ios
+            os: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+      - if: matrix.target == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Build the example with the plugin's Swift or Java
+        working-directory: example
+        run: |
+          flutter pub get
+          if [ "${{ matrix.target }}" = android ]; then
+            flutter build apk --debug
+          else
+            flutter build ios --simulator --debug
+          fi

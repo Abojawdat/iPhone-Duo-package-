@@ -6,6 +6,7 @@ import 'dart:ui' as ui;
 
 import 'package:duo_dynamic_sizing/duo_dynamic_sizing.dart';
 import 'package:duo_dynamic_sizing_example/main.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -264,25 +265,29 @@ void main() {
     await shot(tester, '12_help');
   });
 
-  testWidgets('this device: live window resizing on macOS', (tester) async {
-    await launch(tester, const Size(1280, 800));
-    await pose(tester, 'real device');
-    await tab(tester, 'Lab');
+  testWidgets(
+    'this device: live window resizing on macOS',
+    (tester) async {
+      await launch(tester, const Size(1280, 800));
+      await pose(tester, 'real device');
+      await tab(tester, 'Lab');
 
-    final windows = {
-      'desktop': const Size(1280, 800),
-      'closedPortrait': const Size(420, 860),
-      'closedLandscape': const Size(760, 440),
-    };
-    for (final MapEntry(key: mode, value: size) in windows.entries) {
-      await resize(tester, size);
-      expect(find.text(mode), findsWidgets, reason: '$size');
-      await shot(
-        tester,
-        '13_mac_${mode}_${size.width.round()}x${size.height.round()}',
-      );
-    }
-    await resize(tester, const Size(420, 860));
-    expect(find.byType(NavigationBar), findsOneWidget);
-  });
+      final windows = {
+        'desktop': const Size(1280, 800),
+        'closedPortrait': const Size(420, 860),
+        'closedLandscape': const Size(760, 440),
+      };
+      for (final MapEntry(key: mode, value: size) in windows.entries) {
+        await resize(tester, size);
+        expect(find.text(mode), findsWidgets, reason: '$size');
+        await shot(
+          tester,
+          '13_mac_${mode}_${size.width.round()}x${size.height.round()}',
+        );
+      }
+      await resize(tester, const Size(420, 860));
+      expect(find.byType(NavigationBar), findsOneWidget);
+    },
+    skip: defaultTargetPlatform != TargetPlatform.macOS,
+  );
 }
