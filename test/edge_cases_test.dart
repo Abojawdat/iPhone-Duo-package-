@@ -2,6 +2,7 @@ import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:duo_dynamic_sizing/duo_dynamic_sizing.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget sim(DuoPose pose, Widget home, {double textScale = 1}) => DuoSimulator(
@@ -348,6 +349,122 @@ void main() {
         displayFeatures: [fold(420, 700, DisplayFeatureState.unknown)],
       );
       expect([d.posture, d.isSeparating], [DuoPosture.unknown, false]);
+    });
+
+    test('iOS fold hugging a Split View window leaves one pane', () {
+      // the 40 pt region reaches 20 pt into the left app's window
+      final d = DuoData(
+        size: const Size(475.5, 669),
+        platform: TargetPlatform.iOS,
+        hardware: const DuoHardware(
+          hasHinge: true,
+          status: DuoHingeStatus.partiallyOpen,
+          folds: [DuoRegion(Rect.fromLTWH(455.5, 0, 40, 669))],
+        ),
+      );
+      expect(splitPanes(d, d.size, Offset.zero), isNull);
+    });
+
+    test('a hinge at the edge of a big window splits in the middle', () {
+      final d = DuoData(
+        size: const Size(900, 700),
+        platform: TargetPlatform.android,
+        displayFeatures: [fold(890, 700)],
+      );
+      final (a, b) = splitPanes(d, d.size, Offset.zero)!;
+      expect([a.width, b.width], [450, 450]);
+    });
+
+    test('Android cover screen: no fold feature, the hinge says closed', () {
+      final d = DuoData(
+        size: const Size(411, 890),
+        platform: TargetPlatform.android,
+        hardware: const DuoHardware(
+          supported: true,
+          hasHinge: true,
+          status: DuoHingeStatus.closed,
+          angle: 0,
+        ),
+      );
+      expect(d.posture, DuoPosture.closed);
+      expect(d.fold, isNull);
+      expect(d.isIphoneDuo, isFalse);
+    });
+
+    testWidgets('DuoAvoidFold avoids the iOS fold without the bridge', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        sim(
+          DuoPose.halfOpenBook,
+          const DuoAvoidFold(child: SizedBox.expand(key: Key('c'))),
+        ),
+      );
+      final c = find.byKey(const Key('c'));
+      expect(tester.getSize(c), const Size(455.5, 669));
+      // the simulator scales the fake screen, so measure inside it
+      final at = tester
+          .renderObject<RenderBox>(c)
+          .localToGlobal(
+            Offset.zero,
+            ancestor: tester.renderObject(find.byType(DuoAvoidFold)),
+          );
+      expect(at.dx, 495.5);
+    });
+
+    testWidgets(
+      'glass follows the app theme, not the system (iOS)',
+      (tester) async {
+        final messenger = tester.binding.defaultBinaryMessenger;
+        messenger.setMockMethodCallHandler(
+          SystemChannels.platform_views,
+          (_) async => null,
+        );
+        addTearDown(
+          () => messenger.setMockMethodCallHandler(
+            SystemChannels.platform_views,
+            null,
+          ),
+        );
+        for (final app in Brightness.values) {
+          await tester.pumpWidget(
+            MediaQuery(
+              data: const MediaQueryData(platformBrightness: Brightness.light),
+              child: MaterialApp(
+                theme: ThemeData(brightness: app),
+                home: const DuoGlass(child: SizedBox()),
+              ),
+            ),
+          );
+          // MaterialApp animates the theme change
+          await tester.pumpAndSettle();
+          final view = tester.widget<UiKitView>(find.byType(UiKitView));
+          expect((view.creationParams! as Map)['dark'], app == Brightness.dark);
+        }
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+    );
+
+    testWidgets('glass fallback follows the app theme too', (tester) async {
+      Future<Color?> fill(Brightness app) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(brightness: app),
+            home: const DuoGlass(child: SizedBox()),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final box = tester.widget<DecoratedBox>(
+          find.descendant(
+            of: find.byType(DuoGlass),
+            matching: find.byType(DecoratedBox),
+          ),
+        );
+        return (box.decoration as BoxDecoration).color;
+      }
+
+      expect(await fill(Brightness.dark), isNot(await fill(Brightness.light)));
+      expect(find.byType(UiKitView), findsNothing);
     });
   });
 
