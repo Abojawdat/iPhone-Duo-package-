@@ -142,6 +142,16 @@ Every clip below is the real [example app](example/lib/main.dart) running this p
 **Why:** the inner screen is √2 shaped, so 16:9 video leaves 134 pt of black bars. Sometimes a small crop is the better trade, and sometimes it isn't.<br>
 **Code:** `DuoMedia(aspectRatio: 16 / 9, child: player)`.
 
+### 8. Live hinge
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/hinge.webp" width="100%" alt="The iPhone Duo bends like a book, then on a table, while the live hinge angle counts down and the panes move off the fold">
+</p>
+
+**What happens:** the iPhone Duo bends from flat to half open, first like a book, then on a table. The angle counts down live, and the moment iOS reports it half open, the fold becomes Apple's 40 pt region and the panes move off it.<br>
+**Why:** layout follows the posture, and the angle is there for effects. That's Apple's own guidance, so widgets that only lay out never rebuild on every degree.<br>
+**Code:** wrap the app once in `DuoHardwareScope`, and read `DuoHardware.angleOf(context)` for the live angle.
+
 ## iPhone Duo, every pose
 
 <p align="center">
@@ -616,6 +626,20 @@ flutter run
 **شنو يصير:** نفس صورة الـ 16:9 تتنقل بين `contain` (أشرطة سودة)، و`cover` (يگص)، و`smart` اللي ما يگص إلا إذا اللي يروح أقل من 15%.<br>
 **ليش:** الشاشة الداخلية شكلها √2، ففيديو 16:9 يخلي أشرطة سودة طولها 134 نقطة. مرات گصة صغيرة أحسن، ومرات لا.<br>
 **الكود:** `DuoMedia(aspectRatio: 16 / 9, child: player)`.
+
+### ٨. المفصل لايف
+
+</div>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/hinge.webp" width="100%" alt="المفصل لايف">
+</p>
+
+<div dir="rtl">
+
+**شنو يصير:** الـ iPhone Duo يتطبّگ من مفتوح كامل لنص مفتوح، أول مثل الكتاب وبعدين عالميز. الزاوية تنزل لايف، وأول ما iOS يگول نص مفتوح، خط الطبگة يصير منطقة Apple (40 نقطة) واللوحات تبعد عنه.<br>
+**ليش:** التخطيط يمشي ويه الوضعية، والزاوية للمؤثرات، مثل ما توصي Apple.<br>
+**الكود:** لف التطبيق مرة وحدة بـ `DuoHardwareScope`، واقرا الزاوية بـ `DuoHardware.angleOf(context)`.
 
 ## iPhone Duo بكل وضعياته
 

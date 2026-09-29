@@ -54,6 +54,13 @@ void main() {
     ], _PostureScene.new);
   });
 
+  testWidgets('hinge animation', (tester) async {
+    await _animate(tester, 'hinge', [
+      ..._pingPong(steps: 18),
+      for (final (v, ms) in _pingPong(steps: 18)) (v + 2, ms),
+    ], _HingeScene.new);
+  });
+
   testWidgets('rotate animation', (tester) async {
     await _animate(tester, 'rotate', [
       ..._pingPong(steps: 20, hold1: 1600),
@@ -709,10 +716,10 @@ Widget _social() => _Backdrop(
               runSpacing: 10,
               children: [
                 for (final c in [
-                  'Pure Dart',
+                  'Live hinge',
                   'Fold aware',
                   'Split View',
-                  'Android foldables',
+                  'Liquid Glass',
                 ])
                   _Chip(c),
               ],
@@ -1189,6 +1196,142 @@ class _PostureScene extends StatelessWidget {
                   'one layout, photo centred',
                 ));
     return _stage('Half open? The layout follows the hinge.', device, label);
+  }
+}
+
+// the Duo bending with live hinge data, book then tabletop
+class _HingeScene extends StatelessWidget {
+  const _HingeScene(this.v);
+
+  final double v;
+
+  static const s = .46;
+
+  @override
+  Widget build(BuildContext context) {
+    final table = v >= 2;
+    final b = _ease(table ? v - 2 : v);
+    final turn = b * (table ? 66 : 58);
+    final hinge = 180 - turn;
+    final bent = hinge < 176;
+    final base = table ? DuoPose.halfOpenTabletop : DuoPose.halfOpenBook;
+    final size = base.size;
+    final pose = DuoPose(
+      base.name,
+      size,
+      padding: base.padding,
+      hardware: DuoHardware(
+        supported: true,
+        hasHinge: true,
+        // flat keeps the region, posture decides it doesnt split
+        status: bent ? DuoHingeStatus.partiallyOpen : DuoHingeStatus.fullyOpen,
+        angle: hinge,
+        folds: base.hardware!.folds,
+        barEdge: base.hardware!.barEdge,
+      ),
+    );
+    final r = 44 * s;
+    final shade = Colors.black.withValues(alpha: .22 * b);
+    final screen = SizedBox.fromSize(
+      size: size * s,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          DuoSimulator(
+            pose: pose,
+            child: table
+                ? const DuoApp(dark: false, initialPhoto: 0)
+                : const DuoApp(dark: false, initialTrack: 1),
+          ),
+          IgnorePointer(child: _Island(base, s)),
+        ],
+      ),
+    );
+
+    Widget half(bool first) => Frame(
+      size: table
+          ? Size(size.width * s, size.height * s / 2)
+          : Size(size.width * s / 2, size.height * s),
+      corners: table
+          ? BorderRadius.vertical(
+              top: first ? Radius.circular(r) : Radius.zero,
+              bottom: first ? Radius.zero : Radius.circular(r),
+            )
+          : BorderRadius.horizontal(
+              left: first ? Radius.circular(r) : Radius.zero,
+              right: first ? Radius.zero : Radius.circular(r),
+            ),
+      child: ClipRect(
+        child: OverflowBox(
+          alignment: table
+              ? (first ? Alignment.topCenter : Alignment.bottomCenter)
+              : (first ? Alignment.centerLeft : Alignment.centerRight),
+          maxWidth: size.width * s,
+          minWidth: size.width * s,
+          maxHeight: size.height * s,
+          minHeight: size.height * s,
+          child: screen,
+        ),
+      ),
+    );
+
+    Widget shaded(Widget child) => Stack(
+      children: [
+        child,
+        Positioned.fill(
+          child: IgnorePointer(child: ColoredBox(color: shade)),
+        ),
+      ],
+    );
+
+    final device = table
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Transform(
+                alignment: Alignment.bottomCenter,
+                transform: _persp.clone()..rotateX(turn * math.pi / 180),
+                child: shaded(half(true)),
+              ),
+              half(false),
+            ],
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              half(true),
+              Transform(
+                alignment: Alignment.centerLeft,
+                transform: _persp.clone()..rotateY(turn * math.pi / 180),
+                child: shaded(half(false)),
+              ),
+            ],
+          );
+    final degrees = '${hinge.round()}°';
+    final label = table
+        ? (bent
+              ? _ModePill(
+                  'tabletop',
+                  degrees,
+                  'photo above the 40 pt fold, details below',
+                )
+              : _ModePill(
+                  'flat',
+                  degrees,
+                  'photo and details meet at the fold',
+                ))
+        : (bent
+              ? _ModePill(
+                  'book',
+                  degrees,
+                  'list and player move off the 40 pt fold',
+                )
+              : _ModePill('flat', degrees, 'list and player meet at the fold'));
+    return _stage(
+      'Live hinge: iOS reports the angle, the layout follows.',
+      device,
+      label,
+    );
   }
 }
 

@@ -59,14 +59,14 @@
   <text x="80" y="340" font-size="24" fill="#C9CCDD">Adaptive layout for the foldable iPhone Duo</text>
   <text x="80" y="374" font-size="24" fill="#C9CCDD">and every other screen.</text>
   
-    <rect x="80" y="412" width="116" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
-    <text x="138.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Pure Dart</text>
-    <rect x="206" y="412" width="126" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
-    <text x="269.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Fold aware</text>
-    <rect x="342" y="412" width="118" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
-    <text x="401.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Split View</text>
-    <rect x="470" y="412" width="188" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
-    <text x="564.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Android foldables</text>
+    <rect x="80" y="412" width="122" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
+    <text x="141.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Live hinge</text>
+    <rect x="212" y="412" width="126" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
+    <text x="275.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Fold aware</text>
+    <rect x="348" y="412" width="118" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
+    <text x="407.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Split View</text>
+    <rect x="476" y="412" width="136" height="36" rx="18" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".14"/>
+    <text x="544.0" y="436" text-anchor="middle" font-size="16" font-weight="500" fill="#E4E6F0">Liquid Glass</text>
   <rect x="80" y="476" width="444" height="48" rx="12" fill="#fff" fill-opacity=".04" stroke="#fff" stroke-opacity=".12"/>
   <text x="102" y="506" font-family="'SF Mono', ui-monospace, Menlo, Consolas, 'Roboto Mono', monospace" font-size="18" fill="#E4E6F0"><tspan fill="#A855F7">$</tspan> flutter pub add duo_dynamic_sizing</text>
 
