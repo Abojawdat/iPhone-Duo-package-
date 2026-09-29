@@ -1,3 +1,28 @@
+## 2.0.0
+
+Live hinge data on iOS and Android. The package now ships a small native side, so this is a major release.
+
+Breaking:
+
+* The package is a Flutter plugin now, with a Swift file for iOS and a Java file for Android. iOS apps need a deployment target of 15.0 or newer, which Xcode 27.1 requires anyway. Web and desktop stay pure Dart.
+* `DuoPose.values` has two more poses, `halfOpenBook` and `halfOpenTabletop`, after `splitRight`.
+* `DuoSplit` and `splitPanes` ignore a fold that leaves less than an eighth of the box on one side, so a fold hugging a Split View window's edge no longer makes a 0 pt pane.
+
+New:
+
+* `DuoHardwareScope` and `DuoHardware`: on iOS 27.1, the live hinge angle and status, Apple's fold region (40 pt while half open), camera regions, size classes and the vertical bar edge; on Android foldables, the hinge angle and status from the hinge sensor. `context.duo` picks it all up: the real posture on the Duo, plus `hardware`, `cameras` and `cameraInsets`.
+* Layout readers never rebuild on angle ticks. `DuoHardware.angleOf` and `DuoHardware.angleStream` give the live angle.
+* `bridge` (`none`, `cameras`, `all`) optionally publishes the fold and cameras to `MediaQuery.displayFeatures`. It's off by default, so dialogs and sheets keep their full width.
+* `DuoHardware.describeNative()` shows what the running OS exposes, for bug reports.
+* `DuoGlass`: real Liquid Glass on iOS 26+ and a blur elsewhere, following the app's light or dark theme. `DuoNavigationScaffold(glass: true)` puts the rail on it.
+* `DuoRailSide.auto` follows the side iOS reports for its vertical bar.
+* `DuoAvoidFold` avoids the iOS hinge fold, bridged or not.
+* The Duo is recognized from its hinge even when an older SDK letterboxes the window.
+* `DuoPose.hardware` simulates hinge data, and `DuoSimulator` never lets the real device's hinge leak into the fake window. Its guides draw the fold band and cameras in use.
+* Example: the Lab shows the hinge status, live angle, cameras and bar edge, with a Native API button; the playground's rail is on Liquid Glass on iOS; `lib/minimal.dart` wraps its app in `DuoHardwareScope`.
+* Tests: hinge parsing, junk channel data, a missing plugin, bridge modes, rebuild isolation and new edge cases, plus integration tests for the live native side and a live fold sweep, run on macOS, the iOS simulator and a Pixel Fold emulator.
+* README and DESIGN, in English and Arabic, cover live hinge data. A new README animation shows the Duo bending like a book and on a table while the angle counts down and the panes move off the fold, and the banner and social preview now read Live hinge, Fold aware, Split View and Liquid Glass.
+
 ## 1.0.10
 
 Docs only, no code changes:
