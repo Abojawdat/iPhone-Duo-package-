@@ -3,6 +3,7 @@
 library;
 
 export 'src/duo_data.dart';
+export 'src/glass.dart';
 export 'src/hardware.dart' hide DuoHardwarePlugin;
 export 'src/layout.dart';
 export 'src/media.dart';
