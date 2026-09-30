@@ -1126,6 +1126,32 @@ class _GlassRail extends InheritedWidget {
   bool updateShouldNotify(_GlassRail old) => on != old.on;
 }
 
+// soft brand color under the glass rail, readable in light and dark
+class _Aurora extends StatelessWidget {
+  const _Aurora();
+
+  @override
+  Widget build(BuildContext context) {
+    final surface = Theme.of(context).colorScheme.surface;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    Color tint(Color c, double a) =>
+        Color.alphaBlend(c.withValues(alpha: dark ? a * 1.4 : a), surface);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            tint(brand, .28),
+            tint(const Color(0xFF22D3EE), .16),
+            tint(const Color(0xFFEC4899), .22),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class Home extends StatefulWidget {
   const Home({super.key, this.initialTab = 0, this.initialTrack});
 
@@ -1151,8 +1177,10 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final c = context.copy;
     return DuoNavigationScaffold(
-      // the playground's glass button, off in the README renders
+      // the playground's glass button, off in the README renders. glass over
+      // a flat color looks like a gray pill, so color runs under it too
       glass: _GlassRail.of(context),
+      background: _GlassRail.of(context) ? const _Aurora() : null,
       selectedIndex: tab,
       onDestinationSelected: (i) => setState(() => tab = i),
       appBar: AppBar(
