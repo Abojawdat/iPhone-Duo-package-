@@ -527,4 +527,89 @@ void main() {
       expect(find.text('count 1'), findsOneWidget);
     });
   });
+
+  group('background', () {
+    Widget app(Widget? background) => DuoSimulator(
+      pose: DuoPose.openLandscape,
+      child: MaterialApp(
+        home: DuoNavigationScaffold(
+          glass: true,
+          background: background,
+          selectedIndex: 0,
+          onDestinationSelected: (_) {},
+          destinations: const [
+            DuoDestination(icon: Icon(Icons.home), label: 'a'),
+            DuoDestination(icon: Icon(Icons.star), label: 'b'),
+          ],
+          body: const Center(child: Counter()),
+        ),
+      ),
+    );
+
+    testWidgets('runs under the body and the rail', (tester) async {
+      const bg = Key('bg');
+      await tester.pumpWidget(
+        app(const ColoredBox(key: bg, color: Color(0xFFFF0000))),
+      );
+      final window = tester.getRect(find.byType(DuoNavigationScaffold));
+      expect(tester.getRect(find.byKey(bg)), window);
+      // the rail's glass sits on top of it
+      expect(window.contains(tester.getCenter(find.byType(DuoGlass))), isTrue);
+      expect(
+        tester.widget<Scaffold>(find.byType(Scaffold)).backgroundColor,
+        Colors.transparent,
+      );
+    });
+
+    testWidgets('glass runs the content on under the rail', (tester) async {
+      final extension = find.byWidgetPredicate(
+        (w) => w.runtimeType.toString() == '_Extension',
+      );
+      Widget rail({required bool glass, required TextDirection dir}) =>
+          DuoSimulator(
+            pose: DuoPose.openLandscape,
+            child: MaterialApp(
+              home: Directionality(
+                textDirection: dir,
+                child: DuoNavigationScaffold(
+                  glass: glass,
+                  railSide: DuoRailSide.start,
+                  selectedIndex: 0,
+                  onDestinationSelected: (_) {},
+                  destinations: const [
+                    DuoDestination(icon: Icon(Icons.home), label: 'a'),
+                    DuoDestination(icon: Icon(Icons.star), label: 'b'),
+                  ],
+                  body: const SizedBox.expand(key: body),
+                ),
+              ),
+            ),
+          );
+      for (final dir in TextDirection.values) {
+        await tester.pumpWidget(rail(glass: true, dir: dir));
+        expect(extension, findsOneWidget);
+        expect(tester.takeException(), isNull);
+        // the content paints first, but the rail keeps its side
+        final railX = tester.getCenter(find.byType(NavigationRail)).dx;
+        final bodyX = tester.getCenter(find.byKey(body)).dx;
+        expect(railX < bodyX, dir == TextDirection.ltr);
+        await tester.pumpWidget(rail(glass: false, dir: dir));
+        expect(extension, findsNothing);
+      }
+    });
+
+    testWidgets('toggling it keeps the page state', (tester) async {
+      await tester.pumpWidget(app(null));
+      await tester.tap(find.text('count 0'));
+      await tester.pump();
+      await tester.pumpWidget(app(const ColoredBox(color: Color(0xFF00FF00))));
+      expect(find.text('count 1'), findsOneWidget);
+      await tester.pumpWidget(app(null));
+      expect(find.text('count 1'), findsOneWidget);
+      expect(
+        tester.widget<Scaffold>(find.byType(Scaffold)).backgroundColor,
+        isNull,
+      );
+    });
+  });
 }

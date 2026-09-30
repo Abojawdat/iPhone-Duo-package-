@@ -446,7 +446,7 @@ void main() {
     );
 
     testWidgets('glass fallback follows the app theme too', (tester) async {
-      // shadow, sheen and fill layers, all of them change with the theme
+      // sheen and fill layers, both change with the theme
       Future<List<Decoration>> layers(Brightness app) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -468,7 +468,21 @@ void main() {
 
       final dark = await layers(Brightness.dark);
       final light = await layers(Brightness.light);
-      expect(dark, hasLength(3));
+      expect(dark, hasLength(2));
+      // the outside-only shadow and the rim are painted around the glass
+      expect(
+        tester.widgetList<CustomPaint>(
+          find.descendant(
+            of: find.byType(DuoGlass),
+            matching: find.byType(CustomPaint),
+          ),
+        ),
+        contains(
+          isA<CustomPaint>()
+              .having((p) => p.painter, 'shadow', isNotNull)
+              .having((p) => p.foregroundPainter, 'rim', isNotNull),
+        ),
+      );
       for (var i = 0; i < dark.length; i++) {
         expect(dark[i], isNot(light[i]));
       }
