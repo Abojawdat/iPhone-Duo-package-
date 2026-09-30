@@ -62,7 +62,7 @@
   <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/glass.webp" width="100%" alt="The navigation rail on real Liquid Glass on iOS 26, with the player flowing on beneath it, in dark and light">
 </p>
 
-**Liquid Glass.** `DuoNavigationScaffold(glass: true)` puts the rail on Apple's real `UIGlassEffect` on iOS 26+, and the content beside it flows on beneath the glass, blurred, like Apple's own bars. Elsewhere it gets the same look drawn in Flutter.
+**Liquid Glass, off by default.** Pass `glass: true` to `DuoNavigationScaffold` and the side rail, or the bottom bar as a floating capsule like iOS 26's tab bar, sits on Apple's real `UIGlassEffect` on iOS 26+, with the page flowing on beneath the glass, blurred. Elsewhere it gets the same look drawn in Flutter. Without the flag nothing changes.
 
 <a name="try-it"></a>
 
@@ -283,7 +283,7 @@ The short version is below. The full reasoning, with the alternatives we rejecte
 | `DuoAvoidFold` | Keeps controls off a half-open fold: trailing half in book posture, bottom half on a table. |
 | `DuoMedia` | Fits 16:9 video to the √2 screen, cropping only when little is lost. |
 | `DuoHardwareScope` + `DuoHardware` | Live hinge angle, posture, the 40 pt fold and camera regions, size classes and the vertical bar edge, from iOS 27.1 and Android. |
-| `DuoGlass` | Real Liquid Glass on iOS 26+, the same look drawn in Flutter elsewhere. `DuoNavigationScaffold(glass: true)` puts the rail on it, with the content flowing on beneath. |
+| `DuoGlass` | Real Liquid Glass on iOS 26+, the same look drawn in Flutter elsewhere. `DuoNavigationScaffold(glass: true)` puts the rail, or a floating bottom bar, on it, with the page flowing on beneath. Off by default. |
 | `DuoSimulator` + `DuoPose` | Every iPhone Duo pose, half open too, Android folds, iPhone and iPad, on any device and in widget tests. |
 | `DuoDebugOverlay` | Live readout of mode, size, safe area, fold, posture and angle. |
 
@@ -390,14 +390,14 @@ DuoMedia(aspectRatio: 16 / 9, child: player) // smart: crops up to 15%, else let
 
 ```dart
 DuoNavigationScaffold(
-  glass: true,               // the rail on real Liquid Glass on iOS 26+
+  glass: true,               // off by default. real Liquid Glass on iOS 26+
   background: const Mood(),  // optional, runs under the body and the rail
   ...
 )
 DuoGlass(child: toolbar)     // any capsule, follows your app's light or dark theme
 ```
 
-With `glass` on, the content beside the rail flows on beneath it, blurred, the way Apple's background extension works, so the glass always has real color to show. `background` adds your own layer under everything, like a gradient or a hero image.
+With `glass` on, the side rail sits on glass, or the bottom bar floats as a glass capsule like iOS 26's tab bar, and the page flows on beneath it, blurred, the way Apple's background extension works. The page keeps its layout, so nothing hides under the glass. `background` adds your own layer under everything, like a gradient or a hero image.
 
 ## RTL and LTR
 
@@ -539,7 +539,7 @@ If the package helps you, a star on the repo is the best way to say thanks.
 
 <div dir="rtl">
 
-**Liquid Glass.** `DuoNavigationScaffold(glass: true)` يحط الشريط الجانبي على `UIGlassEffect` الحقيقي مال Apple على iOS 26 وأحدث، والمحتوى اللي يمه يكمل تحت الزجاج مضبّب، مثل أشرطة Apple نفسها.
+**Liquid Glass، مطفي افتراضياً.** مرر `glass: true` لـ `DuoNavigationScaffold` والشريط الجانبي، أو الشريط الجوة كحبة طايفة مثل iOS 26، يگعد على `UIGlassEffect` الحقيقي مال Apple على iOS 26 وأحدث، والصفحة تكمل تحت الزجاج مضبّبة. وبلا هالخيار ما يتغير شي.
 
 ## جرّبها بـ 30 ثانية
 

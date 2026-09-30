@@ -8,7 +8,7 @@ topics: [foldable, iphone-duo, responsive, adaptive, layout]
 screenshots:
   - description: The iPhone Duo bends like a book and on a table while the live hinge angle counts down and the panes move off the 40 pt fold.
     path: doc/hinge.webp
-  - description: The navigation rail on real Liquid Glass on iOS 26, with the player flowing on beneath it, in dark and light.
+  - description: Real Liquid Glass on iOS 26, the side rail on the open Duo and the floating bar on the upright Duo, with the page flowing on beneath.
     path: doc/glass.webp
   - description: The package running on every iPhone Duo pose, closed, open and in Split View.
     path: doc/iphone-duo.webp

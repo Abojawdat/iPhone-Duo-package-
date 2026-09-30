@@ -34,7 +34,7 @@ void main() {
   // them with tool/glass_demo.dart
   testWidgets('glass gallery', (tester) async {
     final shots = [
-      for (final name in ['dark', 'light'])
+      for (final name in ['rail', 'bar'])
         MemoryImage(File('tool/glass/$name.webp').readAsBytesSync()),
     ];
     await tester.pumpWidget(const SizedBox());
@@ -45,7 +45,7 @@ void main() {
     });
     await _shoot(
       tester,
-      const Size(1300, 1100),
+      const Size(1300, 1000),
       _glassGallery(shots[0], shots[1]),
       'glass',
     );
@@ -564,14 +564,14 @@ class _SplitDevice extends StatelessWidget {
               size: half,
               child: const DuoSimulator(
                 pose: DuoPose.splitLeft,
-                child: DuoApp(dark: false),
+                child: DuoApp(dark: false, glass: true),
               ),
             ),
             SizedBox.fromSize(
               size: half,
               child: const DuoSimulator(
                 pose: DuoPose.splitRight,
-                child: DuoApp(dark: false, initialTab: 1),
+                child: DuoApp(dark: false, glass: true, initialTab: 1),
               ),
             ),
           ],
@@ -641,33 +641,41 @@ class _Gallery extends StatelessWidget {
   );
 }
 
-Widget _glassGallery(ImageProvider dark, ImageProvider light) => _Gallery(
-  title: 'Liquid Glass rail.',
+Widget _glassGallery(ImageProvider rail, ImageProvider bar) => _Gallery(
+  title: 'Liquid Glass, rail and bar.',
   subtitle:
-      "Real UIGlassEffect on iOS 26. What sits beside the rail flows on "
-      "beneath it, like Apple's own bars.",
+      'Real UIGlassEffect on iOS 26, one flag and off by default. The page '
+      "runs on beneath the glass, like Apple's own bars.",
   rows: [
     [
-      _Shot(_GlassHalf(dark), 'Dark', 'the player flows on under the glass'),
-      _Shot(_GlassHalf(light), 'Light', 'the same rail, light theme'),
+      _Shot(
+        _GlassScreen(rail, DuoPose.openLandscape),
+        'Side rail',
+        'open, dark · the player flows on under the glass',
+      ),
+      _Shot(
+        _GlassScreen(bar, DuoPose.openPortrait),
+        'Floating bar',
+        "upright, light · a capsule like iOS 26's tab bar",
+      ),
     ],
   ],
 );
 
-// the right half of the Duo's inner screen at 1:1, fold on the left edge
-class _GlassHalf extends StatelessWidget {
-  const _GlassHalf(this.image);
+// a real iPhone Duo screen shot on iOS 26, framed like the other renders
+class _GlassScreen extends StatelessWidget {
+  const _GlassScreen(this.image, this.pose);
 
   final ImageProvider image;
+  final DuoPose pose;
+
+  static const s = .62;
 
   @override
   Widget build(BuildContext context) => Frame(
-    size: const Size(475.5, 669),
-    corners: const BorderRadius.horizontal(
-      left: Radius.circular(10),
-      right: Radius.circular(44),
-    ),
-    overlay: const IgnorePointer(child: _Island(DuoPose.openLandscape, 1)),
+    size: pose.size * s,
+    radius: 44 * s,
+    overlay: IgnorePointer(child: _Island(pose, s)),
     child: Image(image: image, fit: BoxFit.cover),
   );
 }
@@ -678,24 +686,33 @@ Widget _duoGallery() => const _Gallery(
   rows: [
     [
       _Shot(
-        Device(DuoPose.closedPortrait, DuoApp(dark: false)),
+        Device(DuoPose.closedPortrait, DuoApp(dark: false, glass: true)),
         'Closed',
         '466 × 678 · one pane, rail by the island',
       ),
       _Shot(
-        Device(DuoPose.openLandscape, DuoApp(dark: false, initialTrack: 1)),
+        Device(
+          DuoPose.openLandscape,
+          DuoApp(dark: false, glass: true, initialTrack: 1),
+        ),
         'Open',
         '951 × 669 · list + detail, split at the fold',
       ),
       _Shot(
-        Device(DuoPose.openPortrait, DuoApp(dark: false, initialTrack: 2)),
+        Device(
+          DuoPose.openPortrait,
+          DuoApp(dark: false, glass: true, initialTrack: 2),
+        ),
         'Open, upright',
         '669 × 951 · two panes, bottom bar',
       ),
     ],
     [
       _Shot(
-        Device(DuoPose.closedLandscape, DuoApp(dark: false, initialPhoto: 0)),
+        Device(
+          DuoPose.closedLandscape,
+          DuoApp(dark: false, glass: true, initialPhoto: 0),
+        ),
         'Closed, sideways',
         '678 × 466 · one pane, media fit',
       ),
@@ -714,22 +731,32 @@ Widget _elsewhere() => const _Gallery(
   rows: [
     [
       _Shot(
-        Device(DuoPose.iPhone, DuoApp(dark: false)),
+        Device(DuoPose.iPhone, DuoApp(dark: false, glass: true)),
         'iPhone',
         '402 × 874 · bottom bar',
       ),
       _Shot(
-        Device(DuoPose.foldableBook, DuoApp(dark: false, initialTrack: 3)),
+        Device(
+          DuoPose.foldableBook,
+          DuoApp(dark: false, glass: true, initialTrack: 3),
+        ),
         'Android fold, book',
         'panes split right at the hinge',
       ),
       _Shot(
-        Device(DuoPose.foldableTabletop, DuoApp(dark: false, initialPhoto: 0)),
+        Device(
+          DuoPose.foldableTabletop,
+          DuoApp(dark: false, glass: true, initialPhoto: 0),
+        ),
         'Android fold, tabletop',
         'photo up top, details below the fold',
       ),
       _Shot(
-        Device(DuoPose.iPad, DuoApp(dark: false, initialTrack: 4), scale: .4),
+        Device(
+          DuoPose.iPad,
+          DuoApp(dark: false, glass: true, initialTrack: 4),
+          scale: .4,
+        ),
         'iPad',
         '1032 × 1376 · list + detail, side rail',
       ),
@@ -783,14 +810,18 @@ Widget _social() => _Backdrop(
         top: 140,
         child: Device(
           DuoPose.openLandscape,
-          DuoApp(dark: false, initialTrack: 1),
+          DuoApp(dark: false, glass: true, initialTrack: 1),
           scale: .54,
         ),
       ),
       const Positioned(
         right: 424,
         top: 250,
-        child: Device(DuoPose.closedPortrait, DuoApp(dark: false), scale: .5),
+        child: Device(
+          DuoPose.closedPortrait,
+          DuoApp(dark: false, glass: true),
+          scale: .5,
+        ),
       ),
     ],
   ),
@@ -833,8 +864,8 @@ class _FoldScene extends StatelessWidget {
     final half = open.width / 2;
     final hinge = ui.lerpDouble(cx - closed.width / 2, cx, e)!;
     final r = 44 * s;
-    const outerApp = DuoApp(dark: false, initialTrack: 2);
-    const innerApp = DuoApp(dark: false, initialTrack: 2);
+    const outerApp = DuoApp(dark: false, glass: true, initialTrack: 2);
+    const innerApp = DuoApp(dark: false, glass: true, initialTrack: 2);
 
     Widget innerHalf(bool left) => SizedBox(
       width: half,
@@ -1061,7 +1092,10 @@ class _SplitScene extends StatelessWidget {
             top: 0,
             width: w * s,
             height: h * s,
-            child: DuoSimulator(pose: left, child: const DuoApp(dark: false)),
+            child: DuoSimulator(
+              pose: left,
+              child: const DuoApp(dark: false, glass: true),
+            ),
           ),
           Positioned(
             left: w * s + 3,
@@ -1070,7 +1104,7 @@ class _SplitScene extends StatelessWidget {
             height: h * s,
             child: const DuoSimulator(
               pose: DuoPose.splitRight,
-              child: DuoApp(dark: false, initialTab: 1),
+              child: DuoApp(dark: false, glass: true, initialTab: 1),
             ),
           ),
           if (e > .02)
@@ -1160,7 +1194,7 @@ class _PostureScene extends StatelessWidget {
         size: size * s,
         child: DuoSimulator(
           pose: pose,
-          child: const DuoApp(dark: false, initialPhoto: 0),
+          child: const DuoApp(dark: false, glass: true, initialPhoto: 0),
         ),
       );
       return Frame(
@@ -1291,8 +1325,8 @@ class _HingeScene extends StatelessWidget {
           DuoSimulator(
             pose: pose,
             child: table
-                ? const DuoApp(dark: false, initialPhoto: 0)
-                : const DuoApp(dark: false, initialTrack: 1),
+                ? const DuoApp(dark: false, glass: true, initialPhoto: 0)
+                : const DuoApp(dark: false, glass: true, initialTrack: 1),
           ),
           IgnorePointer(child: _Island(base, s)),
         ],
@@ -1398,8 +1432,11 @@ class _RotateScene extends StatelessWidget {
     final s = open ? .44 : .5;
     final from = open ? DuoPose.openLandscape : DuoPose.closedPortrait;
     final to = open ? DuoPose.openPortrait : DuoPose.closedLandscape;
-    Widget device(DuoPose p) =>
-        Device(p, DuoApp(dark: false, initialTrack: open ? 1 : null), scale: s);
+    Widget device(DuoPose p) => Device(
+      p,
+      DuoApp(dark: false, glass: true, initialTrack: open ? 1 : null),
+      scale: s,
+    );
     final turn = (e / .72).clamp(0.0, 1.0);
     final settle = ((e - .72) / .28).clamp(0.0, 1.0);
     return _stage(
@@ -1516,7 +1553,7 @@ class _ResizeScene extends StatelessWidget {
             height: h,
             child: DuoSimulator(
               pose: pose,
-              child: const DuoApp(dark: false, initialTrack: 1),
+              child: const DuoApp(dark: false, glass: true, initialTrack: 1),
             ),
           ),
         ],
@@ -1551,6 +1588,7 @@ class _RtlScene extends StatelessWidget {
       DuoPose.openLandscape,
       DuoApp(
         dark: false,
+        glass: true,
         initialTrack: 1,
         arabic: rtl,
         fontFallback: const ['SFArabic'],
@@ -1605,7 +1643,7 @@ class _MediaScene extends StatelessWidget {
     final next = (i + 1) % 3;
     Widget duo(int k) => Device(
       DuoPose.openLandscape,
-      DuoApp(dark: false, initialPhoto: 0, initialFit: fits[k]),
+      DuoApp(dark: false, glass: true, initialPhoto: 0, initialFit: fits[k]),
       scale: s,
     );
     return _stage(

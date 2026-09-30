@@ -81,7 +81,7 @@ A point is the same size on both screens, so the inner screen is simply more spa
 
 ## 5. State survives by moving, not rebuilding
 
-**Decision:** when the layout changes shape, widgets are moved to their new place with the same element, using Flutter's `GlobalKey` reparenting. `DuoKeep`, `DuoSplit`, `DuoListDetail`, the scaffold body and `DuoSimulator` all do this.
+**Decision:** when the layout changes shape, widgets are moved to their new place with the same element, using Flutter's `GlobalKey` reparenting. `DuoKeep`, `DuoSplit`, `DuoListDetail`, the scaffold body and `DuoSimulator` all do this. When a `DuoSplit` only has room for one pane, for example with the keyboard up, the other pane stays mounted but hidden instead of being dropped, so it comes back as it was.
 
 **Why:** you keep everything a user would notice: scroll position, text being typed, selections and running animations. Apple lists continuity across a fold as a requirement, not a nice-to-have.
 
@@ -119,6 +119,7 @@ A point is the same size on both screens, so the inner screen is simply more spa
 - **Long labels** are shortened with an ellipsis.
 - **Width:** the rail never takes more than 30% of the window. It keeps its natural 80 pt width by using `IntrinsicWidth` inside that cap. The golden tests caught the first version stretching the rail to 140 pt.
 - **Glass:** `glass: true` draws the rail on real `UIGlassEffect` on iOS 26+. Elsewhere it draws the full glassmorphism recipe: a saturated blur, a thin fill, a sheen, a bright hairline rim and a shadow kept outside the glass, because a shadow under see-through glass turns it gray. It follows the app's theme, not the system's: a dark app on a light phone first got light-gray glass, which the iPad simulator screenshots caught.
+- **Floating bar:** where the navigation is a bottom bar, `glass: true` floats it as a 64 pt glass capsule, like iOS 26's tab bar, and the bottom of the page runs on beneath it. The page keeps its layout, so nothing ends up hidden under the glass. The first version padded the capsule with the scaffold's insets and grew by the upright Duo's 59 pt island strip; the edge-case tests pin it at 64 pt now.
 - **Background extension:** glass over a flat color looks like a plain pill, so the content beside the rail flows on beneath it, blurred, like Apple's background extension, and `background:` adds a layer under everything. Apple mirrors that content; we slide it over instead, because a flipped backdrop filter renders nothing on Impeller, as probes on the iOS simulator showed. Under the blur the two look the same.
 
 ## 8. Smart media fit at 15%
@@ -186,6 +187,7 @@ Photos and most social video fill the screen; cinematic video keeps its edges.
 | iOS before 27.1, or an API that changed shape | Size classes only; the rest stays empty |
 | Android angle before the hinge first moves after a wake | `null`; posture still comes from Android |
 | iOS fold region overlapping a Split View window's edge | One pane |
+| A keyboard squeezes a `DuoSplit` to one pane | The hidden pane keeps its state, typed text included |
 
 These all live in [`test/edge_cases_test.dart`](test/edge_cases_test.dart), and every bug fix gets a case there.
 
