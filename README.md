@@ -50,6 +50,20 @@
 
 # English
 
+## New in 2.0: a live hinge and Liquid Glass
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/hinge.webp" width="100%" alt="The iPhone Duo bends like a book, then on a table, while the live hinge angle counts down and the panes move off the fold">
+</p>
+
+**A live hinge.** On iOS 27.1 and Android foldables the package reads the real hinge: the angle, the posture and Apple's 40 pt fold. Wrap your app once in `DuoHardwareScope` and every layout below follows it. [How it works](#live-hinge-data).
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/glass.webp" width="100%" alt="The navigation rail on real Liquid Glass on iOS 26, with the player flowing on beneath it, in dark and light">
+</p>
+
+**Liquid Glass.** `DuoNavigationScaffold(glass: true)` puts the rail on Apple's real `UIGlassEffect` on iOS 26+, and the content beside it flows on beneath the glass, blurred, like Apple's own bars. Elsewhere it gets the same look drawn in Flutter.
+
 <a name="try-it"></a>
 
 ## Try it in 30 seconds
@@ -141,16 +155,6 @@ Every clip below is the real [example app](example/lib/main.dart) running this p
 **What happens:** the same 16:9 photo cycles through `contain` (bars), `cover` (cropped) and `smart`, which crops only when it loses less than 15%.<br>
 **Why:** the inner screen is √2 shaped, so 16:9 video leaves 134 pt of black bars. Sometimes a small crop is the better trade, and sometimes it isn't.<br>
 **Code:** `DuoMedia(aspectRatio: 16 / 9, child: player)`.
-
-### 8. Live hinge
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/hinge.webp" width="100%" alt="The iPhone Duo bends like a book, then on a table, while the live hinge angle counts down and the panes move off the fold">
-</p>
-
-**What happens:** the iPhone Duo bends from flat to half open, first like a book, then on a table. The angle counts down live, and the moment iOS reports it half open, the fold becomes Apple's 40 pt region and the panes move off it.<br>
-**Why:** layout follows the posture, and the angle is there for effects. That's Apple's own guidance, so widgets that only lay out never rebuild on every degree.<br>
-**Code:** wrap the app once in `DuoHardwareScope`, and read `DuoHardware.angleOf(context)` for the live angle.
 
 ## iPhone Duo, every pose
 
@@ -279,7 +283,7 @@ The short version is below. The full reasoning, with the alternatives we rejecte
 | `DuoAvoidFold` | Keeps controls off a half-open fold: trailing half in book posture, bottom half on a table. |
 | `DuoMedia` | Fits 16:9 video to the √2 screen, cropping only when little is lost. |
 | `DuoHardwareScope` + `DuoHardware` | Live hinge angle, posture, the 40 pt fold and camera regions, size classes and the vertical bar edge, from iOS 27.1 and Android. |
-| `DuoGlass` | Real Liquid Glass on iOS 26+, a matching blur elsewhere. `DuoNavigationScaffold(glass: true)` puts the rail on it. |
+| `DuoGlass` | Real Liquid Glass on iOS 26+, the same look drawn in Flutter elsewhere. `DuoNavigationScaffold(glass: true)` puts the rail on it, with the content flowing on beneath. |
 | `DuoSimulator` + `DuoPose` | Every iPhone Duo pose, half open too, Android folds, iPhone and iPad, on any device and in widget tests. |
 | `DuoDebugOverlay` | Live readout of mode, size, safe area, fold, posture and angle. |
 
@@ -385,9 +389,15 @@ DuoMedia(aspectRatio: 16 / 9, child: player) // smart: crops up to 15%, else let
 **Liquid Glass:**
 
 ```dart
-DuoNavigationScaffold(glass: true, ...) // the rail on real Liquid Glass on iOS 26+
-DuoGlass(child: toolbar)                // any capsule, follows your app's light or dark theme
+DuoNavigationScaffold(
+  glass: true,               // the rail on real Liquid Glass on iOS 26+
+  background: const Mood(),  // optional, runs under the body and the rail
+  ...
+)
+DuoGlass(child: toolbar)     // any capsule, follows your app's light or dark theme
 ```
+
+With `glass` on, the content beside the rail flows on beneath it, blurred, the way Apple's background extension works, so the glass always has real color to show. `background` adds your own layer under everything, like a gradient or a hero image.
 
 ## RTL and LTR
 
@@ -509,6 +519,28 @@ If the package helps you, a star on the repo is the best way to say thanks.
 
 # العربية
 
+## الجديد بـ 2.0: مفصل لايف وLiquid Glass
+
+</div>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/hinge.webp" width="100%" alt="المفصل لايف">
+</p>
+
+<div dir="rtl">
+
+**مفصل لايف.** على iOS 27.1 وموبايلات Android اللي تنطبگ، الحزمة تقرا المفصل الحقيقي: الزاوية والوضعية وخط الطبگة مال Apple (40 نقطة). لف تطبيقك مرة وحدة بـ `DuoHardwareScope` وكل التخطيطات تمشي وياه.
+
+</div>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/glass.webp" width="100%" alt="Liquid Glass">
+</p>
+
+<div dir="rtl">
+
+**Liquid Glass.** `DuoNavigationScaffold(glass: true)` يحط الشريط الجانبي على `UIGlassEffect` الحقيقي مال Apple على iOS 26 وأحدث، والمحتوى اللي يمه يكمل تحت الزجاج مضبّب، مثل أشرطة Apple نفسها.
+
 ## جرّبها بـ 30 ثانية
 
 ما تحتاج iPhone Duo، أي موبايل أو محاكي أو كمبيوتر يمشي. الصق هذا بالـ terminal:
@@ -626,20 +658,6 @@ flutter run
 **شنو يصير:** نفس صورة الـ 16:9 تتنقل بين `contain` (أشرطة سودة)، و`cover` (يگص)، و`smart` اللي ما يگص إلا إذا اللي يروح أقل من 15%.<br>
 **ليش:** الشاشة الداخلية شكلها √2، ففيديو 16:9 يخلي أشرطة سودة طولها 134 نقطة. مرات گصة صغيرة أحسن، ومرات لا.<br>
 **الكود:** `DuoMedia(aspectRatio: 16 / 9, child: player)`.
-
-### ٨. المفصل لايف
-
-</div>
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/anim/hinge.webp" width="100%" alt="المفصل لايف">
-</p>
-
-<div dir="rtl">
-
-**شنو يصير:** الـ iPhone Duo يتطبّگ من مفتوح كامل لنص مفتوح، أول مثل الكتاب وبعدين عالميز. الزاوية تنزل لايف، وأول ما iOS يگول نص مفتوح، خط الطبگة يصير منطقة Apple (40 نقطة) واللوحات تبعد عنه.<br>
-**ليش:** التخطيط يمشي ويه الوضعية، والزاوية للمؤثرات، مثل ما توصي Apple.<br>
-**الكود:** لف التطبيق مرة وحدة بـ `DuoHardwareScope`، واقرا الزاوية بـ `DuoHardware.angleOf(context)`.
 
 ## iPhone Duo بكل وضعياته
 

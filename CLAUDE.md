@@ -32,7 +32,9 @@ Regenerate every image and animation in `doc/` (real renders of the example app;
 cd example && flutter test tool/render.dart && python3 ../tool/pack_visuals.py   # needs Pillow
 ```
 
-Outputs: stills in `doc/*.webp`, `doc/fold.webp` (also a pub.dev screenshot), and scenario animations in `doc/anim/*.webp` (kept out of the pub archive by `.pubignore`). `doc/banner.svg` (animated, SMIL) and `doc/logo.svg` are hand-written SVGs. The logo is the app icon: `cd example && python3 tool/make_icon.py` regenerates every platform's icon from the same geometry.
+Outputs: stills in `doc/*.webp`, `doc/fold.webp` and `doc/hinge.webp` (also pub.dev screenshots), and scenario animations in `doc/anim/*.webp` (kept out of the pub archive by `.pubignore`).
+
+`doc/glass.webp` is built from real iOS screenshots, because `UIGlassEffect` can't render in a test. Retake them on the iPad Pro 13-inch simulator, where two Duo screens fit at 1:1: `cd example && flutter build ios --simulator --debug -t tool/glass_demo.dart`, install and launch it with `xcrun simctl`, take `xcrun simctl io <id> screenshot shot.png`, run `python3 ../tool/crop_glass.py shot.png`, then `flutter test tool/render.dart --plain-name "glass gallery"` and pack. `doc/banner.svg` (animated, SMIL) and `doc/logo.svg` are hand-written SVGs. The logo is the app icon: `cd example && python3 tool/make_icon.py` regenerates every platform's icon from the same geometry.
 
 ## Docs (English + Arabic, keep them in sync)
 
@@ -67,6 +69,7 @@ Outputs: stills in `doc/*.webp`, `doc/fold.webp` (also a pub.dev screenshot), an
 - **The `displayFeatures` bridge stays off by default.** Publishing a half-open fold makes every Flutter dialog and sheet half width. Our own widgets read the hinge fold directly (`DuoSplit`, `DuoAvoidFold`). The scope stands down if flutter/flutter#192515 lands and the engine reports features itself.
 - **The simulator never shows the real hinge.** `DuoSimulator` always wraps its window in `DuoHardwareScope(hardware: pose.hardware ?? DuoHardware.none)`.
 - **In widget tests, never `await` a platform-channel cancel.** Fake async time never delivers the reply and the test hangs; use `unawaited(sub.cancel())` and pump.
+- **The glass rail's background extension slides, it doesn't mirror.** A backdrop `ImageFilter.matrix` with a negative scale renders nothing on Impeller (iOS and Android), inside real apps and under transforms, though a bare probe can seem to work. Keep the shift, keep the content painting before the rail (the row flips its `textDirection` instead of its children), and check it on the iOS simulator, not just macOS.
 - **Rail sizing:** keep `IntrinsicWidth` inside the 30% width cap. A bounded `NavigationRail` stretches to fill its width, which silently took 60 pt from the content before the goldens caught it.
 - **Edge cases live in `test/edge_cases_test.dart`:** zero and tiny windows, bad input, unbounded layouts, tri-folds, rapid folding, 3x text, keyboard rebuilds. Add a case there for every bug fix.
 - **The Flutter floor is 3.41 (Dart 3.11).** The local SDK is newer, so don't use APIs added after 3.41.

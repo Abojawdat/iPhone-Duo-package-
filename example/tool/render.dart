@@ -30,6 +30,27 @@ void main() {
     await _shoot(tester, const Size(1560, 900), _elsewhere(), 'everywhere');
   });
 
+  // real iOS 26 screenshots, UIGlassEffect cant render in a test. retake
+  // them with tool/glass_demo.dart
+  testWidgets('glass gallery', (tester) async {
+    final shots = [
+      for (final name in ['dark', 'light'])
+        MemoryImage(File('tool/glass/$name.webp').readAsBytesSync()),
+    ];
+    await tester.pumpWidget(const SizedBox());
+    await tester.runAsync(() async {
+      for (final shot in shots) {
+        await precacheImage(shot, tester.element(find.byType(SizedBox)));
+      }
+    });
+    await _shoot(
+      tester,
+      const Size(1300, 1100),
+      _glassGallery(shots[0], shots[1]),
+      'glass',
+    );
+  });
+
   testWidgets('social preview', (tester) async {
     await _shoot(tester, const Size(1280, 640), _social(), 'social', ratio: 1);
   });
@@ -620,10 +641,40 @@ class _Gallery extends StatelessWidget {
   );
 }
 
+Widget _glassGallery(ImageProvider dark, ImageProvider light) => _Gallery(
+  title: 'Liquid Glass rail.',
+  subtitle:
+      "Real UIGlassEffect on iOS 26. What sits beside the rail flows on "
+      "beneath it, like Apple's own bars.",
+  rows: [
+    [
+      _Shot(_GlassHalf(dark), 'Dark', 'the player flows on under the glass'),
+      _Shot(_GlassHalf(light), 'Light', 'the same rail, light theme'),
+    ],
+  ],
+);
+
+// the right half of the Duo's inner screen at 1:1, fold on the left edge
+class _GlassHalf extends StatelessWidget {
+  const _GlassHalf(this.image);
+
+  final ImageProvider image;
+
+  @override
+  Widget build(BuildContext context) => Frame(
+    size: const Size(475.5, 669),
+    corners: const BorderRadius.horizontal(
+      left: Radius.circular(10),
+      right: Radius.circular(44),
+    ),
+    overlay: const IgnorePointer(child: _Island(DuoPose.openLandscape, 1)),
+    child: Image(image: image, fit: BoxFit.cover),
+  );
+}
+
 Widget _duoGallery() => const _Gallery(
   title: 'iPhone Duo, every pose.',
-  subtitle:
-      'Real renders of duo_dynamic_sizing. One codebase, zero native code.',
+  subtitle: 'Real renders of duo_dynamic_sizing. One codebase, every pose.',
   rows: [
     [
       _Shot(

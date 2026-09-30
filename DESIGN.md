@@ -118,7 +118,8 @@ A point is the same size on both screens, so the inner screen is simply more spa
 - **Scrolling:** the rail scrolls when items don't fit. Seven tabs used to overflow the 386 pt of height on the closed-sideways Duo.
 - **Long labels** are shortened with an ellipsis.
 - **Width:** the rail never takes more than 30% of the window. It keeps its natural 80 pt width by using `IntrinsicWidth` inside that cap. The golden tests caught the first version stretching the rail to 140 pt.
-- **Glass:** `glass: true` draws the rail on real `UIGlassEffect` on iOS 26+, and on a blur with a 1 px light edge elsewhere. It follows the app's theme, not the system's: a dark app on a light phone first got light-gray glass, which the iPad simulator screenshots caught.
+- **Glass:** `glass: true` draws the rail on real `UIGlassEffect` on iOS 26+. Elsewhere it draws the full glassmorphism recipe: a saturated blur, a thin fill, a sheen, a bright hairline rim and a shadow kept outside the glass, because a shadow under see-through glass turns it gray. It follows the app's theme, not the system's: a dark app on a light phone first got light-gray glass, which the iPad simulator screenshots caught.
+- **Background extension:** glass over a flat color looks like a plain pill, so the content beside the rail flows on beneath it, blurred, like Apple's background extension, and `background:` adds a layer under everything. Apple mirrors that content; we slide it over instead, because a flipped backdrop filter renders nothing on Impeller, as probes on the iOS simulator showed. Under the blur the two look the same.
 
 ## 8. Smart media fit at 15%
 

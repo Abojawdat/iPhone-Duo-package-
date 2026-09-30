@@ -20,17 +20,18 @@ def shrink(im):
     return im.resize((ANIM_WIDTH, round(im.height * ANIM_WIDTH / im.width)), Image.LANCZOS)
 
 
-for name in ['iphone-duo', 'everywhere']:
+for name in ['iphone-duo', 'everywhere', 'glass']:
     Image.open(src / f'{name}.png').save(doc / f'{name}.webp', quality=90, method=6)
 
 Image.open(src / 'social.png').convert('RGB').save(doc / 'social.png', optimize=True)
 
-# fold.webp is a pub.dev screenshot so it stays in doc/, the rest go to doc/anim/
+# fold and hinge are pub.dev screenshots so they stay in doc/, the rest go
+# to doc/anim/
 for manifest in sorted(src.glob('*.json')):
     name = manifest.stem
     frames = json.loads(manifest.read_text())
     imgs = [shrink(Image.open(src / f['file']).convert('RGB')) for f in frames]
-    target = doc / 'fold.webp' if name == 'fold' else doc / 'anim' / f'{name}.webp'
+    target = doc / f'{name}.webp' if name in ('fold', 'hinge') else doc / 'anim' / f'{name}.webp'
     imgs[0].save(
         target,
         save_all=True,
