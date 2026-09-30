@@ -446,7 +446,8 @@ void main() {
     );
 
     testWidgets('glass fallback follows the app theme too', (tester) async {
-      Future<Color?> fill(Brightness app) async {
+      // shadow, sheen and fill layers, all of them change with the theme
+      Future<List<Decoration>> layers(Brightness app) async {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData(brightness: app),
@@ -454,16 +455,24 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        final box = tester.widget<DecoratedBox>(
-          find.descendant(
-            of: find.byType(DuoGlass),
-            matching: find.byType(DecoratedBox),
-          ),
-        );
-        return (box.decoration as BoxDecoration).color;
+        return [
+          for (final box in tester.widgetList<DecoratedBox>(
+            find.descendant(
+              of: find.byType(DuoGlass),
+              matching: find.byType(DecoratedBox),
+            ),
+          ))
+            box.decoration,
+        ];
       }
 
-      expect(await fill(Brightness.dark), isNot(await fill(Brightness.light)));
+      final dark = await layers(Brightness.dark);
+      final light = await layers(Brightness.light);
+      expect(dark, hasLength(3));
+      for (var i = 0; i < dark.length; i++) {
+        expect(dark[i], isNot(light[i]));
+      }
+
       expect(find.byType(UiKitView), findsNothing);
     });
   });

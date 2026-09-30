@@ -40,19 +40,50 @@ class DuoGlass extends StatelessWidget {
         creationParamsCodec: const StandardMessageCodec(),
       );
     } else {
-      // blur plus a 1 px light edge, the usual Liquid Glass stand in
-      glass = ClipRRect(
-        borderRadius: radius,
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color:
-                  tint ??
-                  (dark ? const Color(0x1FFFFFFF) : const Color(0x8CFFFFFF)),
-              borderRadius: radius,
-              border: Border.all(
-                color: dark ? const Color(0x24FFFFFF) : const Color(0x14000000),
+      // blur, a sheen on top, a 1 px edge and a soft shadow so it reads as
+      // glass even over a plain background
+      glass = DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: radius,
+          boxShadow: [
+            BoxShadow(
+              color: dark ? const Color(0x66000000) : const Color(0x24000000),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: radius,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: DecoratedBox(
+              position: DecorationPosition.foreground,
+              decoration: BoxDecoration(
+                borderRadius: radius,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.center,
+                  colors: [
+                    Colors.white.withValues(alpha: dark ? .16 : .5),
+                    Colors.white.withValues(alpha: 0),
+                  ],
+                ),
+              ),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color:
+                      tint ??
+                      (dark
+                          ? const Color(0x24FFFFFF)
+                          : const Color(0xA6FFFFFF)),
+                  borderRadius: radius,
+                  border: Border.all(
+                    color: dark
+                        ? const Color(0x33FFFFFF)
+                        : const Color(0x1A000000),
+                  ),
+                ),
               ),
             ),
           ),
