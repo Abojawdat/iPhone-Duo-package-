@@ -28,8 +28,9 @@ class DuoDestination {
 }
 
 /// Bottom bar or side rail per prefersRail. On the Duo the rail sits right by
-/// the island and the FAB moves into it. glass puts the rail on DuoGlass, and
-/// background runs under the body and the rail so the glass shows it.
+/// the island and the FAB moves into it. glass (off by default) puts the rail
+/// or a floating bar on DuoGlass, with the page running on beneath it, and
+/// background runs under the body and the rail.
 class DuoNavigationScaffold extends StatefulWidget {
   const DuoNavigationScaffold({
     super.key,
@@ -78,23 +79,65 @@ class _DuoNavigationScaffoldState extends State<DuoNavigationScaffold> {
     final duo = context.duo;
     final body = KeyedSubtree(key: _body, child: widget.body);
     if (!duo.prefersRail) {
+      final glass = widget.glass;
+      final bar = NavigationBar(
+        height: glass ? 64 : null,
+        elevation: glass ? 0 : null,
+        backgroundColor: glass ? Colors.transparent : null,
+        shadowColor: glass ? Colors.transparent : null,
+        surfaceTintColor: glass ? Colors.transparent : null,
+        selectedIndex: widget.selectedIndex,
+        onDestinationSelected: widget.onDestinationSelected,
+        destinations: [
+          for (final d in widget.destinations)
+            NavigationDestination(
+              icon: d.icon,
+              selectedIcon: d.selectedIcon,
+              label: d.label,
+            ),
+        ],
+      );
       return Scaffold(
         backgroundColor: fill,
         appBar: widget.appBar,
         body: body,
         floatingActionButton: widget.floatingActionButton,
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: widget.selectedIndex,
-          onDestinationSelected: widget.onDestinationSelected,
-          destinations: [
-            for (final d in widget.destinations)
-              NavigationDestination(
-                icon: d.icon,
-                selectedIcon: d.selectedIcon,
-                label: d.label,
-              ),
-          ],
-        ),
+        // a floating glass capsule like iOS 26's tab bar, the bottom of the
+        // page runs on under it. the page itself keeps its layout
+        bottomNavigationBar: glass
+            ? Stack(
+                children: [
+                  const Positioned.fill(
+                    child: _Extension(from: AxisDirection.up),
+                  ),
+                  SafeArea(
+                    top: false,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                      child: DuoGlass(
+                        borderRadius: 32,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(32),
+                          // the SafeArea above placed the capsule, so the
+                          // bar inside pads nothing. its own context, not
+                          // the scaffold's, or the island inset comes back
+                          child: Builder(
+                            builder: (context) => MediaQuery.removePadding(
+                              context: context,
+                              removeTop: true,
+                              removeBottom: true,
+                              removeLeft: true,
+                              removeRight: true,
+                              child: bar,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : bar,
       );
     }
 
@@ -153,7 +196,11 @@ class _DuoNavigationScaffoldState extends State<DuoNavigationScaffold> {
     final rail = widget.glass
         ? Stack(
             children: [
-              Positioned.fill(child: _Extension(contentOnLeft: right)),
+              Positioned.fill(
+                child: _Extension(
+                  from: right ? AxisDirection.left : AxisDirection.right,
+                ),
+              ),
               strip,
             ],
           )
@@ -197,27 +244,28 @@ class _DuoNavigationScaffoldState extends State<DuoNavigationScaffold> {
 }
 
 // repaints the content beside it, blurred, inside its own bounds
+// from = the side the content is on
 class _Extension extends LeafRenderObjectWidget {
-  const _Extension({required this.contentOnLeft});
+  const _Extension({required this.from});
 
-  final bool contentOnLeft;
+  final AxisDirection from;
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
-      _RenderExtension(contentOnLeft);
+      _RenderExtension(from);
 
   @override
   void updateRenderObject(BuildContext context, _RenderExtension render) =>
-      render.contentOnLeft = contentOnLeft;
+      render.from = from;
 }
 
 class _RenderExtension extends RenderBox {
-  _RenderExtension(this._contentOnLeft);
+  _RenderExtension(this._from);
 
-  bool _contentOnLeft;
-  set contentOnLeft(bool value) {
-    if (value == _contentOnLeft) return;
-    _contentOnLeft = value;
+  AxisDirection _from;
+  set from(AxisDirection value) {
+    if (value == _from) return;
+    _from = value;
     markNeedsPaint();
   }
 
@@ -237,11 +285,17 @@ class _RenderExtension extends RenderBox {
   void paint(PaintingContext context, Offset offset) {
     // slide the neighbouring strip's width of content over. Apple mirrors
     // it instead, but a flipped backdrop renders nothing on Impeller
+    final (dx, dy) = switch (_from) {
+      AxisDirection.left => (size.width, 0.0),
+      AxisDirection.right => (-size.width, 0.0),
+      AxisDirection.up => (0.0, size.height),
+      AxisDirection.down => (0.0, -size.height),
+    };
     final shift = Float64List.fromList([
       1, 0, 0, 0, //
       0, 1, 0, 0, //
       0, 0, 1, 0, //
-      _contentOnLeft ? size.width : -size.width, 0, 0, 1,
+      dx, dy, 0, 1,
     ]);
     _extend.layer ??= BackdropFilterLayer();
     _extend.layer!.filter = ui.ImageFilter.compose(

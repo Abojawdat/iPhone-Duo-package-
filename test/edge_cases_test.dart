@@ -445,6 +445,30 @@ void main() {
       variant: TargetPlatformVariant.only(TargetPlatform.iOS),
     );
 
+    testWidgets('floating glass bar ignores the island inset above it', (
+      tester,
+    ) async {
+      // the upright Duo has a 59 pt island strip on top. it once leaked
+      // into the capsule and nearly doubled the bar's height
+      await tester.pumpWidget(
+        sim(
+          DuoPose.openPortrait,
+          DuoNavigationScaffold(
+            glass: true,
+            selectedIndex: 0,
+            onDestinationSelected: (_) {},
+            destinations: const [
+              DuoDestination(icon: Icon(Icons.home), label: 'a'),
+              DuoDestination(icon: Icon(Icons.star), label: 'b'),
+            ],
+            body: const SizedBox.expand(),
+          ),
+        ),
+      );
+      expect(tester.getSize(find.byType(NavigationBar)).height, 64);
+      expect(tester.getSize(find.byType(DuoGlass)).height, 64);
+    });
+
     testWidgets('glass fallback follows the app theme too', (tester) async {
       // sheen and fill layers, both change with the theme
       Future<List<Decoration>> layers(Brightness app) async {

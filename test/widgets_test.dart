@@ -598,6 +598,54 @@ void main() {
       }
     });
 
+    testWidgets('glass floats the bottom bar as a capsule', (tester) async {
+      var picked = 0;
+      final extension = find.byWidgetPredicate(
+        (w) => w.runtimeType.toString() == '_Extension',
+      );
+      Widget bar({required bool glass}) => DuoSimulator(
+        pose: DuoPose.openPortrait,
+        child: MaterialApp(
+          home: DuoNavigationScaffold(
+            glass: glass,
+            selectedIndex: 0,
+            onDestinationSelected: (i) => picked = i,
+            destinations: const [
+              DuoDestination(icon: Icon(Icons.home), label: 'a'),
+              DuoDestination(icon: Icon(Icons.star), label: 'b'),
+            ],
+            body: const Center(child: Counter()),
+          ),
+        ),
+      );
+      // off by default: a plain bar, nothing under it
+      await tester.pumpWidget(bar(glass: false));
+      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.byType(DuoGlass), findsNothing);
+      expect(extension, findsNothing);
+      await tester.tap(find.text('count 0'));
+      await tester.pump();
+
+      await tester.pumpWidget(bar(glass: true));
+      expect(
+        find.descendant(
+          of: find.byType(DuoGlass),
+          matching: find.byType(NavigationBar),
+        ),
+        findsOneWidget,
+      );
+      expect(extension, findsOneWidget);
+      expect(find.text('count 1'), findsOneWidget);
+      // it floats clear of the window's sides
+      final capsule = tester.getRect(find.byType(DuoGlass));
+      final window = tester.getRect(find.byType(DuoNavigationScaffold));
+      expect(capsule.left, greaterThan(window.left));
+      expect(capsule.right, lessThan(window.right));
+      await tester.tap(find.text('b'));
+      expect(picked, 1);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('toggling it keeps the page state', (tester) async {
       await tester.pumpWidget(app(null));
       await tester.tap(find.text('count 0'));
