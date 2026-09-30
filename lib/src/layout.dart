@@ -109,14 +109,33 @@ class _DuoSplitState extends State<DuoSplit> {
           textDirection: direction,
         );
         final primary = KeyedSubtree(key: _primary, child: widget.primary);
-        if (panes == null) return widget.single ?? primary;
+        final secondary = KeyedSubtree(
+          key: _secondary,
+          child: widget.secondary,
+        );
+        if (panes == null) {
+          if (widget.single case final single?) return single;
+          // unbounded never splits, so theres no state to keep
+          if (!constraints.biggest.isFinite) return primary;
+          // one pane for now (a keyboard can squeeze it), but the secondary
+          // stays mounted and hidden so its state survives until it's back
+          return Stack(
+            children: [
+              Positioned.fill(child: primary),
+              Positioned.fill(
+                child: Visibility(
+                  visible: false,
+                  maintainState: true,
+                  child: secondary,
+                ),
+              ),
+            ],
+          );
+        }
         return Stack(
           children: [
             Positioned.fromRect(rect: panes.$1, child: primary),
-            Positioned.fromRect(
-              rect: panes.$2,
-              child: KeyedSubtree(key: _secondary, child: widget.secondary),
-            ),
+            Positioned.fromRect(rect: panes.$2, child: secondary),
           ],
         );
       },

@@ -445,6 +445,35 @@ void main() {
       variant: TargetPlatformVariant.only(TargetPlatform.iOS),
     );
 
+    testWidgets('a pane squeezed away by the keyboard keeps its state', (
+      tester,
+    ) async {
+      // a 403 pt keyboard on the open Duo leaves too little height for two
+      // panes. the secondary used to be dropped, and its state with it
+      Widget app(double height) => DuoSimulator(
+        pose: DuoPose.openLandscape,
+        child: MaterialApp(
+          home: Align(
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              height: height,
+              child: const DuoSplit(
+                primary: SizedBox.expand(),
+                secondary: Center(child: Counter()),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpWidget(app(669));
+      await tester.tap(find.text('count 0'));
+      await tester.pump();
+      await tester.pumpWidget(app(200));
+      expect(find.text('count 1'), findsNothing);
+      await tester.pumpWidget(app(669));
+      expect(find.text('count 1'), findsOneWidget);
+    });
+
     testWidgets('floating glass bar ignores the island inset above it', (
       tester,
     ) async {
