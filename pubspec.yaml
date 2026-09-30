@@ -1,11 +1,12 @@
 name: duo_dynamic_sizing
 description: Adaptive layout for the foldable iPhone Duo and any screen. Live hinge angle, posture, fold and camera regions, split panes, side navigation and a pose simulator.
-version: 2.0.0
+version: 2.0.1
 
 repository: https://github.com/Abojawdat/iPhone-Duo-package-
 issue_tracker: https://github.com/Abojawdat/iPhone-Duo-package-/issues
 topics: [foldable, iphone-duo, responsive, adaptive, layout]
 screenshots:
+
   - description: The package running on every iPhone Duo pose, closed, open and in Split View.
     path: doc/iphone-duo.webp
   - description: Unfolding keeps the same email open while the list slides back in.

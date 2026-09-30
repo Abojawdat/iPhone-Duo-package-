@@ -481,7 +481,7 @@ flutter run                     # the playground, on any phone, emulator or desk
 flutter run -t lib/minimal.dart # the 40-line app above
 ```
 
-The playground is a music player, a photo gallery and a live readout of `context.duo`, including the hinge status, angle, cameras and bar edge. A help sheet opens on start and explains everything. Pick a pose under the phone to simulate it, press **Tour** to watch it fold by itself, or pick **real device** to use your actual screen (a Pixel Fold emulator reports a real hinge). Red areas are what the system covers, like the Duo's Dynamic Island strip; the blue line is the fold.
+The playground is a music player, a photo gallery and a live readout of `context.duo`, including the hinge status, angle, cameras and bar edge. A help sheet opens on start and explains everything. Pick a pose under the phone to simulate it, press **Tour** to watch it fold by itself, drag the **Hinge** slider to bend an open Duo, turn on the **glass** button to put the rail on Liquid Glass, or pick **real device** to use your actual screen (a Pixel Fold emulator reports a real hinge). Red areas are what the system covers, like the Duo's Dynamic Island strip; the blue line is the fold.
 
 ## Contributing
 
@@ -970,7 +970,7 @@ flutter run -t lib/minimal.dart # the 40-line app
 
 <div dir="rtl">
 
-مشغّل أغاني ومعرض صور وقراءة حية لـ `context.duo`، ويفتح دليل يشرح كلشي. اختار وضعية جوه التلفون، أو **Tour** حتى يطبّگ وحده، أو **real device** لشاشتك الحقيقية. الأحمر اللي يغطيه النظام، والأزرق خط الطبگة.
+مشغّل أغاني ومعرض صور وقراءة حية لـ `context.duo`، ويفتح دليل يشرح كلشي. اختار وضعية جوه التلفون، أو **Tour** حتى يطبّگ وحده، أو اسحب **Hinge** حتى تطبّگ الـ Duo المفتوح، أو دوس زر الزجاج حتى يصير الشريط Liquid Glass، أو **real device** لشاشتك الحقيقية. الأحمر اللي يغطيه النظام، والأزرق خط الطبگة.
 
 ## تريد تساعد؟
 

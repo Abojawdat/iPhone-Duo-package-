@@ -305,6 +305,10 @@ class _PlaygroundState extends State<Playground>
   // null = the real device, no simulator
   DuoPose? pose = DuoPose.closedPortrait;
   bool guides = true, debug = false, rtl = false, dark = true, bigText = false;
+  // real Liquid Glass on iOS, the blur look elsewhere
+  bool glass = !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+  // null = the pose's own hinge, else the slider's angle
+  double? hinge;
   Timer? touring;
   final _app = GlobalKey();
   final _home = GlobalKey();
@@ -326,7 +330,10 @@ class _PlaygroundState extends State<Playground>
 
   void setPose(DuoPose? p) {
     if (p == pose) return;
-    setState(() => pose = p);
+    setState(() {
+      pose = p;
+      hinge = null;
+    });
     flip.forward(from: 0);
   }
 
@@ -369,9 +376,9 @@ class _PlaygroundState extends State<Playground>
     // same element across every pose, debug and real-device switch
     final app = KeyedSubtree(
       key: _app,
-      child: DuoApp(dark: dark, arabic: rtl),
+      child: DuoApp(dark: dark, arabic: rtl, glass: glass),
     );
-    final p = pose;
+    final p = bent(pose, hinge);
     Widget screen = MediaQuery(
       data: base.copyWith(
         textScaler: bigText ? const TextScaler.linear(2) : base.textScaler,
@@ -484,6 +491,7 @@ class _PlaygroundState extends State<Playground>
         mainAxisSize: MainAxisSize.min,
         children: [
           _Caption(pose: pose, guides: guides),
+          if (hingeShape(pose) != null) hingeSlider(),
           SizedBox(
             height: 48,
             // 11 chips, all built so each one can be scrolled to
@@ -521,42 +529,61 @@ class _PlaygroundState extends State<Playground>
                   ),
                   label: Text(touring == null ? 'Tour' : 'Stop'),
                 ),
-                const Spacer(),
-                toggle(
-                  Icons.help_outline,
-                  'How to test',
-                  false,
-                  () => showHelp(context),
-                ),
-                toggle(
-                  Icons.grid_on,
-                  'Fold & safe-area guides',
-                  guides,
-                  () => setState(() => guides = !guides),
-                ),
-                toggle(
-                  Icons.bug_report_outlined,
-                  'DuoDebugOverlay',
-                  debug,
-                  () => setState(() => debug = !debug),
-                ),
-                toggle(
-                  Icons.translate,
-                  'العربية, right to left',
-                  rtl,
-                  () => setState(() => rtl = !rtl),
-                ),
-                toggle(
-                  Icons.format_size,
-                  'Text 2x',
-                  bigText,
-                  () => setState(() => bigText = !bigText),
-                ),
-                toggle(
-                  Icons.dark_mode_outlined,
-                  'Dark app',
-                  dark,
-                  () => setState(() => dark = !dark),
+                // scrolls on narrow phones, right-aligned on wide screens
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          toggle(
+                            Icons.help_outline,
+                            'How to test',
+                            false,
+                            () => showHelp(context),
+                          ),
+                          toggle(
+                            Icons.blur_on,
+                            'Glass rail',
+                            glass,
+                            () => setState(() => glass = !glass),
+                          ),
+                          toggle(
+                            Icons.grid_on,
+                            'Fold & safe-area guides',
+                            guides,
+                            () => setState(() => guides = !guides),
+                          ),
+                          toggle(
+                            Icons.bug_report_outlined,
+                            'DuoDebugOverlay',
+                            debug,
+                            () => setState(() => debug = !debug),
+                          ),
+                          toggle(
+                            Icons.translate,
+                            'العربية, right to left',
+                            rtl,
+                            () => setState(() => rtl = !rtl),
+                          ),
+                          toggle(
+                            Icons.format_size,
+                            'Text 2x',
+                            bigText,
+                            () => setState(() => bigText = !bigText),
+                          ),
+                          toggle(
+                            Icons.dark_mode_outlined,
+                            'Dark app',
+                            dark,
+                            () => setState(() => dark = !dark),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -565,6 +592,79 @@ class _PlaygroundState extends State<Playground>
       ),
     );
   }
+
+  // bends the simulated Duo, the app sees it like the real hinge
+  Widget hingeSlider() {
+    final angle = hinge ?? pose?.hardware?.angle ?? 180;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          const Icon(Icons.devices_fold, color: Colors.white70, size: 20),
+          const SizedBox(width: 8),
+          const Text('Hinge', style: TextStyle(color: Colors.white70)),
+          Expanded(
+            child: Slider(
+              min: 20,
+              max: 180,
+              value: angle,
+              label: '${angle.round()}°',
+              onChanged: (v) {
+                touring?.cancel();
+                setState(() {
+                  touring = null;
+                  hinge = v;
+                });
+              },
+            ),
+          ),
+          SizedBox(
+            width: 44,
+            child: Text(
+              '${angle.round()}°',
+              textAlign: TextAlign.end,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontFeatures: [FontFeature.tabularFigures()],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// the inner screen poses the hinge slider can bend
+DuoPose? hingeShape(DuoPose? p) => switch (p?.name) {
+  'openLandscape' || 'halfOpenBook' => DuoPose.halfOpenBook,
+  'openPortrait' || 'halfOpenTabletop' => DuoPose.halfOpenTabletop,
+  _ => null,
+};
+
+// p with its hinge at angle, iOS reports it flat from about 176°
+DuoPose? bent(DuoPose? p, double? angle) {
+  final shape = hingeShape(p);
+  if (p == null || shape == null || angle == null) return p;
+  final h = shape.hardware!;
+  return DuoPose(
+    p.name,
+    p.size,
+    padding: p.padding,
+    hardware: DuoHardware(
+      supported: true,
+      hasHinge: true,
+      status: angle >= 176
+          ? DuoHingeStatus.fullyOpen
+          : DuoHingeStatus.partiallyOpen,
+      angle: angle,
+      folds: h.folds,
+      horizontalSizeClass: h.horizontalSizeClass,
+      verticalSizeClass: h.verticalSizeClass,
+      barEdge: h.barEdge,
+    ),
+  );
 }
 
 // what each pose is, in plain words
@@ -847,6 +947,19 @@ void showHelp(BuildContext context) {
           ),
           row(icon(Icons.format_size), 'Big text', 'Text at 200%.'),
           row(icon(Icons.dark_mode_outlined), 'Dark', 'Light or dark app.'),
+          row(
+            icon(Icons.blur_on),
+            'Glass rail',
+            'Puts the side rail on Liquid Glass: the real one on iOS, a '
+                'blur look elsewhere.',
+          ),
+          row(
+            icon(Icons.devices_fold),
+            'Hinge slider',
+            'On the open Duo poses, bend the hinge from flat to almost '
+                'shut. Posture, fold and panes follow, and the Lab shows '
+                'the angle, like on a real Duo.',
+          ),
           h('The poses'),
           for (final p in [...DuoPose.values, null])
             row(
@@ -954,9 +1067,10 @@ class DuoApp extends StatelessWidget {
     this.initialPhoto,
     this.initialFit = DuoMediaFit.smart,
     this.fontFallback,
+    this.glass = false,
   });
 
-  final bool dark, arabic;
+  final bool dark, arabic, glass;
   final int initialTab;
   final int? initialTrack, initialPhoto;
   final DuoMediaFit initialFit;
@@ -973,9 +1087,12 @@ class DuoApp extends StatelessWidget {
       darkTheme: themed(Brightness.dark),
       themeMode: dark ? ThemeMode.dark : ThemeMode.light,
       themeAnimationDuration: const Duration(milliseconds: 400),
-      builder: (context, child) => Directionality(
-        textDirection: arabic ? TextDirection.rtl : TextDirection.ltr,
-        child: child!,
+      builder: (context, child) => _GlassRail(
+        on: glass,
+        child: Directionality(
+          textDirection: arabic ? TextDirection.rtl : TextDirection.ltr,
+          child: child!,
+        ),
       ),
       onGenerateRoute: (_) => MaterialPageRoute(
         builder: (_) =>
@@ -994,6 +1111,19 @@ class DuoApp extends StatelessWidget {
       ],
     );
   }
+}
+
+// carries the playground's glass button to the scaffold inside the routes
+class _GlassRail extends InheritedWidget {
+  const _GlassRail({required this.on, required super.child});
+
+  final bool on;
+
+  static bool of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_GlassRail>()?.on ?? false;
+
+  @override
+  bool updateShouldNotify(_GlassRail old) => on != old.on;
 }
 
 class Home extends StatefulWidget {
@@ -1021,8 +1151,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final c = context.copy;
     return DuoNavigationScaffold(
-      // real Liquid Glass needs iOS, the renders stay plain
-      glass: !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS,
+      // the playground's glass button, off in the README renders
+      glass: _GlassRail.of(context),
       selectedIndex: tab,
       onDestinationSelected: (i) => setState(() => tab = i),
       appBar: AppBar(

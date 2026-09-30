@@ -1,5 +1,5 @@
 group = "io.github.abojawdat.duo_dynamic_sizing"
-version = "2.0.0"
+version = "2.0.1"
 
 apply plugin: "com.android.library"
 

@@ -1,3 +1,9 @@
+## 2.0.1
+
+* `DuoGlass` reads as glass off iOS even over a plain background: a soft shadow, a sheen along the top and a stronger edge, still following the app's light or dark theme.
+* Example: a **Hinge** slider on the open Duo poses bends the simulated Duo from flat to almost shut, so the posture, the 40 pt fold and the panes follow like on a real Duo, and a glass button puts the rail on Liquid Glass on any platform.
+* Integration tests drive the slider and the glass button on macOS, the iOS simulator and a Pixel Fold emulator.
+
 ## 2.0.0
 
 Live hinge data on iOS and Android. The package now ships a small native side, so this is a major release.

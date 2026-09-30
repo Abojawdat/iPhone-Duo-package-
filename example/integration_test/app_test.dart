@@ -265,6 +265,46 @@ void main() {
     await shot(tester, '12_help');
   });
 
+  testWidgets('hinge slider bends the simulated Duo', (tester) async {
+    await launch(tester);
+    await pose(tester, 'openLandscape');
+    await tab(tester, 'Lab');
+    final slider = find.byType(Slider);
+    expect(slider, findsOneWidget);
+    final track = tester.getRect(slider);
+
+    // about 110°, half open like a book: the 40 pt fold splits the panes
+    await tester.tapAt(Offset(track.left + track.width * .55, track.center.dy));
+    await tester.pumpAndSettle();
+    expect(find.text('book'), findsOneWidget);
+    expect(find.textContaining('partiallyOpen'), findsOneWidget);
+    await shot(tester, '14_hinge_book');
+
+    // all the way open again: flat
+    await tester.tapAt(Offset(track.right - 2, track.center.dy));
+    await tester.pumpAndSettle();
+    expect(find.text('flat'), findsOneWidget);
+    expect(find.textContaining('fullyOpen'), findsOneWidget);
+
+    // picking a pose resets the hinge
+    await pose(tester, 'openPortrait');
+    expect(find.text('flat'), findsNothing);
+  });
+
+  testWidgets('glass button puts the rail on glass', (tester) async {
+    await launch(tester);
+    await pose(tester, 'openLandscape');
+    // on by default on iOS only
+    final before = find.byType(DuoGlass).evaluate().isNotEmpty;
+    await tester.tap(find.byTooltip('Glass rail'));
+    await tester.pumpAndSettle();
+    expect(find.byType(DuoGlass).evaluate().isNotEmpty, !before);
+    if (!before) await shot(tester, '15_glass_rail');
+    await tester.tap(find.byTooltip('Glass rail'));
+    await tester.pumpAndSettle();
+    expect(find.byType(DuoGlass).evaluate().isNotEmpty, before);
+  });
+
   testWidgets(
     'this device: live window resizing on macOS',
     (tester) async {
