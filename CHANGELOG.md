@@ -1,3 +1,11 @@
+## 2.0.2
+
+* The glass rail finally looks like glass. With `glass: true`, the content beside the rail flows on beneath it, blurred, like Apple's background extension, so Liquid Glass on iOS and the Flutter-drawn glass elsewhere always have real color to show.
+* `DuoNavigationScaffold(background:)`: a widget that runs under the body and the rail, like a gradient or a hero image.
+* The glass drawn off iOS is the full recipe now: a saturated blur, a thin fill, a sheen, a bright hairline rim and a shadow kept outside the glass so it never turns gray.
+* The playground puts a soft gradient under the rail when the glass is on.
+* pub.dev and the README lead with the new features: the Live hinge animation and real iOS 26 shots of the Liquid Glass rail, at the top in English and Arabic. The Duo gallery no longer says "zero native code".
+
 ## 2.0.1
 
 * `DuoGlass` reads as glass off iOS even over a plain background: a soft shadow, a sheen along the top and a stronger edge, still following the app's light or dark theme.
