@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'duo_dynamic_sizing'
-  s.version          = '2.0.2'
+  s.version          = '2.0.3'
   s.summary          = 'Hinge, fold and camera data for the iPhone Duo.'
   s.description      = 'Reads the iPhone Duo hinge, reserved regions, size classes and vertical bar edge for duo_dynamic_sizing.'
   s.homepage         = 'https://github.com/Abojawdat/iPhone-Duo-package-'

@@ -1,3 +1,10 @@
+## 2.0.3
+
+* `glass: true` now covers the bottom bar too: it floats as a 64 pt Liquid Glass capsule, like iOS 26's tab bar, with the bottom of the page running on beneath it. The page keeps its layout. Glass stays off by default.
+* The README and pub.dev images all show the glass now: every gallery, animation and the social preview, and the glass shot uses full iPhone Duo screens, the side rail in dark and the floating bar in light.
+* README: glass is off by default, said plainly in both languages.
+* Fix: `DuoSplit` keeps a pane it has no room for mounted but hidden, so its state survives. With the keyboard up on the open Duo there's only room for one pane, and the other used to lose everything in it, typed text included. Found by the iPad simulator's on-screen keyboard.
+
 ## 2.0.2
 
 * The glass rail finally looks like glass. With `glass: true`, the content beside the rail flows on beneath it, blurred, like Apple's background extension, so Liquid Glass on iOS and the Flutter-drawn glass elsewhere always have real color to show.
