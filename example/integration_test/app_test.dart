@@ -169,6 +169,9 @@ void main() {
       await tester.tap(find.byIcon(Icons.add));
     }
     await tester.enterText(find.byType(TextField), 'still here');
+    // like a person would: a simulator with an on screen keyboard otherwise
+    // squeezes the open Duo into one pane and hides the tools
+    FocusManager.instance.primaryFocus?.unfocus();
     await tester.pumpAndSettle();
     for (final p in [
       'openLandscape',
@@ -296,11 +299,24 @@ void main() {
     await pose(tester, 'openLandscape');
     // on by default on iOS only
     final before = find.byType(DuoGlass).evaluate().isNotEmpty;
-    await tester.tap(find.byTooltip('Glass rail'));
+    await tester.tap(find.byTooltip('Liquid Glass'));
     await tester.pumpAndSettle();
     expect(find.byType(DuoGlass).evaluate().isNotEmpty, !before);
-    if (!before) await shot(tester, '15_glass_rail');
-    await tester.tap(find.byTooltip('Glass rail'));
+    if (!before) {
+      await shot(tester, '15_glass_rail');
+      // upright the bar floats as a glass capsule
+      await pose(tester, 'openPortrait');
+      expect(
+        find.descendant(
+          of: find.byType(DuoGlass),
+          matching: find.byType(NavigationBar),
+        ),
+        findsOneWidget,
+      );
+      await shot(tester, '16_glass_bar');
+      await pose(tester, 'openLandscape');
+    }
+    await tester.tap(find.byTooltip('Liquid Glass'));
     await tester.pumpAndSettle();
     expect(find.byType(DuoGlass).evaluate().isNotEmpty, before);
   });

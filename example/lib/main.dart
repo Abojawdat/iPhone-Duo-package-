@@ -546,7 +546,7 @@ class _PlaygroundState extends State<Playground>
                           ),
                           toggle(
                             Icons.blur_on,
-                            'Glass rail',
+                            'Liquid Glass',
                             glass,
                             () => setState(() => glass = !glass),
                           ),
@@ -949,9 +949,10 @@ void showHelp(BuildContext context) {
           row(icon(Icons.dark_mode_outlined), 'Dark', 'Light or dark app.'),
           row(
             icon(Icons.blur_on),
-            'Glass rail',
-            'Puts the side rail on Liquid Glass: the real one on iOS, a '
-                'blur look elsewhere.',
+            'Liquid Glass',
+            'Puts the side rail, or the bottom bar as a floating capsule, on '
+                'Liquid Glass: the real one on iOS, the same look drawn in '
+                'Flutter elsewhere.',
           ),
           row(
             icon(Icons.devices_fold),

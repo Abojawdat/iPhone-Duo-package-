@@ -22,9 +22,9 @@ A help sheet opens on start and explains everything. In short:
 - **Red** areas are what the system covers (the Duo's Dynamic Island strip and
   home bar). The **blue** line is the fold, and a blue band is the 40 pt fold
   iOS reports while the Duo is half open.
-- The other buttons: help, glass rail (real Liquid Glass on iOS, a blur look
-  elsewhere), guides, debug overlay, Arabic (right to left), 2x text, dark
-  mode.
+- The other buttons: help, Liquid Glass (the rail or a floating bottom bar on
+  glass: real on iOS, drawn in Flutter elsewhere), guides, debug overlay,
+  Arabic (right to left), 2x text, dark mode.
 
 Things to try:
 
