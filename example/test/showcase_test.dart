@@ -49,6 +49,44 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('split view, the other tabs and arabic', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(const Showcase(opening: false));
+    await run(tester, 10);
+
+    await tester.tap(find.text('Split View'));
+    await run(tester, 20);
+    expect(find.text('Another app'), findsOneWidget);
+    await tester.tap(find.text('Split View').first);
+    await run(tester, 20);
+    expect(find.text('Another app'), findsOneWidget);
+    // bending it ends the split, like the real device
+    await tester.tap(find.text('Book'));
+    await run(tester);
+    expect(find.text('Another app'), findsNothing);
+
+    await tester.tap(find.text('This device'));
+    await run(tester, 30);
+    expect(find.text('Back to the fold'), findsOneWidget);
+    await tester.tap(find.text('Back to the fold'));
+    await run(tester, 30);
+    expect(find.text('Back to the fold'), findsNothing);
+
+    await tester.tap(find.byIcon(Icons.code));
+    await run(tester, 10);
+    expect(find.textContaining('flutter pub add'), findsOneWidget);
+
+    await tester.tap(find.text('عربي'));
+    await run(tester, 10);
+    expect(find.text('أضفه إلى تطبيقك'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.devices_fold));
+    await run(tester, 20);
+    expect(find.text('كتاب'), findsWidgets);
+    expect(tester.takeException(), isNull);
+  });
+
   test('every hold lays out and keeps a lit screen reachable', () {
     for (final (key, _, hold) in scenes) {
       for (final angle in [0.0, 10.0, 40.0, 90.0, 110.0, 150.0, 180.0]) {

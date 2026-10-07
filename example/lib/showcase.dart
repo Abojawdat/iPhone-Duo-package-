@@ -34,6 +34,8 @@ const _text = {
     'light': 'Light',
     'hinge': 'Hinge',
     'other': 'Another app',
+    'real': 'This device',
+    'back': 'Back to the fold',
     'duo': 'iPhone Duo',
     'android': 'Android fold',
     'iphone': 'iPhone',
@@ -90,6 +92,8 @@ const _text = {
     'light': 'فاتح',
     'hinge': 'المفصل',
     'other': 'تطبيق آخر',
+    'real': 'هذا الجهاز',
+    'back': 'ارجع للطي',
     'duo': 'iPhone Duo',
     'android': 'أندرويد قابل للطي',
     'iphone': 'iPhone',
@@ -342,6 +346,7 @@ class _ShowcaseState extends State<Showcase>
   Timer? touring;
 
   final _app = GlobalKey();
+  final _nav = GlobalKey<NavigatorState>();
   final _snap = SnapshotController(allowSnapshotting: true);
   late final Ticker _ticker;
   var _last = Duration.zero;
@@ -437,6 +442,7 @@ class _ShowcaseState extends State<Showcase>
     final t = _text[arabic ? 'ar' : 'en']!;
     return MaterialApp(
       title: 'duo_dynamic_sizing',
+      navigatorKey: _nav,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
@@ -779,6 +785,23 @@ class _ShowcaseState extends State<Showcase>
                   selected: !dark,
                   onSelected: (v) => setState(() => dark = !v),
                 ),
+                // no pretend phone: the app on this screen, with its real hinge
+                ActionChip(
+                  avatar: const Icon(Icons.smartphone, size: 18),
+                  label: Text(t['real']!),
+                  onPressed: () {
+                    stopTour();
+                    _nav.currentState!.push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => _RealDevice(
+                          dark: dark,
+                          arabic: arabic,
+                          back: t['back']!,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 ActionChip(
                   avatar: Icon(
                     touring == null ? Icons.play_arrow : Icons.stop,
@@ -821,6 +844,39 @@ class _Grip extends StatelessWidget {
       ),
       child: const Icon(Icons.back_hand_outlined, color: Colors.white),
     ),
+  );
+}
+
+class _RealDevice extends StatelessWidget {
+  const _RealDevice({
+    required this.dark,
+    required this.arabic,
+    required this.back,
+  });
+
+  final bool dark, arabic;
+  final String back;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    children: [
+      DuoHardwareScope(
+        child: DuoApp(
+          dark: dark,
+          arabic: arabic,
+          glass: !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS,
+        ),
+      ),
+      Positioned(
+        top: MediaQuery.paddingOf(context).top + 6,
+        right: 12,
+        child: FilledButton.tonalIcon(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.devices_fold),
+          label: Text(back),
+        ),
+      ),
+    ],
   );
 }
 
