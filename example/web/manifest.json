@@ -1,11 +1,11 @@
 {
-    "name": "Duo Playground",
-    "short_name": "Duo Playground",
+    "name": "duo_dynamic_sizing",
+    "short_name": "Duo demo",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Fold a 3D iPhone Duo by hand: the live demo of duo_dynamic_sizing.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
