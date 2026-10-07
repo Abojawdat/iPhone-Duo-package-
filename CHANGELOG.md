@@ -1,3 +1,11 @@
+## 2.0.4
+
+* Fix: apps that use the package build for the web. The package declares a web plugin but never depended on `flutter_web_plugins`, so since 2.0.0 every web build stopped with "Couldn't resolve the package 'flutter_web_plugins'".
+* The example is a 3D showcase now: a foldable you bend by hand, from flat through the book and tabletop postures to shut on its cover screen, with the same live app running inside it and taking touches while bent. Turn it, share the screen in Split View, or swap in an Android fold, an iPhone or an iPad. **This device** still runs it on your real screen and hinge.
+* A live demo of the showcase for the browser: https://abojawdat.github.io/iPhone-Duo-package-/
+* The demo app's color reaches the top of the screen instead of stopping under a solid title band, and every README and pub.dev image is rendered again to match, the two Liquid Glass shots retaken on iOS 26.
+* README: opens with the logo, the author and the live demo, and describes the showcase, in both languages.
+
 ## 2.0.3
 
 * `glass: true` now covers the bottom bar too: it floats as a 64 pt Liquid Glass capsule, like iOS 26's tab bar, with the bottom of the page running on beneath it. The page keeps its layout. Glass stays off by default.
