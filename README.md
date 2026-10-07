@@ -1,35 +1,10 @@
 <a name="top"></a>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/banner.svg" width="100%" alt="duo_dynamic_sizing: adaptive layout for the foldable iPhone Duo and every other screen">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/logo.svg" width="120" alt="duo_dynamic_sizing logo: a foldable phone, half open">
 </p>
 
-<p align="center">
-  <br>
-  Made by &nbsp;<a href="https://github.com/Abojawdat"><b>@Abojawdat</b></a>
-  <br><br><br>
-  <a href="https://github.com/Abojawdat"><img src="https://img.shields.io/badge/GitHub-@Abojawdat-6D5DFC?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0B14" alt="GitHub profile: @Abojawdat"></a>
-  <a href="https://github.com/Abojawdat/iPhone-Duo-package-"><img src="https://img.shields.io/badge/source-iPhone--Duo--package---A855F7?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0B14" alt="Source code on GitHub"></a>
-  <a href="https://github.com/Abojawdat/iPhone-Duo-package-/stargazers"><img src="https://img.shields.io/github/stars/Abojawdat/iPhone-Duo-package-?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0B14&color=22D3EE" alt="GitHub stars"></a>
-</p>
-
-<p align="center">
-  <a href="#english"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/english.svg" height="56" alt="English"></a>
-  &nbsp;&nbsp;
-  <a href="#arabic"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/arabic.svg" height="56" alt="العربية"></a>
-  &nbsp;&nbsp;
-  <a href="#try-it"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/try.svg" height="56" alt="Try it"></a>
-</p>
-
-<p align="center">
-  <a href="https://pub.dev/packages/duo_dynamic_sizing"><img src="https://img.shields.io/pub/v/duo_dynamic_sizing?style=flat-square&color=6D5DFC&labelColor=0A0B14&label=pub" alt="pub version"></a>
-  <a href="https://github.com/Abojawdat/iPhone-Duo-package-/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Abojawdat/iPhone-Duo-package-/ci.yml?branch=main&style=flat-square&labelColor=0A0B14&label=tests" alt="tests"></a>
-  <img src="https://img.shields.io/badge/iPhone_Duo-ready-22D3EE?style=flat-square&labelColor=0A0B14" alt="iPhone Duo ready">
-  <img src="https://img.shields.io/badge/Flutter-3.41%2B-A855F7?style=flat-square&labelColor=0A0B14" alt="Flutter 3.41+">
-  <img src="https://img.shields.io/badge/hinge-live-8B7CFF?style=flat-square&labelColor=0A0B14" alt="live hinge data">
-  <img src="https://img.shields.io/badge/RTL-ready-34D399?style=flat-square&labelColor=0A0B14" alt="RTL ready">
-  <a href="https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-9AA0B8?style=flat-square&labelColor=0A0B14" alt="MIT license"></a>
-</p>
+<h1 align="center">duo_dynamic_sizing</h1>
 
 <p align="center">
   <b>One <code>context.duo</code> that knows if the phone is folded, open, sideways or sharing the screen.</b><br>
@@ -43,6 +18,44 @@
   تقرا زاوية المفصل والوضعية لايف على iOS وAndroid، وتشتغل على iOS وAndroid والويب والديسكتوب، بالعربي والإنگليزي.
 </p>
 </div>
+
+<p align="center">
+  Built by <a href="https://github.com/Abojawdat"><b>Mohammad Othman (Abojawdat)</b></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Abojawdat"><img src="https://img.shields.io/badge/GitHub-@Abojawdat-6D5DFC?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0B14" alt="GitHub profile: @Abojawdat"></a>
+  <a href="https://github.com/Abojawdat/iPhone-Duo-package-"><img src="https://img.shields.io/badge/source-iPhone--Duo--package---A855F7?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0B14" alt="Source code on GitHub"></a>
+  <a href="https://github.com/Abojawdat/iPhone-Duo-package-/stargazers"><img src="https://img.shields.io/github/stars/Abojawdat/iPhone-Duo-package-?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0B14&color=22D3EE" alt="GitHub stars"></a>
+</p>
+
+<p align="center">
+  <a href="https://abojawdat.github.io/iPhone-Duo-package-/"><img src="https://img.shields.io/badge/live_demo-fold_it_in_your_browser-6D5DFC?style=flat-square&labelColor=0A0B14" alt="live demo"></a>
+  <a href="https://pub.dev/packages/duo_dynamic_sizing"><img src="https://img.shields.io/pub/v/duo_dynamic_sizing?style=flat-square&color=6D5DFC&labelColor=0A0B14&label=pub" alt="pub version"></a>
+  <a href="https://github.com/Abojawdat/iPhone-Duo-package-/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Abojawdat/iPhone-Duo-package-/ci.yml?branch=main&style=flat-square&labelColor=0A0B14&label=tests" alt="tests"></a>
+  <img src="https://img.shields.io/badge/iPhone_Duo-ready-22D3EE?style=flat-square&labelColor=0A0B14" alt="iPhone Duo ready">
+  <img src="https://img.shields.io/badge/Flutter-3.41%2B-A855F7?style=flat-square&labelColor=0A0B14" alt="Flutter 3.41+">
+  <img src="https://img.shields.io/badge/hinge-live-8B7CFF?style=flat-square&labelColor=0A0B14" alt="live hinge data">
+  <img src="https://img.shields.io/badge/RTL-ready-34D399?style=flat-square&labelColor=0A0B14" alt="RTL ready">
+  <a href="https://github.com/Abojawdat/iPhone-Duo-package-/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-9AA0B8?style=flat-square&labelColor=0A0B14" alt="MIT license"></a>
+</p>
+
+<p align="center">
+  <a href="#english"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/english.svg" height="56" alt="English"></a>
+  &nbsp;&nbsp;
+  <a href="#arabic"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/arabic.svg" height="56" alt="العربية"></a>
+  &nbsp;&nbsp;
+  <a href="#try-it"><img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/nav/try.svg" height="56" alt="Try it"></a>
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abojawdat/iPhone-Duo-package-/main/doc/banner.svg" width="100%" alt="duo_dynamic_sizing: adaptive layout for the foldable iPhone Duo and every other screen">
+</p>
+
+<p align="center">
+  <a href="https://abojawdat.github.io/iPhone-Duo-package-/"><b>▶ Try the live demo</b></a> &nbsp;·&nbsp; <a href="https://abojawdat.github.io/iPhone-Duo-package-/"><b>جرّب العرض الحي</b></a><br>
+  A 3D iPhone Duo you fold with your hand, in your browser.
+</p>
 
 ---
 
@@ -68,17 +81,19 @@
 
 ## Try it in 30 seconds
 
-No iPhone Duo needed: any phone, emulator, simulator or desktop works. Paste this in a terminal:
+**[▶ Open the live demo](https://abojawdat.github.io/iPhone-Duo-package-/)** in your browser. Nothing to install: a 3D iPhone Duo you fold with your hand.
+
+1. Drag the handle on the edge of the phone, or the **Hinge** slider. It bends from flat, through the book posture, to shut on its cover screen.
+2. Play a song, then fold it: it keeps playing, and the list slides in or out around the fold.
+3. Press **Turn it** for the tabletop posture, **Split View** to share the screen, or swap in an Android fold, an iPhone or an iPad.
+
+Or run the same app yourself. No iPhone Duo needed: any phone, emulator, simulator or desktop works.
 
 ```sh
 dart pub unpack duo_dynamic_sizing
 cd duo_dynamic_sizing-*/example
 flutter run
 ```
-
-1. A help sheet opens and explains everything on screen. Close it with **Start testing**.
-2. Tap a pose under the phone (`closedPortrait`, `openLandscape`, `splitLeft`…) or press **Tour** to fold by itself.
-3. Play a song, then unfold: it keeps playing and the list slides in next to it.
 
 Using it in your own app instead? `flutter pub add duo_dynamic_sizing`, then see the [minimal example](#minimal-example).
 
@@ -487,11 +502,11 @@ No clone needed, this pulls the package with its example from pub.dev:
 ```sh
 dart pub unpack duo_dynamic_sizing
 cd duo_dynamic_sizing-*/example
-flutter run                     # the playground, on any phone, emulator or desktop
+flutter run                     # the 3D showcase, on any phone, emulator or desktop
 flutter run -t lib/minimal.dart # the 40-line app above
 ```
 
-The playground is a music player, a photo gallery and a live readout of `context.duo`, including the hinge status, angle, cameras and bar edge. A help sheet opens on start and explains everything. Pick a pose under the phone to simulate it, press **Tour** to watch it fold by itself, drag the **Hinge** slider to bend an open Duo, turn on the **glass** button to put the rail on Liquid Glass, or pick **real device** to use your actual screen (a Pixel Fold emulator reports a real hinge). Red areas are what the system covers, like the Duo's Dynamic Island strip; the blue line is the fold.
+It is the same app as the [live demo](https://abojawdat.github.io/iPhone-Duo-package-/): a foldable drawn in 3D, with a music player, a photo gallery and a live readout of `context.duo` running inside it, including the hinge status, angle, cameras and bar edge. Drag the handle or the **Hinge** slider to fold it shut or open, **Turn it** to rotate it, **Split View** to share the screen, **Play all** to watch every posture by itself, or swap in an Android fold, an iPhone or an iPad. **Guides** paints what the system covers in red, like the Duo's Dynamic Island strip, and the fold in blue. **This device** drops the pretend phone and uses your actual screen (a Pixel Fold emulator reports a real hinge). The **Every pose** tab lists each posture, and **Use it** has the install line and a starter.
 
 ## Contributing
 
@@ -499,7 +514,7 @@ Bug reports and pull requests are welcome in the [issue tracker](https://github.
 
 ## Author
 
-Built and maintained by [@Abojawdat](https://github.com/Abojawdat).
+Built and maintained by **Mohammad Othman** ([@Abojawdat](https://github.com/Abojawdat)).
 
 - Profile: [github.com/Abojawdat](https://github.com/Abojawdat)
 - Source: [github.com/Abojawdat/iPhone-Duo-package-](https://github.com/Abojawdat/iPhone-Duo-package-)
@@ -543,7 +558,9 @@ If the package helps you, a star on the repo is the best way to say thanks.
 
 ## جرّبها بـ 30 ثانية
 
-ما تحتاج iPhone Duo، أي موبايل أو محاكي أو كمبيوتر يمشي. الصق هذا بالـ terminal:
+**[▶ افتح العرض الحي](https://abojawdat.github.io/iPhone-Duo-package-/)** بالمتصفح، بلا تنصيب: iPhone Duo ثلاثي الأبعاد تطبّگه بإيدك. اسحب المقبض أو شريط **Hinge**، شغّل أغنية وطبّگه: تبقى تشتغل.
+
+أو شغّله عندك، وما تحتاج iPhone Duo، أي موبايل أو محاكي أو كمبيوتر يمشي:
 
 </div>
 
@@ -555,7 +572,7 @@ flutter run
 
 <div dir="rtl">
 
-يفتح دليل يشرح كلشي. اختار وضعية جوه التلفون أو دوس **Tour**، شغّل أغنية وافتحه: تبقى تشتغل.
+دوس **Turn it** حتى تدوّره، أو **Split View** حتى تتقاسم الشاشة، أو بدّله بأندرويد أو iPhone أو iPad.
 
 ## شوفها شلون تشتغل
 
@@ -982,13 +999,13 @@ MaterialApp(
 ```sh
 dart pub unpack duo_dynamic_sizing
 cd duo_dynamic_sizing-*/example
-flutter run                     # the playground
+flutter run                     # the 3D showcase
 flutter run -t lib/minimal.dart # the 40-line app
 ```
 
 <div dir="rtl">
 
-مشغّل أغاني ومعرض صور وقراءة حية لـ `context.duo`، ويفتح دليل يشرح كلشي. اختار وضعية جوه التلفون، أو **Tour** حتى يطبّگ وحده، أو اسحب **Hinge** حتى تطبّگ الـ Duo المفتوح، أو دوس زر الزجاج حتى يصير الشريط Liquid Glass، أو **real device** لشاشتك الحقيقية. الأحمر اللي يغطيه النظام، والأزرق خط الطبگة.
+نفس [العرض الحي](https://abojawdat.github.io/iPhone-Duo-package-/): موبايل ينطبگ مرسوم ثلاثي الأبعاد، وبداخله مشغّل أغاني ومعرض صور وقراءة حية لـ `context.duo`. اسحب المقبض أو **Hinge** حتى تطبّگه أو تفتحه، **Turn it** حتى تدوّره، **Split View** حتى تتقاسم الشاشة، أو **Play all** حتى يمر بكل الوضعيات وحده. **Guides** يلوّن اللي يغطيه النظام بالأحمر وخط الطبگة بالأزرق، و**This device** يستخدم شاشتك الحقيقية.
 
 ## تريد تساعد؟
 
@@ -996,7 +1013,7 @@ flutter run -t lib/minimal.dart # the 40-line app
 
 ## منو سواها
 
-هاي الحزمة سواها ويتابعها [@Abojawdat](https://github.com/Abojawdat).
+هاي الحزمة سواها ويتابعها **محمد عثمان** ([@Abojawdat](https://github.com/Abojawdat)).
 
 - الحساب: [github.com/Abojawdat](https://github.com/Abojawdat)
 - الكود: [github.com/Abojawdat/iPhone-Duo-package-](https://github.com/Abojawdat/iPhone-Duo-package-)

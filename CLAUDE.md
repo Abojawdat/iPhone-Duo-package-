@@ -16,7 +16,7 @@ flutter pub get
 flutter analyze                 # must be clean
 flutter test                    # test/duo_data_test.dart (logic), test/widgets_test.dart (poses)
 dart format lib test example    # 80 cols
-cd example && flutter run       # showcase with a pose picker
+cd example && flutter run       # the 3D showcase, also the live demo
 flutter test --update-goldens test/golden_test.dart   # goldens, macOS only (skipped elsewhere)
 cd example && flutter test integration_test -d macos  # real app, every pose. keep its window visible: macOS throttles hidden windows and the run crawls
 cd example && flutter drive -d macos --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart  # same + screenshots in example/build/screens
@@ -35,6 +35,16 @@ cd example && flutter test tool/render.dart && python3 ../tool/pack_visuals.py  
 Outputs: stills in `doc/*.webp`, `doc/fold.webp` and `doc/hinge.webp` (also pub.dev screenshots), and scenario animations in `doc/anim/*.webp` (kept out of the pub archive by `.pubignore`).
 
 `doc/glass.webp` is built from real iOS screenshots, because `UIGlassEffect` can't render in a test. Retake them on the iPad Pro 13-inch simulator, which fits each Duo screen at 1:1: `cd example && flutter build ios --simulator --debug -t tool/glass_demo.dart`, install and launch it with `xcrun simctl`, screenshot the rail (`xcrun simctl io <id> screenshot rail.png`), then after 15 s the floating bar (`bar.png`), run `python3 ../tool/crop_glass.py rail.png bar.png`, then `flutter test tool/render.dart --plain-name "glass gallery"` and pack. Every render passes `glass: true` to `DuoApp`. `doc/banner.svg` (animated, SMIL) and `doc/logo.svg` are hand-written SVGs. The logo is the app icon: `cd example && python3 tool/make_icon.py` regenerates every platform's icon from the same geometry.
+
+## Example and live demo
+
+- `example/lib/showcase.dart` is what `flutter run` and the live demo open: a foldable drawn in 3D that folds by hand. `example/lib/fold_view.dart` is its 3D body. `.github/workflows/demo.yml` builds it for the web and puts it on GitHub Pages on every push to `main`: https://abojawdat.github.io/iPhone-Duo-package-/
+- **One live app, never two.** `DuoApp` is built once under a GlobalKey, pictured every frame by a `SnapshotWidget` and painted onto both halves by `Fold3D`. Building it once per half would look the same and lose state on every fold.
+- **Touches go through the same bend.** `RenderFold.hitTest` uses the matrices `Fold3D` painted with. Change one and the other has to follow.
+- **Below 28° the cover screen is the lit one,** and the app is laid out for the closed pose. Above it the inner screen is, bent to the hinge angle.
+- `Playground` and `DuoApp` stay in `example/lib/main.dart`: `tool/render.dart`, `tool/glass_demo.dart` and the integration tests import them.
+- The package depends on `flutter_web_plugins` because it declares a web plugin. Without it no web app using the package compiles.
+- The demo app's `AppBar` is clear whenever the aurora background is on, so the color reaches the top of the screen. Render the docs again after touching it.
 
 ## Docs (English + Arabic, keep them in sync)
 
