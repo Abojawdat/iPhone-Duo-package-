@@ -7,7 +7,9 @@ import 'package:duo_dynamic_sizing/duo_dynamic_sizing.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(const Playground());
+import 'showcase.dart';
+
+void main() => runApp(const Showcase());
 
 const brand = Color(0xFF6D5DFC);
 
