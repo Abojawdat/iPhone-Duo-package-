@@ -1187,6 +1187,8 @@ class _HomeState extends State<Home> {
       selectedIndex: tab,
       onDestinationSelected: (i) => setState(() => tab = i),
       appBar: AppBar(
+        // the color runs to the top of the screen, no band behind the title
+        backgroundColor: _GlassRail.of(context) ? Colors.transparent : null,
         title: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           transitionBuilder: (child, a) => FadeTransition(
