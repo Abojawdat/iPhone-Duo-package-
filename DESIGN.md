@@ -186,6 +186,7 @@ Photos and most social video fill the screen; cinematic video keeps its edges.
 | No plugin (widget tests, web, desktop) | `DuoHardware.none`, no errors |
 | iOS before 27.1, or an API that changed shape | Size classes only; the rest stays empty |
 | Android angle before the hinge first moves after a wake | `null`; posture still comes from Android |
+| A shut Android hinge that jitters a few degrees | Stays `closed`: below 15° is closed and above 165° is flat |
 | iOS fold region overlapping a Split View window's edge | One pane |
 | A keyboard squeezes a `DuoSplit` to one pane | The hidden pane keeps its state, typed text included |
 
@@ -200,6 +201,7 @@ These all live in [`test/edge_cases_test.dart`](test/edge_cases_test.dart), and 
 | 141 unit, widget, edge-case and golden tests | Every mode, pose, fold, direction and rail placement, pixel references for each pose, hinge data, bridge modes, junk channel data and rebuild isolation |
 | Integration tests on macOS, the iOS simulator and a Pixel Fold emulator | Taps, folds, Split View, RTL, window resizing, the live native side and Liquid Glass on the real engine |
 | A live fold on the Pixel Fold emulator | The hinge sensor driven from flat through half open, rapid flapping and shut, and back, with no errors |
+| A live fold on a real Honor foldable | Folded by hand from 4° to 180° and back: `closed`, `book` and `flat`, and the app moving between the cover and inner screens, with no errors |
 | Render tool | The animations on this page are real frames of the example app |
 
 ## 14. What we deliberately left out

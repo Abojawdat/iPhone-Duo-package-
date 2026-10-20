@@ -284,7 +284,7 @@ The short version is below. The full reasoning, with the alternatives we rejecte
 - **Native code only where the data lives.** A small Swift file reads Apple's hinge, fold and camera APIs, looked up at runtime so it builds on any Xcode, and a small Java file reads Android's hinge sensor. Web and desktop stay pure Dart.
 - **The iPhone Duo is detected by its exact screen sizes** at 3x on iOS, so iPads, Android phones and desktop windows are never mistaken for it.
 - **State survives every fold** because the package moves widgets instead of rebuilding them.
-- **Tested hard:** 141 unit, widget, edge-case and golden tests, plus integration tests on macOS, the iOS simulator and a Pixel Fold emulator, including a live fold from flat to shut and back.
+- **Tested hard:** 141 unit, widget, edge-case and golden tests, plus integration tests on macOS, the iOS simulator, a Pixel Fold emulator and a real Honor foldable, including a live fold from flat to shut and back.
 
 ## What's inside
 
@@ -489,7 +489,7 @@ Apple announced it on 9 September 2026, and it ships on 23 October 2026 with iOS
 
 ## Limitations
 
-- **Live hinge data needs `DuoHardwareScope` and, on iOS, the 27.1 runtime.** Without it, `posture` on the Duo is `closed` or `unknown` and the fold is the known physical centre line. The iOS side is written against Apple's iOS 27.1 headers and looks every API up at runtime, so a missing or changed API turns the feature off instead of crashing. It's tested on iOS 26 simulators, macOS and a Pixel Fold emulator; if a real Duo reports something odd, `DuoHardware.describeNative()` shows what the OS exposes.
+- **Live hinge data needs `DuoHardwareScope` and, on iOS, the 27.1 runtime.** Without it, `posture` on the Duo is `closed` or `unknown` and the fold is the known physical centre line. The iOS side is written against Apple's iOS 27.1 headers and looks every API up at runtime, so a missing or changed API turns the feature off instead of crashing. It's tested on iOS 26 simulators, macOS, a Pixel Fold emulator and a real Honor foldable; if a real Duo reports something odd, `DuoHardware.describeNative()` shows what the OS exposes.
 - **On Android the angle can start empty.** After the phone wakes, Android may have no reading until the hinge first moves. Posture still comes from Android's own fold data.
 - **Simulator safe areas are estimates.** Apple hasn't published the Duo's inset values, so `DuoPose` uses 59 pt and 21 pt. Real devices always use the live values.
 - **The Split View side is inferred** from which side has the Dynamic Island inset.
@@ -809,7 +809,7 @@ duo.gridColumns(160); // عدد زوجي من الأعمدة حوالي خط ا�
 - **كود أصلي بس وين لازم:** ملف Swift صغير يقرا مفصل Apple، وملف Java يقرا حساس Android، والويب والديسكتوب Dart بس.
 - **نعرف الـ iPhone Duo من قياسات شاشته بالضبط** على iOS، فما يتلخبط ويا iPad أو Android.
 - **ماكو شي يضيع لمن تطبّگ** لأن الحزمة تنقل عناصر الواجهة بدل ما تبنيها من جديد.
-- **مجربة زين:** 141 اختبار، واختبارات تكامل على macOS ومحاكي iOS ومحاكي Pixel Fold، وبيها طبگة لايف من مفتوح لمسكّر.
+- **مجربة زين:** 141 اختبار، واختبارات تكامل على macOS ومحاكي iOS ومحاكي Pixel Fold وموبايل Honor حقيقي، وبيها طبگة لايف من مفتوح لمسكّر.
 
 ## شنو بالحزمة
 

@@ -95,12 +95,21 @@ class DuoHardware {
         (r['kind'] == 'occlusion' ? cameras : folds).add(region);
       }
     }
-    final angle = number(map['angle']);
+    final angle = number(map['angle'])?.clamp(0, 180).toDouble();
+    // Android sends only the angle. A shut hinge jitters a few degrees on
+    // real phones, hence the wide margins
+    final status = map['status'] == null && angle != null
+        ? angle < 15
+              ? DuoHingeStatus.closed
+              : angle > 165
+              ? DuoHingeStatus.fullyOpen
+              : DuoHingeStatus.partiallyOpen
+        : pick(DuoHingeStatus.values, map['status']);
     return DuoHardware(
       supported: map['supported'] == true,
       hasHinge: map['hinge'] == true,
-      status: pick(DuoHingeStatus.values, map['status']),
-      angle: angle?.clamp(0, 180).toDouble(),
+      status: status,
+      angle: angle,
       folds: List.unmodifiable(folds),
       cameras: List.unmodifiable(cameras),
       horizontalSizeClass: pick(DuoSizeClass.values, map['hSize']),

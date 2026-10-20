@@ -90,11 +90,8 @@ public class DuoDynamicSizingPlugin
     Map<String, Object> map = new HashMap<>();
     map.put("supported", hinge != null);
     map.put("hinge", hinge != null);
-    if (angle != null) {
-      map.put("angle", angle);
-      // same order as UIHingeStatus: closed 1, partiallyOpen 2, fullyOpen 3
-      map.put("status", angle < 5 ? 1 : angle > 175 ? 3 : 2);
-    }
+    // Dart turns the angle into a status
+    if (angle != null) map.put("angle", angle);
     return map;
   }
 }

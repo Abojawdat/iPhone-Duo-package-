@@ -332,6 +332,25 @@ void main() {
       expect(tester.getSize(find.byKey(const Key('a'))).width, 400);
     });
 
+    test('a shut hinge that jitters a few degrees stays closed', () {
+      DuoHingeStatus at(double a) =>
+          DuoHardware.fromMap({'hinge': true, 'angle': a}).status;
+      // a real Honor fold reads 0 to 5 degrees while shut
+      expect(at(5), DuoHingeStatus.closed);
+      expect(at(14.9), DuoHingeStatus.closed);
+      expect(at(90), DuoHingeStatus.partiallyOpen);
+      expect(at(172), DuoHingeStatus.fullyOpen);
+      expect(
+        DuoHardware.fromMap({'hinge': true}).status,
+        DuoHingeStatus.unknown,
+      );
+      // iOS sends its own status, the angle never overrides it
+      expect(
+        DuoHardware.fromMap({'status': 2, 'angle': 3.0}).status,
+        DuoHingeStatus.partiallyOpen,
+      );
+    });
+
     test('a fold outside the window is ignored by the split', () {
       final d = DuoData(
         size: const Size(900, 700),
