@@ -1,3 +1,8 @@
+## 2.0.5
+
+* Fix: a shut Android foldable no longer reports the half-open `book` posture. A real hinge sensor jitters a few degrees while closed (0° to 5° on an Honor fold), and the old 5° line read that as half open. The status now comes from the angle with wider margins: below 15° is closed and above 165° is flat.
+* Tested on a real foldable for the first time: an Honor folded by hand from shut to flat and back, the app moving between its cover and inner screens.
+
 ## 2.0.4
 
 * Fix: apps that use the package build for the web. The package declares a web plugin but never depended on `flutter_web_plugins`, so since 2.0.0 every web build stopped with "Couldn't resolve the package 'flutter_web_plugins'".
